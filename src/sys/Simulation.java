@@ -38,9 +38,6 @@ public class Simulation {
         while(state != 0) {
             switch (menu.show()) {
                 case 0:
-                    //Config realConfigs = new Config();
-                    //realConfigs.copy(configs);
-                    //configs = realConfigs;
                     state = 0;
                     start();
                     break;
@@ -63,7 +60,7 @@ public class Simulation {
             long startTime = System.nanoTime();
             long endTime = System.nanoTime();
 
-            Thread.sleep(currentState.dayDuration);
+            Thread.sleep(currentState.configs.dayDuration);
         }
     }
 

@@ -2,18 +2,18 @@ package sys;
 import sys.Core.*;
 
 class Config {
-    private int ageAverage;
-    private int socialDistance;
-    private int populationNumber;
-    private int initialResources;
-    private int swabsCost;
-    private double infectivity;
-    private double sintomaticity;
-    private double letality;
-    private int diseaseDuration;
-    private int dayDuration = 500;                         //Loop duration measured in milliseconds
-    private boolean masks = false;
-    private boolean isValid;
+    int ageAverage;
+    int socialDistance;
+    int populationNumber;
+    int initialResources;
+    int swabsCost;
+    double infectivity;
+    double sintomaticity;
+    double letality;
+    int diseaseDuration;
+    int dayDuration = 500;                         //Loop duration measured in milliseconds
+    boolean masks = false;
+    boolean isValid;
 
 
     /**

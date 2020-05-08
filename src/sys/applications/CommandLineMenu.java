@@ -8,15 +8,11 @@ public class CommandLineMenu implements IMenu {
 
     @Override
     @NotImplemented
-    public int show() {
-        return -1;
-    }
+    public int show() { return -1; }
 
     @Override
     @NotImplemented
-    public void feedback(State state){
-
-    }
+    public void feedback(State state){ }
 
 
 

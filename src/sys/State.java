@@ -9,16 +9,15 @@ import java.util.HashSet;
 
 public class State {
     // ----------------------------- SIMULATION PARAMETERS -----------------------------
-    Config configs;
-    Person[] startingPopulation;
-    double vd;
-    int dayDuration = 500;                         //Loop duration measured in milliseconds
-    HashMap<Person, HashSet<Person>> contacts;     //Person, {set of infected people met}
-    HashMap<Person, Boolean> swabs;                //True (positive), False (not tested/negative)
-    boolean unoPatientFound = false;
-    SimulationStatus STATUS = SimulationStatus.NOT_YET_STARTED;     //Game status
-    ArrayList<Integer> totalInfected;
-    ArrayList<Integer> dailyInfected;
+    public Config configs;
+    public Person[] startingPopulation;
+    public double vd;
+    public HashMap<Person, HashSet<Person>> contacts;     //Person, {set of infected people met}
+    public HashMap<Person, Boolean> swabs;                //True (positive), False (not tested/negative)
+    public boolean unoPatientFound = false;
+    public SimulationStatus STATUS = SimulationStatus.NOT_YET_STARTED;     //Simulation status
+    public ArrayList<Integer> totalInfected;
+    public ArrayList<Integer> dailyInfected;
     // ---------------------------------------------------------------------------------
 
     // -------------------------------- SYSTEM SETTINGS --------------------------------

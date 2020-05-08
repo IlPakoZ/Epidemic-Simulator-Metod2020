@@ -21,9 +21,7 @@ public class Rng {
      * @return          se l'evento deve essere eseguito o no
      */
     @NotImplemented
-    public boolean generateFortune(double percent, double modifier){
-        return false;
-    }
+    public boolean generateFortune(double percent, double modifier){ return false; }
 
     /**
      * Restituisce un double da utilizzare come modificatore nel metodo
