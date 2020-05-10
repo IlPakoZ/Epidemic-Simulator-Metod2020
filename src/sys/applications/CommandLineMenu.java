@@ -14,7 +14,9 @@ public class CommandLineMenu implements IMenu {
     @NotImplemented
     public void feedback(State state){ }
 
-
+    @Override
+    @NotImplemented
+    public void finalFeedback(State state) { }
 
 
 }

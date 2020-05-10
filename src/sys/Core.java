@@ -22,7 +22,7 @@ public class Core {
     public @interface Ready{ boolean value() default true;}
 
     private Simulation sim;
-    private Config startingConfigs;
+    private Config startingConfigs;     //TODO: trovare un'utilità a questa cosa.
 
     /**
      * Crea un'istanza di una nuova simulazione
@@ -34,6 +34,7 @@ public class Core {
     /**
      * Dò il via alla simulazione salvata negli attributi.
      */
+    @ToRevise
     public void run() {
         try {
             startingConfigs = sim.getConfigs();

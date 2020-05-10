@@ -1,5 +1,6 @@
 package sys;
 
+import assets.Person;
 import assets.SimulationStatus;
 
 import sys.Core.*;
@@ -19,7 +20,7 @@ public class Simulation {
     }
 
     /**
-     * Inizializza la simulazione.
+     * Inizializza la simulazione. Metodo di appoggio.
      */
     @ToRevise
     private void initialize(IMenu menu){
@@ -56,12 +57,14 @@ public class Simulation {
     @NotImplemented
     private void start() throws InterruptedException {
         currentState.STATUS = SimulationStatus.PLAYING;
-        while(loop()){
+        boolean going = true;
+        while(going){
             long startTime = System.nanoTime();
+            going = loop();
             long endTime = System.nanoTime();
-
             Thread.sleep(currentState.configs.dayDuration);
         }
+        end();
     }
 
     /**
@@ -82,6 +85,7 @@ public class Simulation {
      * Passa al giorno della simulazione successivo,
      * aggiorna i valori della simulazione. Contiene il
      * payload da eseguire ad ogni cambiamento di giorno.
+     * Calcola anche il valore vd (vedere specifiche progetto).
      */
     @NotImplemented
     private void nextDay(){ }
@@ -98,7 +102,7 @@ public class Simulation {
      * con le configurazioni passate in input.
      * @param config    istanza di Config, contiene le configurazioni da cariare nella simulazione.
      */
-    @NotImplemented
+    @ToRevise
     void loadConfigs(Config config){
         currentState.configs.copy(config);
     }
@@ -107,10 +111,45 @@ public class Simulation {
      * Restituisce le configurazioni della simulazione corrente.
      * @return      configurazioni attuali.
      */
-    @NotImplemented
+    @ToRevise
     Config getConfigs(){
         return currentState.configs;
     }
 
+    /**
+     * Questo metodo prende in input due parametri: una prima persona
+     * (quella sana) e una seconda persona (quella contagiata). Questo metodo
+     * si occupa innanzitutto di richiamare i metodi della classe Rng per
+     * calcolare se la persona sana deve risultare contagiata. Se il risultato
+     * è positivo e se il paziente uno è stato trovato, bisogna memorizzare il
+     * contatto nel dizionario che conterrà i contatti di una certa persona.
+     *
+     * @param p1    persona sana che è venuta in contatto con un infetto
+     * @param p2    persona infetta.
+     */
+    @NotImplemented
+    private void contact(Person p1, Person p2){ }
+
+    /**
+     * Toglie denaro dalle casse dello Stato per effettuare un tampone
+     * sulla persona. Effettuato il tempone, se la persona è nella
+     * lista dei contatti, si può decidere di eseguire un tampone
+     * anche ai contatti (contact tracing). Il tampone ha una certa
+     * probabilità di fallire. Usare il metodo "generateFortune" in Rng
+     * per calcolare le probabilità di riuscita.
+     * Il tampone verrà usato o meno in base allo scenario che si sceglie.
+     * @param p1    persona a cui sottoporre il tampone.
+     */
+    @NotImplemented
+    private void doSwab(Person p1){ }
+
+    /**
+     * Termina la simulazione ed esegue le operazioni finali.
+     * Mostra a schermo i risultati. Della visualizzazione dei
+     * risultati e delle statistiche finali si occupa la classe
+     * che implementa IMenu.
+     */
+    @NotImplemented
+    private void end() {menu.finalFeedback(currentState);}
 
 }

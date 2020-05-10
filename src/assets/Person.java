@@ -18,6 +18,7 @@ public class Person {
      * con un attributo età e un attributo indice
      * che memorizza la sua posizione nell'ArrayList
      * startingPopulation.
+     *
      * @param age       età della persona
      * @param index     la sua posizione nell'ArrayList startingPopulation
      */
@@ -30,7 +31,15 @@ public class Person {
      * Se la persona è infetta, aggiorna il suo
      * contatore del giorno e aggiorna il suo status
      * di infezione in base al numero dei giorni
-     * passati.
+     * passati. Se si aggiorna lo stato di infezione
+     * bisogna chiamare il metodo makeOfColor per far diventare
+     * lo status della persona di un certo colore.
+     * Se la persona diventa rossa, questa deve
+     * essere impostata come ferma. Se la persona è ferma,
+     * togliere opportuno denaro dalle casse dello Stato.
+     * Se la persona è in terapia intensiva (rossa), togliere
+     * il denaro.
+     *
      */
     @NotImplemented
     public void refresh(){ if (isInfected); }
@@ -39,6 +48,9 @@ public class Person {
      * Metodo di supporto interno utilizzato per settare
      * la persona di un determinato colore e poi modificare
      * la sua posizione nell'ArrayList startingPositions.
+     * Si occupa anche dell'esecuzione della tripartizione
+     * sull'array startingPopulation.
+     *
      * @param color     colore di destinazione
      */
     @NotImplemented
@@ -51,5 +63,6 @@ public class Person {
      */
     @ToRevise
     public void setAsInfected() {isInfected = true;}
+
 }
 

@@ -12,6 +12,7 @@ public class Rng {
      * e ad un modificatore (double da 0 a 1) che rende l'evento
      * più o meno probabile, restituisce true se l'evento deve
      * essere eseguito e false se non deve essere eseguito.
+     * Può essere usato per un calcolo generico di probabilità.
      *
      * @param percent   double da 0 a 100 che specifica la probabilità che l'evento dia risultato positivo
      * @param modifier  double da 0 (evento certo) a 2 (evento meno probabile) che modifica la probabilità
@@ -27,6 +28,7 @@ public class Rng {
      * Restituisce un double da utilizzare come modificatore nel metodo
      * generateFortune che modifica la probabilità di morire in base
      * all'età del paziente.
+     *
      * @param age   intero che indica l'età del paziente
      * @return      modificatore di probabilità di tipo double
      */
@@ -39,6 +41,7 @@ public class Rng {
      * Restituisce un double da utilizzare come modificatore nel motodo
      * generateFortune che modifica la probabilità di contagiare qualcuno
      * in base a se possiede la mascherina o no.
+     *
      * @param mask  booleano che indica se possiede la mascherina o no
      * @return      modificatore di probabilità di tipo double
      */
@@ -51,6 +54,7 @@ public class Rng {
      * Data una media di età e un'età massima per la popolazione,
      * restituisce un ArrayList di persone la cui età è distribuita
      * seguendo una distribuzione Gaussiana.
+     *
      * @param mean      età media (trend) della popolazione
      * @param maxAge    età massima della popolazione
      * @return          persone con età generata casualmente
