@@ -1,8 +1,7 @@
 package sys;
 
-class Config {
+public class Config {
     int ageAverage;
-    int socialDistance;
     int populationNumber;
     int resources;
     int swabsCost;
@@ -11,6 +10,8 @@ class Config {
     double letality;
     int diseaseDuration;
     int dayDuration = 500;                         //Loop duration measured in milliseconds
+    double velocity = 1;
+    int socialDistance;
     boolean masks = false;
     boolean isValid;
 

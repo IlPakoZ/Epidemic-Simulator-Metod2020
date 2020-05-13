@@ -1,11 +1,9 @@
 package sys;
 
 import assets.Person;
-import assets.SimulationStatus;
 
 import sys.Core.*;
 import sys.models.IMenu;
-import sys.models.IScenario;
 
 public class Simulation {
 
@@ -34,18 +32,24 @@ public class Simulation {
      */
     @ToRevise
     void run() throws InterruptedException {
-        menu.show();
+        menu.firstInput(getConfigs());
         int state = 1;
         while(state != 0) {
-            switch (menu.show()) {
+            switch (state) {
                 case 0:
                     state = 0;
                     start();
+                    //Inizia la simulazione
                     break;
                 case 1:
-                    state = 1;
+                    state = menu.show();
+                    //Mostra il menù principale / torna al menù principale
                     break;
-                case -1:
+                case 2:
+                    state = menu.settings(getConfigs());
+                    //Mostra il menù delle opzioni
+                    break;
+                default:
                     throw new UnsupportedOperationException();
             }
         }
@@ -56,7 +60,7 @@ public class Simulation {
      */
     @NotImplemented
     private void start() throws InterruptedException {
-        currentState.STATUS = SimulationStatus.PLAYING;
+        currentState.status = SimulationStatus.PLAYING;
         boolean going = true;
         while(going){
             long startTime = System.nanoTime();
@@ -76,6 +80,7 @@ public class Simulation {
      */
     @NotImplemented
     private boolean loop() {
+        //Esegui qualcosa
         nextDay();
         menu.feedback(currentState);
         return true;
@@ -89,13 +94,6 @@ public class Simulation {
      */
     @NotImplemented
     private void nextDay(){ }
-
-    /**
-     * Permette di caricare nella simulazione uno scenario
-     * personalizzato.
-     */
-    @NotImplemented
-    void loadScenario(IScenario scenario){ }
 
     /**
      * Sostituisci le configurazioni correnti della simulazione
@@ -149,7 +147,7 @@ public class Simulation {
      * risultati e delle statistiche finali si occupa la classe
      * che implementa IMenu.
      */
-    @NotImplemented
+    @ToRevise
     private void end() {menu.finalFeedback(currentState);}
 
 }
