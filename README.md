@@ -9,12 +9,12 @@ La versione qui di seguito descritta è la **versione 1.00** del software.
 Qui di seguito sono riportati due **diagrammi UML**.
 Il primo è uno **State Diagram** e rappresenta la transizione tra gli stati all'interno di un oggetto della classe `Simulation` in base al ciclo di vita dello stesso. I pallini completamente piani indicano lo **stato iniziale**, i riquadri gli **stati intermedi**, i rombi indicano le diramazioni (*if*)  e i pallini col contorno indicano gli **stati finali**.
 
-//Image
+![](infos/Simulation.png) 
 
 Il secondo è un **Entity-Relationship Diagram** e rappresenta le relazioni tra i diversi moduli del programma. Notare che ho escluso da questa rappresentazione l'interfaccia `IScenario`, poiché il suo funzionamento non è stato ancora deciso e in questa versione del programma non verrà considerata.
-In verde sono rappresentate le **classi**, in giallo le **interfacce** e in azzurro le **relazioni** (che legano tra loro due moduli). In rosso invece sono rappresentate le relazioni di **IsA**, (*"è una"*), che permettono di rappresentare l'ereditarietà (parole chiave `extends` e `implements` in Java).
+In verde sono rappresentate le **classi**, in giallo le **interfacce** e in azzurro le **relazioni** (che legano tra loro due moduli). In rosso invece sono rappresentate le relazioni di **IsA**, (*"è una"*), che permettono di rappresentare l'ereditarietà (parole chiave `extends` e `implements` in Java). Per informazioni sul significato delle frecce e su come leggere un diagramma ER visitare [questo sito](https://www.lucidchart.com/pages/ER-diagram-symbols-and-meaning) e scorrere in fondo alla pagina.
 
-//Image
+![](infos/ClassesER.png)
 
 ## Nozioni generali sui moduli
 Per comodità, lascio qui sopra un piccolo sommario su cosa rappresentano e come si interfacciano tra loro i vari moduli all'interno del progetto. Molte di queste **definizioni** potrebbero riapparire nella sezione successiva per contestualizzare meglio le spiegazioni più specifiche.
