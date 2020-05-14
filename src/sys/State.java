@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class State {
-    // ----------------------------- SIMULATION PARAMETERS -----------------------------
+    // ----------------------------- SIMULATION SETTINGS -----------------------------
     public Config configs;
     public Person[] startingPopulation;
     public double vd;
