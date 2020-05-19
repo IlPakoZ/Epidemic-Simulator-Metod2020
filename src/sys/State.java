@@ -10,9 +10,10 @@ public class State {
     // ----------------------------- SIMULATION SETTINGS -----------------------------
     public Config configs;
     public Person[] startingPopulation;
+    public int resources;
     public double vd;
     public double r0;
-    public HashMap<Person, ArrayList<Person>> contacts;     // Person, {set of infected people met}
+    public HashMap<Person, ArrayList<Person>> contacts;     // Infected person, {set of people met}
     public HashSet<Person> swabs;                           // If present, the person represented by the instance
                                                             // is positive to the swabs
     public boolean unoPatientFound = false;
@@ -22,9 +23,9 @@ public class State {
     // ---------------------------------------------------------------------------------
 
     // -------------------------------- SYSTEM SETTINGS --------------------------------
-    int greenYellow;
+    /*int greenYellow;
     int yellowRed;
     int redBlue;
-    int blueBlack;
+    int blueBlack;*/
     // ---------------------------------------------------------------------------------
 }

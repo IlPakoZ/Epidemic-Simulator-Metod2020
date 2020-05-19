@@ -47,10 +47,7 @@ public class Person {
 
     /**
      * Metodo di supporto interno utilizzato per settare
-     * la persona di un determinato colore e poi modificare
-     * la sua posizione nell'ArrayList startingPositions.
-     * Si occupa anche dell'esecuzione della tripartizione
-     * sull'array startingPopulation.
+     * la persona di un determinato colore.
      *
      * @param color     colore di destinazione
      */

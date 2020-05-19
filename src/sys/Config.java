@@ -6,7 +6,7 @@ public class Config {
 
     int ageAverage;
     int populationNumber;
-    int resources;
+    int initialResources;
     int swabsCost;
     double infectivity;
     double sintomaticity;
@@ -38,7 +38,7 @@ public class Config {
             this.ageAverage = c.ageAverage;
             this.socialDistance = c.socialDistance;
             this.populationNumber = c.populationNumber;
-            this.resources = c.resources;
+            this.initialResources = c.initialResources;
             this.swabsCost = c.swabsCost;
             this.infectivity = c.infectivity;
             this.sintomaticity = c.sintomaticity;

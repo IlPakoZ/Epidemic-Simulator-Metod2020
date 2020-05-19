@@ -82,7 +82,6 @@ public class Simulation {
     private boolean loop() {
         //Esegui qualcosa
         nextDay();
-        menu.feedback(currentState);
         return true;
     }
 
@@ -93,7 +92,7 @@ public class Simulation {
      * Calcola anche il valore vd (vedere specifiche progetto).
      */
     @NotImplemented
-    private void nextDay(){ }
+    private void nextDay(){ menu.feedback(currentState); }
 
     /**
      * Sostituisci le configurazioni correnti della simulazione
@@ -138,10 +137,10 @@ public class Simulation {
      * Il tampone verrà usato o meno in base allo scenario che si sceglie.
      * @param p1    persona a cui sottoporre il tampone.
      */
-    @NotImplemented
-    private void doSwab(Person p1){ }
+     @NotImplemented
+     private void doSwab(Person p1){ }
 
-    /**
+     /**
      * Termina la simulazione ed esegue le operazioni finali.
      * Mostra a schermo i risultati. Della visualizzazione dei
      * risultati e delle statistiche finali si occupa la classe
@@ -150,4 +149,19 @@ public class Simulation {
     @ToRevise
     private void end() {menu.finalFeedback(currentState);}
 
+    /**
+     * Sottrae value dalle risorse. Se il nuovo valore calcolato
+     * è minore di zero, allora impostalo a zero.
+     * @param value     risorse da togliere
+     * @return          restituisce True se ci sono ancora risorse disponibili, False altrimenti
+     */
+    @Ready
+    public boolean subtractResources(int value){
+        if (currentState.resources - value > 0) {
+            currentState.resources -= value;
+            return true;
+        }
+        currentState.resources = 0;
+        return false;
+    }
 }
