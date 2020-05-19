@@ -6,11 +6,12 @@ public class Person {
 
     private int age;
     private int index;
-    private int dayFromInfection = 0;
-    private double deathModifier = 1;
-    private double infectivityModifier = 1;
     private ColorStatus color = ColorStatus.GREEN;
     private MovementStatus movement = MovementStatus.MOVING;
+    private int dayOfDeath = -1;
+    private int daysFromInfection = -1;
+    private double deathModifier = 1;
+    private double infectivityModifier = 1;
     private boolean isInfected = false;
 
     /**
@@ -64,5 +65,44 @@ public class Person {
     @ToRevise
     public void setAsInfected() {isInfected = true;}
 
+    /**
+     * Imposta il modificatore di infettività in base
+     * al parametro in input. Questo metodo è utilizzato
+     * dalla classe Rng.
+     * @param infectivityModifier   modificatore di infettivitò generato da Rng
+     */
+    @ToRevise
+    public void setInfectivityModifier(double infectivityModifier){
+        this.infectivityModifier = infectivityModifier;
+    }
+
+    /**
+     * Imposta il modificatore di infettività in base
+     * al parametro in input. Questo metodo è utilizzato dalla
+     * classe Rng durante la creazione della popolazione.
+     * @param deathModifier     modificatore di morte generato da Rng
+     */
+    @ToRevise
+    public void setDeathModifier(double deathModifier){
+        this.deathModifier = deathModifier;
+    }
+
+    /**
+     * Restituisce l'attributo deathModifier
+     * @return  restituisce l'attributo deathModifier
+     */
+    @Ready
+    public double getDeathModifier() {
+        return deathModifier;
+    }
+
+    /**
+     * Restituisce l'attributo infectivityModifier
+     * @return  restituisce l'attributo infectivityModifier
+     */
+    @Ready
+    public double getInfectivityModifier() {
+        return infectivityModifier;
+    }
 }
 
