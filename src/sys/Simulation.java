@@ -18,7 +18,7 @@ public class Simulation {
     Simulation(IMenu menu){
         initialize(menu);
     }
-
+    Pasquale puzza
     /**
      * Inizializza la simulazione. Metodo di appoggio.
      */
