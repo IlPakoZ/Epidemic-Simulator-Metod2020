@@ -1,19 +1,30 @@
 package sys;
 
-class Config {
+public class Config {
+
+    // ----------------------------- SIMULATION PARAMETERS (COMPULSORY) -----------------------------
+
     int ageAverage;
-    int socialDistance;
     int populationNumber;
-    int resources;
+    int initialResources;
     int swabsCost;
     double infectivity;
     double sintomaticity;
     double letality;
     int diseaseDuration;
-    int dayDuration = 500;                         //Loop duration measured in milliseconds
-    boolean masks = false;
-    boolean isValid;
 
+    // ----------------------------------------------------------------------------------------------
+
+    // ----------------------------- SIMULATION PARAMETERS (OPTIONAL) -------------------------------
+
+    int dayDuration = 500;                         //Loop duration measured in milliseconds
+    double velocity = 1;
+    int socialDistance;
+    boolean masks = false;
+
+    // ----------------------------------------------------------------------------------------------
+
+    boolean isValid;
 
     /**
      * Se una configurazione è pronta per l'esecuzione,
@@ -27,7 +38,7 @@ class Config {
             this.ageAverage = c.ageAverage;
             this.socialDistance = c.socialDistance;
             this.populationNumber = c.populationNumber;
-            this.resources = c.resources;
+            this.initialResources = c.initialResources;
             this.swabsCost = c.swabsCost;
             this.infectivity = c.infectivity;
             this.sintomaticity = c.sintomaticity;

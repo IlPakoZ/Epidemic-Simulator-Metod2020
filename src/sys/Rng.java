@@ -22,7 +22,7 @@ public class Rng {
      * @return          se l'evento deve essere eseguito o no
      */
     @NotImplemented
-    public boolean generateFortune(double percent, double modifier){ return false; }
+    public static boolean generateFortune(double percent, double modifier){ return false; }
 
     /**
      * Restituisce un double da utilizzare come modificatore nel metodo
@@ -33,7 +33,7 @@ public class Rng {
      * @return      modificatore di probabilità di tipo double
      */
     @NotImplemented
-    private double generateDeathModifiers(int age){
+    private static double generateDeathModifiers(int age){
         return 0;
     }
 
@@ -46,20 +46,23 @@ public class Rng {
      * @return      modificatore di probabilità di tipo double
      */
     @NotImplemented
-    private double generateInfectivityModifiers(boolean mask){
+    private static double generateInfectivityModifiers(boolean mask){
         return 0;
     }
 
     /**
      * Data una media di età e un'età massima per la popolazione,
      * restituisce un ArrayList di persone la cui età è distribuita
-     * seguendo una distribuzione Gaussiana.
-     *
+     * seguendo una distribuzione Gaussiana. La generazione della popolazione
+     * avviene immediatamente prima dell'inizio della simulazione e utilizza il
+     * parametro "dim" di distanziamento sociale per fornire un numero casuale di
+     * default alle persone che corrisponderà alla propria "casa".
      * @param mean      età media (trend) della popolazione
      * @param maxAge    età massima della popolazione
+     * @param dim       distanziamento sociale, serve per il calcolo delle "case"
      * @return          persone con età generata casualmente
      */
     @NotImplemented
-    private ArrayList<Person> generatePopulation(int mean, int maxAge){ return new ArrayList<>();}
+    private static ArrayList<Person> generatePopulation(int mean, int maxAge, int dim){ return new ArrayList<>();}
 
 }

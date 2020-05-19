@@ -22,7 +22,7 @@ public class Core {
     public @interface Ready{ boolean value() default true;}
 
     private Simulation sim;
-    private Config startingConfigs;     //TODO: trovare un'utilità a questa cosa.
+    //private Config startingConfigs;     //TODO: trovare un'utilità a questa cosa.
 
     /**
      * Crea un'istanza di una nuova simulazione
@@ -37,7 +37,7 @@ public class Core {
     @ToRevise
     public void run() {
         try {
-            startingConfigs = sim.getConfigs();
+            //startingConfigs = sim.getConfigs();
             sim.run();
         } catch (UnsupportedOperationException usopex){
             System.out.println("Operazione non supportata. La simulazione verrà interrotta.");
