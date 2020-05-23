@@ -165,6 +165,9 @@ Ancora più importante: se non volete ritrovarvi a riscrivere duecento volte lo 
 
 Vi lascio all'ultima sezione di questo file, ossia la descrizione delle caratteristiche che potremo aggiungere al progetto nelle versioni future.
 
+## ATTENZIONE!
+Con tutta probabilità, la pentapartizione verrà sostituita con una esapartizione (tra cui verranno aggiunti anche gli individui in incubazione (subito dopo quelli sani).
+
 ## Versioni future
 Abbiamo parlato delle caratteristiche che dovrà avere il simulatore di base, ***versione 1.0.0***. Oltre a queste però, sono presenti altre ***features*** che sarebbe bello implementare e che, tempo permettendo, potranno essere implementate nelle versioni successive:
 1. la contagiosità degli infetti cambia in base all'entità dei sintomi;
