@@ -29,7 +29,8 @@ public interface IMenu {
     /**
      * Apre il menù delle opzioni. Permette di modificare singolarmente
      * i parametri di input inseriti. Controllare la correttezza
-     * degli input spetta a questa classe.
+     * degli input spetta a questa classe. Serve anche per inserire
+     * i parametri opzionali.
      *
      * @param config configurazione corrente della simulazione
      * @return       restituisce un valore che verrà interpretato dal
