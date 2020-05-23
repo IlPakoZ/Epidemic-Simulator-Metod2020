@@ -55,14 +55,23 @@ public class Rng {
      * restituisce un ArrayList di persone la cui età è distribuita
      * seguendo una distribuzione Gaussiana. La generazione della popolazione
      * avviene immediatamente prima dell'inizio della simulazione e utilizza il
-     * parametro "dim" di distanziamento sociale per fornire un numero casuale di
-     * default alle persone che corrisponderà alla propria "casa".
-     * @param mean      età media (trend) della popolazione
-     * @param maxAge    età massima della popolazione
-     * @param dim       distanziamento sociale, serve per il calcolo delle "case"
-     * @return          persone con età generata casualmente
+     * parametro currentState della simulazione per generare un certo numero
+     * di persone di una determinata età.
+     *
+     * @return  restituisce l'array di persone
      */
     @NotImplemented
-    private static ArrayList<Person> generatePopulation(int mean, int maxAge, int dim){ return new ArrayList<>();}
+    public static Person[] generatePopulation(State currentState){
+        Person[] people = new Person[currentState.configs.populationNumber];
+        for (int i=0;i<currentState.configs.populationNumber;i++){
+            people[i] = new Person(currentState.configs.ageAverage, i, currentState);
+        }
+        currentState.greenIncubation=currentState.configs.populationNumber-1;
+        currentState.incubationYellow=currentState.configs.populationNumber-1;
+        currentState.yellowRed=currentState.configs.populationNumber-1;
+        currentState.redBlue=currentState.configs.populationNumber-1;
+        currentState.blueBlack=currentState.configs.populationNumber-1;
+        return people;
+    }
 
 }

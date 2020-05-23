@@ -3,3 +3,5 @@
 *.txt
 ProgettoEsame.iml
 src/qualcosa.iml
+*.class
+*.iml
