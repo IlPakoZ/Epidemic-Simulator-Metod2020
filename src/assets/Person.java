@@ -1,12 +1,14 @@
 package assets;
-
+import sys.Core;
 import sys.Core.*;
+import sys.State;
 
 public class Person {
 
+    private State currentState;
     private int age;
     private int index;
-    private ColorStatus color = ColorStatus.GREEN;
+    public ColorStatus color = ColorStatus.GREEN;
     private MovementStatus movement = MovementStatus.MOVING;
     private int dayOfDeath = -1;
     private int daysFromInfection = -1;
@@ -23,9 +25,10 @@ public class Person {
      * @param age       età della persona
      * @param index     la sua posizione nell'ArrayList startingPopulation
      */
-    Person(int age, int index){
+    public Person(int age, int index, State currentState){
         this.age = age;
         this.index = index;
+        this.currentState = currentState;
     }
 
     /**
@@ -44,23 +47,91 @@ public class Person {
      */
     @NotImplemented
     public void refresh(){ if (isInfected); }
-
     /**
      * Metodo di supporto interno utilizzato per settare
      * la persona di un determinato colore.
      *
      * @param color     colore di destinazione
      */
-    @NotImplemented
-    private void makeOfColor(ColorStatus color){ }
+
+    @ToRevise
+    private void makeOfColor(ColorStatus color){
+        switch (color){
+            case YELLOW:
+                this.color = ColorStatus.YELLOW;
+                switchPerson(currentState.incubationYellow);
+                currentState.incubationYellow-=1;
+                break;
+            case RED:
+                this.color = ColorStatus.RED;
+                switchPerson(currentState.yellowRed);
+                currentState.yellowRed-=1;
+                movement = MovementStatus.STATIONARY;
+                break;
+            case BLUE:
+                if (this.color==ColorStatus.YELLOW){
+                    switchPerson(currentState.redBlue);
+                    currentState.yellowRed-=1;
+                    currentState.redBlue-=1;
+                    movement = MovementStatus.MOVING;
+
+                } else {
+                    switchPerson(currentState.redBlue);
+                    currentState.redBlue-=1;
+                }
+                this.color = ColorStatus.BLUE;
+
+                break;
+            case BLACK:
+                this.color = ColorStatus.BLACK;
+                switchPerson(currentState.blueBlack);
+                currentState.blueBlack-=1;
+                currentState.redBlue-=1;
+                movement = MovementStatus.STATIONARY;
+                break;
+            default:
+                break;
+        }
+    }
 
     /**
      * Metodo utilizzato per settare una persona come infetta.
-     * Usare questo metodo è sconsigliato ed è stato pensato
-     * solo per l'infezione del paziente zero.
+     * Questo metodo deve essere chiamato solo se il contatto
+     * ha avuto esito positivo.
+     * Si occupa anche di mettere una persona nello status di
+     * incubazione.
      */
     @ToRevise
-    public void setAsInfected() {isInfected = true;}
+    public void setAsInfected() {
+        isInfected = true;
+        switchPerson(currentState.greenIncubation);
+        currentState.greenIncubation-=1;
+    }
+
+    /**
+     * Restituisce l'attributo isInfected.
+     *
+     * @return  isInfected
+     */
+    @ToRevise
+    public boolean isInfected(){
+        return isInfected;
+    }
+
+    /**
+     * Metodo utilizzato per scambiare la posizione nell'array della
+     * persona corrente con la persona ad indice "newIndex"
+     *
+     * @param newIndex  indice di destinazione
+     */
+    @NotImplemented
+    private void switchPerson(int newIndex){
+        Person temp = currentState.startingPopulation[newIndex];
+        temp.index = index;
+        currentState.startingPopulation[newIndex] = this;
+        currentState.startingPopulation[index] = temp;
+        index = newIndex;
+    }
 
     /**
      * Imposta il modificatore di infettività in base
@@ -100,6 +171,22 @@ public class Person {
     @Ready
     public double getInfectivityModifier() {
         return infectivityModifier;
+    }
+
+    /**
+     * Sottrae value dalle risorse. Se il nuovo valore calcolato
+     * è minore di zero, allora impostalo a zero.
+     * @param value     risorse da togliere
+     * @return          restituisce True se ci sono ancora risorse disponibili, False altrimenti
+     */
+    @Ready
+    private boolean subtractResources(int value){
+        if (currentState.resources - value > 0) {
+            currentState.resources -= value;
+            return true;
+        }
+        currentState.resources = 0;
+        return false;
     }
 }
 

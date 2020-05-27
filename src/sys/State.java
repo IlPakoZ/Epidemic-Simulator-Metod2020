@@ -23,9 +23,10 @@ public class State {
     // ---------------------------------------------------------------------------------
 
     // -------------------------------- SYSTEM SETTINGS --------------------------------
-    /*int greenYellow;
-    int yellowRed;
-    int redBlue;
-    int blueBlack;*/
+    public int greenIncubation;
+    public int incubationYellow;
+    public int yellowRed;
+    public int redBlue;
+    public int blueBlack;
     // ---------------------------------------------------------------------------------
 }

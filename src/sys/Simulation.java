@@ -1,5 +1,6 @@
 package sys;
 
+import assets.ColorStatus;
 import assets.Person;
 
 import sys.Core.*;
@@ -13,9 +14,7 @@ public class Simulation {
     /**
      * Costruttore della simulazione.
      */
-    Simulation(IMenu menu){
-        initialize(menu);
-    }
+    Simulation(IMenu menu){ initialize(menu); }
 
     /**
      * Inizializza la simulazione. Metodo di appoggio.
@@ -149,19 +148,5 @@ public class Simulation {
     @ToRevise
     private void end() {menu.finalFeedback(currentState);}
 
-    /**
-     * Sottrae value dalle risorse. Se il nuovo valore calcolato
-     * è minore di zero, allora impostalo a zero.
-     * @param value     risorse da togliere
-     * @return          restituisce True se ci sono ancora risorse disponibili, False altrimenti
-     */
-    @Ready
-    public boolean subtractResources(int value){
-        if (currentState.resources - value > 0) {
-            currentState.resources -= value;
-            return true;
-        }
-        currentState.resources = 0;
-        return false;
-    }
+
 }

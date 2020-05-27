@@ -5,13 +5,15 @@ public class Config {
     // ----------------------------- SIMULATION PARAMETERS (COMPULSORY) -----------------------------
 
     int ageAverage;
-    int populationNumber;
+    public int populationNumber;
     int initialResources;
     int swabsCost;
     double infectivity;
     double sintomaticity;
     double letality;
     int diseaseDuration;
+    int maxAge;
+    int meanAge;
 
     // ----------------------------------------------------------------------------------------------
 
@@ -46,6 +48,8 @@ public class Config {
             this.diseaseDuration = c.diseaseDuration;
             this.dayDuration = c.dayDuration;
             this.masks = c.masks;
+            this.maxAge = c.maxAge;
+            this.meanAge = c.meanAge;
         }
     }
 
