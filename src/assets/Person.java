@@ -60,12 +60,12 @@ public class Person {
             break;
         }
         else if (daysFromInfection == (currentState.configs.diseaseDuration/3)) {
-            if (becomeRed){
+            if (becomeRed) {
                 makeOfColor(RED);
-                becomeBlack = rng.generateFortune(currentState.configs.letality , deathModifier);
+                becomeBlack = rng.generateFortune(currentState.configs.letality, deathModifier);
+            }
             else
                 break;
-            }
         }
         else if (daysFromInfection < currentState.configs.diseaseDuration){
             break;
