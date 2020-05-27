@@ -3,26 +3,33 @@ package sys;
 import assets.Person;
 import sys.Core.*;
 import java.util.ArrayList;
+import java.util.Math;
 
 public class Rng {
     /**
      * Restituisce un booleano che indica se l'evento casuale
      * deve essere eseguito oppure no. In base ad una certa
      * probabilità specificata come parametro (double da 0 a 100)
-     * e ad un modificatore (double da 0 a 1) che rende l'evento
+     * e ad un modificatore (double da 0 a 2) che rende l'evento
      * più o meno probabile, restituisce true se l'evento deve
      * essere eseguito e false se non deve essere eseguito.
      * Può essere usato per un calcolo generico di probabilità.
      *
      * @param percent   double da 0 a 100 che specifica la probabilità che l'evento dia risultato positivo
      * @param modifier  double da 0 (evento certo) a 2 (evento meno probabile) che modifica la probabilità
-     *                  che l'evento dia risultato positivo. Viene moltiplicato al numero massimo generato
+     *                  che l'evento dia risultato positivo. Viene diviso al numero massimo generato
      *                  in modo tale che un numero basso aumenti le possibilità che l'evento venga eseguito e uno
      *                  alto le diminuisca fino a dimezzarle.
      * @return          se l'evento deve essere eseguito o no
      */
     @NotImplemented
-    public static boolean generateFortune(double percent, double modifier){ return false; }
+    public static boolean generateFortune(double percent, double modifier){
+        if (modifier == 0) return true;
+        double NewPercent = percent/modifier;
+        double IsItGonna = Math.random();
+        if (IsItGonna*100 <= NewPercent) return true;
+        else return false;
+    }
 
     /**
      * Restituisce un double da utilizzare come modificatore nel metodo
