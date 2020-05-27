@@ -38,15 +38,50 @@ public class Person {
      * passati. Se si aggiorna lo stato di infezione
      * bisogna chiamare il metodo makeOfColor per far diventare
      * lo status della persona di un certo colore.
-     * Se la persona diventa rossa, questa deve
-     * essere impostata come ferma. Se la persona è ferma,
+     * Se la persona è ferma,
      * togliere opportuno denaro dalle casse dello Stato.
      * Se la persona è in terapia intensiva (rossa), togliere
      * il denaro.
      *
      */
     @NotImplemented
-    public void refresh(){ if (isInfected); }
+    public void refresh(){ if (isInfected);
+        boolean becomeRed = False;
+        boolean becomeBlack = False;
+        daysFromInfection = daysFromInfection + 1;
+        if (daysFromInfection < currentState.configs.diseaseDuration/6){
+            break;
+        }
+        else if (daysFromInfection == (currentState.configs.diseaseDuration/6)){
+            makeOfColor(YELLOW);
+            becomeRed = rng.generateFortune(currentState.configs.sintomaticity , deathModifier);
+        }
+        else if (daysFromInfection < (currentState.configs.diseaseDuration/3)){
+            break;
+        }
+        else if (daysFromInfection == (currentState.configs.diseaseDuration/3)) {
+            if (becomeRed){
+                makeOfColor(RED);
+                becomeBlack = rng.generateFortune(currentState.configs.letality , deathModifier);
+            else
+                break;
+            }
+        }
+        else if (daysFromInfection < currentState.configs.diseaseDuration){
+            break;
+        }
+        else {
+            if (becomeBlack) {
+                makeOfColor(BLACK);
+            }
+            else if (color == GREEN){
+                break;
+            }
+            else
+                makeOfColor(BLUE);
+        }
+    }
+
     /**
      * Metodo di supporto interno utilizzato per settare
      * la persona di un determinato colore.
