@@ -1,6 +1,7 @@
 package sys;
 
 import assets.Person;
+import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +21,10 @@ public class State {
     public SimulationStatus status = SimulationStatus.NOT_YET_STARTED;     // Simulation status
     public ArrayList<Integer> totalInfected;
     public ArrayList<Integer> dailyInfected;
+    public int currentDay = 0;
+    public boolean defaultScenario = true;
+    public HashMap<Pair<Integer, Integer>, ArrayList<Person>> space;
+
     // ---------------------------------------------------------------------------------
 
     // -------------------------------- SYSTEM SETTINGS --------------------------------

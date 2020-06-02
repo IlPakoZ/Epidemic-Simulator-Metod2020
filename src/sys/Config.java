@@ -1,32 +1,35 @@
 package sys;
 
+import javafx.util.Pair;
+
 public class Config {
 
     // ----------------------------- SIMULATION PARAMETERS (COMPULSORY) -----------------------------
 
-    int ageAverage;
+    public int ageAverage;
     public int populationNumber;
-    int initialResources;
-    int swabsCost;
-    double infectivity;
-    double sintomaticity;
-    double letality;
-    int diseaseDuration;
-    int maxAge;
-    int meanAge;
-
+    public int initialResources;
+    public int swabsCost;
+    public double infectivity;
+    public double sintomaticity;
+    public double letality;
+    public int diseaseDuration;
+    public int maxAge;
+    public int meanAge;
+    public Pair<Integer,Integer> size;              // width, height
     // ----------------------------------------------------------------------------------------------
 
     // ----------------------------- SIMULATION PARAMETERS (OPTIONAL) -------------------------------
 
-    int dayDuration = 500;                         //Loop duration measured in milliseconds
-    double velocity = 1;
-    int socialDistance;
+    public int dayDuration = 500;                         //Loop duration measured in milliseconds
+    public double velocity = 1;
+    public int socialDistance;
     boolean masks = false;
+    public int frameADay = 12;
 
     // ----------------------------------------------------------------------------------------------
 
-    boolean isValid;
+    public boolean isValid;
 
     /**
      * Se una configurazione è pronta per l'esecuzione,
