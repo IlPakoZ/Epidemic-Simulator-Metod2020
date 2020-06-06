@@ -93,8 +93,12 @@ public class Rng {
     @NotImplemented
     public static Person[] generatePopulation(State currentState){
         Person[] people = new Person[currentState.configs.populationNumber];
+        Random r = new Random();
         for (int i=0;i<currentState.configs.populationNumber;i++){
-            people[i] = new Person(currentState.configs.ageAverage, i, currentState);
+            double age = r.nextGaussian()*100+currentState.configs.ageAverage;
+            if (age<0) age = 0;
+            //people[i] = new Person(currentState.configs.ageAverage, i, currentState);
+            people[i] = new Person((int) age, i, currentState);
         }
         currentState.greenIncubation=currentState.configs.populationNumber-1;
         currentState.incubationYellow=currentState.configs.populationNumber-1;
