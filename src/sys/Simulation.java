@@ -40,7 +40,7 @@ public class Simulation {
     void run() throws InterruptedException {
         menu.firstInput(getConfigs());
         int state = 1;
-        while(state != 0) {
+        do {
             switch (state) {
                 case 0:
                     state = 0;
@@ -58,7 +58,7 @@ public class Simulation {
                 default:
                     throw new UnsupportedOperationException();
             }
-        }
+        }while(state != 0);
     }
 
     /**
