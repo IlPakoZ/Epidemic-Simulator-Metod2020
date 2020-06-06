@@ -1,8 +1,5 @@
 import assets.ColorStatus;
-import sys.Config;
-import sys.Core;
-import sys.Rng;
-import sys.State;
+import sys.*;
 import sys.applications.CommandLineMenu;
 
 import java.awt.*;
@@ -10,7 +7,9 @@ import java.awt.*;
 public class Main {
     public static void main(String[] args) {
         Core x = new Core();
+        CommandLineMenu c = new CommandLineMenu();
         x.newSimulation(new CommandLineMenu());
+        x.debug();
     /*
         State state = new State();
         state.configs = new Config();

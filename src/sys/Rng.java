@@ -23,7 +23,7 @@ public class Rng {
      *                  alto le diminuisca fino a dimezzarle.
      * @return          se l'evento deve essere eseguito o no
      */
-    @NotImplemented
+    @ToRevise
     public static boolean generateFortune(double percent, double modifier){
         if (modifier == 0) return true;
         double newPercent = percent/modifier;
@@ -40,8 +40,8 @@ public class Rng {
      * @param age   intero che indica l'età del paziente
      * @return      modificatore di probabilità di tipo double
      */
-    @NotImplemented
-    private static double generateDeathModifiers(int age){
+    @ToRevise
+    private static double generateSeverityModifiers(int age){
         Random r = new Random();
         double valore = 0;
         if (age <= 29) {
@@ -74,7 +74,7 @@ public class Rng {
      * @param mask  booleano che indica se possiede la mascherina o no
      * @return      modificatore di probabilità di tipo double
      */
-    @NotImplemented
+    @ToRevise
     private static double generateInfectivityModifiers(boolean mask){
         if (mask) return 2;
         else return 1;
@@ -90,15 +90,19 @@ public class Rng {
      *
      * @return  restituisce l'array di persone
      */
-    @NotImplemented
+    @ToRevise
     public static Person[] generatePopulation(State currentState){
         Person[] people = new Person[currentState.configs.populationNumber];
         Random r = new Random();
         for (int i=0;i<currentState.configs.populationNumber;i++){
-            double age = r.nextGaussian()*100+currentState.configs.ageAverage;
-            if (age<0) age = 0;
+            double age;
+            do {
+                age = r.nextGaussian() * 20 + currentState.configs.ageAverage;
+            }while(age<0 || age>currentState.configs.maxAge);
             //people[i] = new Person(currentState.configs.ageAverage, i, currentState);
             people[i] = new Person((int) age, i, currentState);
+            people[i].setSeverityModifier(generateSeverityModifiers((int)age));
+            people[i].setInfectivityModifier(generateInfectivityModifiers(false));
         }
         currentState.greenIncubation=currentState.configs.populationNumber-1;
         currentState.incubationYellow=currentState.configs.populationNumber-1;

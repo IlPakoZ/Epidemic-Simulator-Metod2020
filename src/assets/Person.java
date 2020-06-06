@@ -11,8 +11,8 @@ public class Person {
     private State currentState;
     private int age;
     private int index;
-    Pair<Double, Double> position;          //x, y
-    Pair<Double, Double> speed;             //horizontalSpeed, verticalSpeed
+    Pair<Double, Double> position;                  //x, y
+    private Pair<Double, Double> speed;             //horizontalSpeed, verticalSpeed
     public boolean contact = false;
     public ColorStatus color = ColorStatus.GREEN;
     private MovementStatus movement = MovementStatus.MOVING;
@@ -36,6 +36,8 @@ public class Person {
         this.age = age;
         this.index = index;
         this.currentState = currentState;
+        this.speed = getRandomSpeed();
+        this.position = new Pair<>((double)ran.nextInt(currentState.configs.size.getKey()), (double)ran.nextInt(currentState.configs.size.getValue()));
     }
 
     /**
@@ -65,12 +67,14 @@ public class Person {
                 if (Rng.generateFortune(currentState.configs.sintomaticity, severityModifier)) {
                     makeOfColor(ColorStatus.RED);
                     if (Rng.generateFortune(currentState.configs.letality, severityModifier)) {
-                        Random r = new Random();
-                        dayOfDeath = r.nextInt(currentState.configs.diseaseDuration - (daysFromInfection + 1)) + daysFromInfection + 1;
+                        dayOfDeath = ran.nextInt(currentState.configs.diseaseDuration - (daysFromInfection + 1) - 1) + daysFromInfection + 1;
                     }
+                    currentState.subtractResources(3 * currentState.configs.swabsCost);
                 }
-            } else if (daysFromInfection == dayOfDeath){
+            } else if (daysFromInfection == dayOfDeath) {
                 makeOfColor(ColorStatus.BLACK);
+            } else if (daysFromInfection == currentState.configs.diseaseDuration) {
+                makeOfColor(ColorStatus.BLUE);
             } else if (color == ColorStatus.RED) {
                 currentState.subtractResources(3 * currentState.configs.swabsCost);
             }
@@ -99,21 +103,25 @@ public class Person {
                 break;
             case BLUE:
                 if (this.color==ColorStatus.YELLOW){
-                    switchPerson(currentState.redBlue);         //Qui no perché è molto più raro che accada
+                    if (index != currentState.yellowRed) switchPerson(currentState.yellowRed);
                     currentState.yellowRed-=1;
+                    switchPerson(currentState.redBlue);         //Qui no perché è molto più raro che accada;
                 } else {
                     if (index != currentState.redBlue) switchPerson(currentState.redBlue);
                     movement = MovementStatus.MOVING;
                 }
                 currentState.redBlue-=1;
+                isInfected = false;
                 this.color = ColorStatus.BLUE;
                 break;
             case BLACK:
                 this.color = ColorStatus.BLACK;
+                if (index != currentState.redBlue) switchPerson(currentState.redBlue);
                 switchPerson(currentState.blueBlack);           //Anche qui è più raro che accada
                 currentState.blueBlack-=1;
                 currentState.redBlue-=1;
                 movement = MovementStatus.STATIONARY;
+                isInfected = false;
                 break;
             default:
                 break;
@@ -130,9 +138,7 @@ public class Person {
     @ToRevise
     public void setAsInfected() {
         isInfected = true;
-        if (index!=currentState.greenIncubation) {      //E' inutile effetturare lo scambio se l'indice è già quello giusto
-                                                        //TODO: è possibile creare una versione di questo metodo che non utilizza
-                                                        //TODO: lo scambio in nessun modo (e quindi senza controllo) se modifico la posizione in cui metto il primo infetto.
+        if (index!=currentState.greenIncubation) {      //E' inutile effetturare lo scambio se l'indice è già quello giusto.
             switchPerson(currentState.greenIncubation);
         }
         currentState.greenIncubation-=1;

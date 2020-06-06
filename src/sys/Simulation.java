@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Simulation {
 
@@ -29,8 +30,29 @@ public class Simulation {
     private void initialize(IMenu menu){
         this.menu = menu;
         currentState = new State();
+        currentState.configs = new Config();
+        currentState.totalInfected = new ArrayList<>();
+        currentState.dailyInfected = new ArrayList<>();
+        currentState.contacts = new HashMap<>();
+        currentState.swabs = new HashSet<>();
     }
 
+    public void debug() throws InterruptedException {
+        currentState.configs.populationNumber = 100000;
+        currentState.configs.infectivity = 10;
+        currentState.configs.letality = 20;
+        currentState.configs.sintomaticity = 20;
+        currentState.configs.swabsCost = 3;
+        currentState.configs.size = new Pair<>(500,500);
+        currentState.configs.initialResources = 100000;
+        currentState.configs.diseaseDuration = 30;
+        currentState.configs.ageAverage = 50;
+        currentState.configs.maxAge = 110;
+        currentState.startingPopulation = Rng.generatePopulation(currentState);
+        currentState.startingPopulation[currentState.configs.populationNumber-1].setAsInfected();
+        currentState.resources = currentState.configs.initialResources;
+        start();
+    }
     /**
      * Mostra il menù principale.
      * Serve all'utente per interfacciarsi alla simulazione
@@ -42,11 +64,6 @@ public class Simulation {
         int state = 1;
         do {
             switch (state) {
-                case 0:
-                    state = 0;
-                    start();
-                    //Inizia la simulazione
-                    break;
                 case 1:
                     state = menu.show();
                     //Mostra il menù principale / torna al menù principale
@@ -59,6 +76,10 @@ public class Simulation {
                     throw new UnsupportedOperationException();
             }
         }while(state != 0);
+        currentState.startingPopulation = Rng.generatePopulation(currentState);
+        currentState.startingPopulation[currentState.configs.populationNumber-1].setAsInfected();
+        currentState.resources = currentState.configs.initialResources;
+        start();
     }
 
     /**
@@ -74,18 +95,17 @@ public class Simulation {
             going = loop();
             if (frame % currentState.configs.frameADay == 0){
                 if (frame == 0){
-                    menu.feedback(currentState);
                     currentState.totalInfected.add(0);
                     currentState.dailyInfected.add(0);
+                    menu.feedback(currentState);
                 }else{
+                    nextDay();
                     Instant endTime = Instant.now();
                     int duration = Duration.between(startTime, endTime).getNano()/1000000;
                     if (duration < currentState.configs.dayDuration) Thread.sleep(currentState.configs.dayDuration-duration);
                     startTime = Instant.now();
                 }
-                nextDay();
             }
-            Thread.sleep(currentState.configs.dayDuration);
             frame++;
         }
         end();
@@ -101,19 +121,22 @@ public class Simulation {
     @NotImplemented
     private boolean loop() {
         currentState.space = new HashMap<>();
-        for (int i=currentState.incubationYellow+1;i<=currentState.redBlue;i++){ //TODO: Controllare se il numero è preciso
+        for (int i=currentState.incubationYellow+1;i<=currentState.redBlue;i++){
             Pair<Integer, Integer> position = currentState.startingPopulation[i].nextPosition();
             currentState.space.putIfAbsent(position, new ArrayList<>());
             currentState.space.get(position).add(currentState.startingPopulation[i]);
         }
-        for (int i=currentState.greenIncubation; i>-1; i--){
-            Person person = currentState.startingPopulation[i];
-            if(currentState.space.containsKey(person.nextPosition())){
-                for (Person contatto: currentState.space.get(person.getPosition())){
-                    contact(contatto, person);
+        if (currentState.redBlue - currentState.incubationYellow != 0) {
+            for (int i = currentState.greenIncubation; i > -1; i--) {
+                Person person = currentState.startingPopulation[i];
+                if (currentState.space.containsKey(person.nextPosition())) {
+                    for (Person contatto : currentState.space.get(person.getPosition())) {
+                        contact(contatto, person);
+                    }
                 }
             }
         }
+
         //Mettere una condizione di uscita (se sono tutti guariti)
         return true;
     }
@@ -137,8 +160,8 @@ public class Simulation {
         {
             currentState.startingPopulation[i].refresh();
         }
-        currentState.totalInfected.add(currentState.configs.populationNumber-currentState.greenIncubation);
-        currentState.dailyInfected.add(currentState.configs.populationNumber-currentState.greenIncubation - currentState.totalInfected.get(currentState.totalInfected.size()-2));
+        currentState.totalInfected.add(currentState.configs.populationNumber-currentState.greenIncubation-1);
+        currentState.dailyInfected.add(currentState.totalInfected.get(currentState.totalInfected.size()-1) - currentState.totalInfected.get(currentState.totalInfected.size()-2));
         menu.feedback(currentState);
         currentState.currentDay+=1;                                 //Controllare se l'incremento del giorno è nella posizione giusta (dovrebbe esserlo)
     }
@@ -173,7 +196,7 @@ public class Simulation {
      * @param p1    persona sana che è venuta in contatto con un infetto
      * @param p2    persona infetta.
      */
-    @NotImplemented
+    @ToRevise
     private void contact(Person p1, Person p2){
         p1.contact = true;
         p2.contact = true;
@@ -182,6 +205,9 @@ public class Simulation {
                 p2.setAsInfected();
             }
         }
+        currentState.contacts.putIfAbsent(p1, new ArrayList<>());
+        currentState.contacts.get(p1).add(p2);
+
     }
 
     /**

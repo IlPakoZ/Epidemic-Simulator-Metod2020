@@ -51,4 +51,23 @@ public class State {
         return false;
     }
 
+    public int getHealthyNumber(){
+        return greenIncubation+1;
+    }
+    public int getIncubationNumber(){
+        return incubationYellow - greenIncubation;
+    }
+    public int getAsymptomaticNumber(){
+        return yellowRed - incubationYellow;
+    }
+    public int getSymptomaticNumber(){
+        return redBlue - yellowRed;
+    }
+    public int getCuredNumber(){
+        return blueBlack - redBlue;
+    }
+    public int getDeathsNumber(){
+        return configs.populationNumber-blueBlack-1;
+    }
+
 }

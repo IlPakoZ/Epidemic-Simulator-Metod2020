@@ -46,4 +46,12 @@ public class Core {
         }
     }
 
+    public void debug() {
+        try {
+            sim.debug();
+        }catch (InterruptedException ex){
+            
+        }
+    }
+
 }
