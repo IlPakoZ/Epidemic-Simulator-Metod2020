@@ -15,7 +15,6 @@ public class Config {
     public double letality;
     public int diseaseDuration;
     public int maxAge;
-    public int meanAge;
     public Pair<Integer,Integer> size;              // width, height
     // ----------------------------------------------------------------------------------------------
 
@@ -52,7 +51,6 @@ public class Config {
             this.dayDuration = c.dayDuration;
             this.masks = c.masks;
             this.maxAge = c.maxAge;
-            this.meanAge = c.meanAge;
         }
     }
 
