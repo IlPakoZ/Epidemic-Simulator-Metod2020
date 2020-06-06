@@ -1,20 +1,27 @@
 package assets;
-import sys.Core;
+import javafx.util.Pair;
 import sys.Core.*;
+import sys.Rng;
 import sys.State;
+
+import java.util.Random;
 
 public class Person {
 
     private State currentState;
     private int age;
     private int index;
+    Pair<Double, Double> position;          //x, y
+    Pair<Double, Double> speed;             //horizontalSpeed, verticalSpeed
+    public boolean contact = false;
     public ColorStatus color = ColorStatus.GREEN;
     private MovementStatus movement = MovementStatus.MOVING;
     private int dayOfDeath = -1;
     private int daysFromInfection = -1;
-    private double deathModifier = 1;
+    private double severityModifier = 1;
     private double infectivityModifier = 1;
     private boolean isInfected = false;
+    private static Random ran = new Random();
 
     /**
      * Costruttore di Person. Crea una nuova persona
@@ -45,46 +52,65 @@ public class Person {
      * il denaro.
      *
      */
-    @NotImplemented
-    public void refresh(){ if (isInfected); }
+    @ToRevise
+    public void refresh() {
+        if (movement == MovementStatus.STATIONARY){
+            currentState.subtractResources(1);
+        }
+        if (isInfected) {
+            daysFromInfection = daysFromInfection + 1;
+            if (daysFromInfection == (currentState.configs.diseaseDuration / 6)) {
+                makeOfColor(ColorStatus.YELLOW);
+            } else if (daysFromInfection == (currentState.configs.diseaseDuration / 3)) {
+                if (Rng.generateFortune(currentState.configs.sintomaticity, severityModifier)) {
+                    makeOfColor(ColorStatus.RED);
+                    if (Rng.generateFortune(currentState.configs.letality, severityModifier)) {
+                        Random r = new Random();
+                        dayOfDeath = r.nextInt(currentState.configs.diseaseDuration - (daysFromInfection + 1)) + daysFromInfection + 1;
+                    }
+                }
+            } else if (daysFromInfection == dayOfDeath){
+                makeOfColor(ColorStatus.BLACK);
+            } else if (color == ColorStatus.RED) {
+                currentState.subtractResources(3 * currentState.configs.swabsCost);
+            }
+        }
+    }
+
     /**
      * Metodo di supporto interno utilizzato per settare
      * la persona di un determinato colore.
      *
      * @param color     colore di destinazione
      */
-
     @ToRevise
     private void makeOfColor(ColorStatus color){
         switch (color){
             case YELLOW:
                 this.color = ColorStatus.YELLOW;
-                switchPerson(currentState.incubationYellow);
+                if (index != currentState.incubationYellow) switchPerson(currentState.incubationYellow);
                 currentState.incubationYellow-=1;
                 break;
             case RED:
                 this.color = ColorStatus.RED;
-                switchPerson(currentState.yellowRed);
+                if (index != currentState.yellowRed) switchPerson(currentState.yellowRed);
                 currentState.yellowRed-=1;
                 movement = MovementStatus.STATIONARY;
                 break;
             case BLUE:
                 if (this.color==ColorStatus.YELLOW){
-                    switchPerson(currentState.redBlue);
+                    switchPerson(currentState.redBlue);         //Qui no perché è molto più raro che accada
                     currentState.yellowRed-=1;
-                    currentState.redBlue-=1;
-                    movement = MovementStatus.MOVING;
-
                 } else {
-                    switchPerson(currentState.redBlue);
-                    currentState.redBlue-=1;
+                    if (index != currentState.redBlue) switchPerson(currentState.redBlue);
+                    movement = MovementStatus.MOVING;
                 }
+                currentState.redBlue-=1;
                 this.color = ColorStatus.BLUE;
-
                 break;
             case BLACK:
                 this.color = ColorStatus.BLACK;
-                switchPerson(currentState.blueBlack);
+                switchPerson(currentState.blueBlack);           //Anche qui è più raro che accada
                 currentState.blueBlack-=1;
                 currentState.redBlue-=1;
                 movement = MovementStatus.STATIONARY;
@@ -104,7 +130,11 @@ public class Person {
     @ToRevise
     public void setAsInfected() {
         isInfected = true;
-        switchPerson(currentState.greenIncubation);
+        if (index!=currentState.greenIncubation) {      //E' inutile effetturare lo scambio se l'indice è già quello giusto
+                                                        //TODO: è possibile creare una versione di questo metodo che non utilizza
+                                                        //TODO: lo scambio in nessun modo (e quindi senza controllo) se modifico la posizione in cui metto il primo infetto.
+            switchPerson(currentState.greenIncubation);
+        }
         currentState.greenIncubation-=1;
     }
 
@@ -148,11 +178,11 @@ public class Person {
      * Imposta il modificatore di infettività in base
      * al parametro in input. Questo metodo è utilizzato dalla
      * classe Rng durante la creazione della popolazione.
-     * @param deathModifier     modificatore di morte generato da Rng
+     * @param severityModifier     modificatore di morte generato da Rng
      */
     @ToRevise
-    public void setDeathModifier(double deathModifier){
-        this.deathModifier = deathModifier;
+    public void setSeverityModifier(double severityModifier){
+        this.severityModifier = severityModifier;
     }
 
     /**
@@ -160,8 +190,8 @@ public class Person {
      * @return  restituisce l'attributo deathModifier
      */
     @Ready
-    public double getDeathModifier() {
-        return deathModifier;
+    public double getSeverityModifier() {
+        return severityModifier;
     }
 
     /**
@@ -173,20 +203,44 @@ public class Person {
         return infectivityModifier;
     }
 
-    /**
-     * Sottrae value dalle risorse. Se il nuovo valore calcolato
-     * è minore di zero, allora impostalo a zero.
-     * @param value     risorse da togliere
-     * @return          restituisce True se ci sono ancora risorse disponibili, False altrimenti
-     */
-    @Ready
-    private boolean subtractResources(int value){
-        if (currentState.resources - value > 0) {
-            currentState.resources -= value;
-            return true;
+
+
+    public Pair<Integer, Integer> getPosition() {
+        return new Pair<>(position.getKey().intValue(),position.getValue().intValue());
+    }
+
+    public Pair<Integer,Integer> nextPosition() {
+        if (movement == MovementStatus.MOVING) {
+            if (contact) {
+                Pair<Double, Double> speedA = getRandomSpeed();
+                speed = new Pair<>(Math.copySign(speedA.getKey(), -speed.getKey()), Math.copySign(speedA.getValue(), -speed.getKey()));
+                contact = false;
+            }
+            double newSpeedX = speed.getKey();
+            double newSpeedY = speed.getValue();
+
+            boolean changed = false;
+            if ((position.getKey() + newSpeedX <= 0) || (position.getKey() + newSpeedX > currentState.configs.size.getKey())) {
+                changed = true;
+                newSpeedX = -newSpeedX;
+            }
+            if ((position.getValue() + newSpeedY <= 0) || (position.getValue() + newSpeedY > currentState.configs.size.getValue())) {
+                changed = true;
+                newSpeedY = -newSpeedY;
+            }
+            if (changed) speed = new Pair<>(newSpeedX, newSpeedY);
+            position = new Pair<>(position.getKey() + newSpeedX, position.getValue() + newSpeedY);
         }
-        currentState.resources = 0;
-        return false;
+        return getPosition();
+    }
+
+    Pair<Double,Double> getRandomSpeed() {
+        double x = (ran.nextDouble()-0.5)*2;
+        double y = Math.sqrt(1-Math.abs(x));
+        if (ran.nextInt(2) == 0) {
+            return new Pair<>(x*currentState.configs.velocity, y*currentState.configs.velocity);
+        }
+        return new Pair<>(x*currentState.configs.velocity, -y*currentState.configs.velocity);
     }
 }
 

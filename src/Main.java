@@ -20,7 +20,6 @@ public class Main {
         state.startingPopulation[0].setAsInfected();
         state.startingPopulation[0].setAsInfected();
         printResults(state);
-
         state.startingPopulation[97].makeOfColor(ColorStatus.YELLOW);
         printResults(state);
         state.startingPopulation[99].makeOfColor(ColorStatus.BLUE);
@@ -37,9 +36,8 @@ public class Main {
         printResults(state);
         state.startingPopulation[97].makeOfColor(ColorStatus.BLUE);
         printResults(state);
-    */
     }
-    /*
+
      private static void printResults(State state){
             for (int i=0;i<state.configs.populationNumber;i++){
                 System.out.println("La persona con indice " + i + (!state.startingPopulation[i].isInfected() ? " NON" : "")+ " è infetta ed è di colore "+ state.startingPopulation[i].color + "!");
@@ -51,6 +49,6 @@ public class Main {
                     "BLU: da " + (state.redBlue+1) + " a " + state.blueBlack+ "\n"+
                     "NERI: da "+ (state.blueBlack+1) + " a " + (state.configs.populationNumber-1));
 
-
-    }*/
+        */
+    }
 }

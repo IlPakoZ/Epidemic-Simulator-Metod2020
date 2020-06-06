@@ -1,10 +1,11 @@
 package sys;
 
 import assets.Person;
-
+import javafx.util.Pair;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import sys.Core.*;
 
 public class State {
     // ----------------------------- SIMULATION SETTINGS -----------------------------
@@ -20,6 +21,10 @@ public class State {
     public SimulationStatus status = SimulationStatus.NOT_YET_STARTED;     // Simulation status
     public ArrayList<Integer> totalInfected;
     public ArrayList<Integer> dailyInfected;
+    public int currentDay = 0;
+    public boolean defaultScenario = true;
+    public HashMap<Pair<Integer, Integer>, ArrayList<Person>> space;
+
     // ---------------------------------------------------------------------------------
 
     // -------------------------------- SYSTEM SETTINGS --------------------------------
@@ -29,4 +34,21 @@ public class State {
     public int redBlue;
     public int blueBlack;
     // ---------------------------------------------------------------------------------
+
+    /**
+     * Sottrae value dalle risorse. Se il nuovo valore calcolato
+     * è minore di zero, allora impostalo a zero.
+     * @param value     risorse da togliere
+     * @return          restituisce True se ci sono ancora risorse disponibili, False altrimenti
+     */
+    @Ready
+    public boolean subtractResources(int value){
+        if (resources - value > 0) {
+            resources -= value;
+            return true;
+        }
+        resources = 0;
+        return false;
+    }
+
 }

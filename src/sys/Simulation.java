@@ -3,8 +3,14 @@ package sys;
 import assets.ColorStatus;
 import assets.Person;
 
+import javafx.util.Pair;
 import sys.Core.*;
 import sys.models.IMenu;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Simulation {
 
@@ -61,11 +67,25 @@ public class Simulation {
     private void start() throws InterruptedException {
         currentState.status = SimulationStatus.PLAYING;
         boolean going = true;
+        int frame = 0;
+        Instant startTime = Instant.now();
         while(going){
-            long startTime = System.nanoTime();
             going = loop();
-            long endTime = System.nanoTime();
+            if (frame % currentState.configs.frameADay == 0){
+                if (frame == 0){
+                    menu.feedback(currentState);
+                    currentState.totalInfected.add(0);
+                    currentState.dailyInfected.add(0);
+                }else{
+                    Instant endTime = Instant.now();
+                    int duration = Duration.between(startTime, endTime).getNano()/1000000;
+                    if (duration < currentState.configs.dayDuration) Thread.sleep(currentState.configs.dayDuration-duration);
+                    startTime = Instant.now();
+                }
+                nextDay();
+            }
             Thread.sleep(currentState.configs.dayDuration);
+            frame++;
         }
         end();
     }
@@ -79,19 +99,48 @@ public class Simulation {
      */
     @NotImplemented
     private boolean loop() {
-        //Esegui qualcosa
-        nextDay();
+        currentState.space = new HashMap<>();
+        for (int i=currentState.incubationYellow+1;i<=currentState.redBlue;i++){ //TODO: Controllare se il numero è preciso
+            Pair<Integer, Integer> position = currentState.startingPopulation[i].nextPosition();
+            currentState.space.putIfAbsent(position, new ArrayList<>());
+            currentState.space.get(position).add(currentState.startingPopulation[i]);
+        }
+        for (int i=currentState.greenIncubation; i>-1; i--){
+            Person person = currentState.startingPopulation[i];
+            if(currentState.space.containsKey(person.nextPosition())){
+                for (Person contatto: currentState.space.get(person.getPosition())){
+                    contact(contatto, person);
+                }
+            }
+        }
+        //Mettere una condizione di uscita (se sono tutti guariti)
         return true;
     }
+    // NB: I blu sono invisibili, quindi come se fossero inesistenti
+    // infatti, su di loro le collisioni non hanno effetto e non sono registrate.
+
 
     /**
      * Passa al giorno della simulazione successivo,
      * aggiorna i valori della simulazione. Contiene il
      * payload da eseguire ad ogni cambiamento di giorno.
      * Calcola anche il valore vd (vedere specifiche progetto).
+     * Vengono considerati nel numero di infetti tutte le
+     * persone tranne quelle verdi (anche quelle in incubazione
+     * sono considerate infette).
      */
     @NotImplemented
-    private void nextDay(){ menu.feedback(currentState); }
+    private void nextDay(){
+        //Potrei fare quella cosa degli indici anche qui?
+        for (int i = currentState.redBlue; i > -1 ; i--)             //TODO: Controllare che gli indici siano giusti (voglio refreshare tutti tranne i verdi non incubati, blu e neri)
+        {
+            currentState.startingPopulation[i].refresh();
+        }
+        currentState.totalInfected.add(currentState.configs.populationNumber-currentState.greenIncubation);
+        currentState.dailyInfected.add(currentState.configs.populationNumber-currentState.greenIncubation - currentState.totalInfected.get(currentState.totalInfected.size()-2));
+        menu.feedback(currentState);
+        currentState.currentDay+=1;                                 //Controllare se l'incremento del giorno è nella posizione giusta (dovrebbe esserlo)
+    }
 
     /**
      * Sostituisci le configurazioni correnti della simulazione
@@ -124,7 +173,15 @@ public class Simulation {
      * @param p2    persona infetta.
      */
     @NotImplemented
-    private void contact(Person p1, Person p2){ }
+    private void contact(Person p1, Person p2){
+        p1.contact = true;
+        p2.contact = true;
+        if(!p2.isInfected()){
+            if(Rng.generateFortune(currentState.configs.infectivity, p2.getInfectivityModifier())) {
+                p2.setAsInfected();
+            }
+        }
+    }
 
     /**
      * Toglie denaro dalle casse dello Stato per effettuare un tampone
