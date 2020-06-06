@@ -28,6 +28,7 @@ public class Simulation {
     @ToRevise
     private void initialize(IMenu menu){
         this.menu = menu;
+        currentState = new State();
     }
 
     /**
