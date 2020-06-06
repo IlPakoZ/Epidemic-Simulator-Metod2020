@@ -3,7 +3,8 @@ package sys;
 import assets.Person;
 import sys.Core.*;
 import java.util.ArrayList;
-import java.util.Math;
+//import java.util.Math;
+import java.util.Random;
 
 public class Rng {
     /**
@@ -25,10 +26,10 @@ public class Rng {
     @NotImplemented
     public static boolean generateFortune(double percent, double modifier){
         if (modifier == 0) return true;
-        double NewPercent = percent/modifier;
-        double IsItGonna = Math.random();
-        if (IsItGonna*100 <= NewPercent) return true;
-        else return false;
+        double newPercent = percent/modifier;
+        double isItGonna = Math.random();
+        if (isItGonna*100 <= newPercent) return true;
+        return false;
     }
 
     /**
@@ -41,7 +42,36 @@ public class Rng {
      */
     @NotImplemented
     private static double generateDeathModifiers(int age){
-        return 0;
+        Random r = new Random();
+        double valore = 0;
+        if (age <= 29) {
+            while (valore<1.5)
+                valore = r.nextGaussian();
+            if (valore>2)
+                valore = 2;
+            if (valore<0)
+                valore = 0;
+            return valore;
+        }
+        if (age <= 59) {
+            while (valore<0.8)
+                valore = r.nextGaussian();
+            if (valore>2)
+                valore = 2;
+            if (valore<0)
+                valore = 0;
+            return valore;
+        }
+        if (60 <= age) {
+            while (valore<0.1)
+                valore = r.nextGaussian();
+            if (valore>2)
+                valore = 2;
+            if (valore<0)
+                valore = 0;
+            return valore;
+        }
+        return valore;
     }
 
     /**
@@ -54,7 +84,8 @@ public class Rng {
      */
     @NotImplemented
     private static double generateInfectivityModifiers(boolean mask){
-        return 0;
+        if (mask) return 2;
+        else return 1;
     }
 
     /**
