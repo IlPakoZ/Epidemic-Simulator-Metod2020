@@ -45,31 +45,23 @@ public class Rng {
         Random r = new Random();
         double valore = 0;
         if (age <= 29) {
-            while (valore<1.5)
-                valore = r.nextGaussian();
+            valore = r.nextGaussian()+1.5;
             if (valore>2)
                 valore = 2;
             if (valore<0)
                 valore = 0;
-            return valore;
-        }
-        if (age <= 59) {
-            while (valore<0.8)
-                valore = r.nextGaussian();
+        }else if (age <= 59) {
+            valore = r.nextGaussian()+0.8;
             if (valore>2)
                 valore = 2;
             if (valore<0)
                 valore = 0;
-            return valore;
-        }
-        if (60 <= age) {
-            while (valore<0.1)
-                valore = r.nextGaussian();
+        }else {
+            valore = r.nextGaussian()+0.1;
             if (valore>2)
                 valore = 2;
             if (valore<0)
                 valore = 0;
-            return valore;
         }
         return valore;
     }
