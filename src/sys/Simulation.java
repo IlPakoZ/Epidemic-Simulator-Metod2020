@@ -1,11 +1,14 @@
 package sys;
 
 import assets.ColorStatus;
+import assets.MovementStatus;
 import assets.Person;
 
 import javafx.util.Pair;
 import sys.Core.*;
+import sys.applications.*;
 import sys.models.IMenu;
+import sys.models.IScenario;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -17,6 +20,7 @@ public class Simulation {
 
     private State currentState;
     private IMenu menu;
+    private IScenario scenario = new DefaultScenario();
 
     /**
      * Costruttore della simulazione.
@@ -37,6 +41,7 @@ public class Simulation {
         currentState.swabs = new HashSet<>();
     }
 
+    @Ready
     public void debug() throws InterruptedException {
         currentState.configs.populationNumber = 100000;
         currentState.configs.infectivity = 10;
@@ -45,7 +50,7 @@ public class Simulation {
         currentState.configs.swabsCost = 3;
         currentState.configs.size = new Pair<>(500,500);
         currentState.configs.initialResources = 100000;
-        currentState.configs.diseaseDuration = 30;
+        currentState.configs.diseaseDuration = 50;
         currentState.configs.ageAverage = 50;
         currentState.configs.maxAge = 110;
         currentState.startingPopulation = Rng.generatePopulation(currentState);
@@ -72,6 +77,10 @@ public class Simulation {
                     state = menu.settings(getConfigs());
                     //Mostra il menù delle opzioni
                     break;
+                case 3:
+                    menu.selectScenario();
+                    state = 1;
+                    //Mostra il menù di scelta dello scenario
                 default:
                     throw new UnsupportedOperationException();
             }
@@ -85,7 +94,7 @@ public class Simulation {
     /**
      * Avvia la simulazione.
      */
-    @NotImplemented
+    @ToRevise
     private void start() throws InterruptedException {
         currentState.status = SimulationStatus.PLAYING;
         boolean going = true;
@@ -118,7 +127,7 @@ public class Simulation {
      * false.
      * @return      booleano che indica se il loop è ancora in esecuzione
      */
-    @NotImplemented
+    @ToRevise
     private boolean loop() {
         currentState.space = new HashMap<>();
         for (int i=currentState.incubationYellow+1;i<=currentState.redBlue;i++){
@@ -153,13 +162,15 @@ public class Simulation {
      * persone tranne quelle verdi (anche quelle in incubazione
      * sono considerate infette).
      */
-    @NotImplemented
+    @ToRevise
     private void nextDay(){
         //Potrei fare quella cosa degli indici anche qui?
         for (int i = currentState.redBlue; i > -1 ; i--)             //TODO: Controllare che gli indici siano giusti (voglio refreshare tutti tranne i verdi non incubati, blu e neri)
         {
             currentState.startingPopulation[i].refresh();
         }
+        if (currentState.redBlue-currentState.yellowRed!=0) currentState.unoPatientFound = true;
+
         currentState.totalInfected.add(currentState.configs.populationNumber-currentState.greenIncubation-1);
         currentState.dailyInfected.add(currentState.totalInfected.get(currentState.totalInfected.size()-1) - currentState.totalInfected.get(currentState.totalInfected.size()-2));
         menu.feedback(currentState);
@@ -207,7 +218,6 @@ public class Simulation {
         }
         currentState.contacts.putIfAbsent(p1, new ArrayList<>());
         currentState.contacts.get(p1).add(p2);
-
     }
 
     /**
@@ -221,7 +231,25 @@ public class Simulation {
      * @param p1    persona a cui sottoporre il tampone.
      */
      @NotImplemented
-     private void doSwab(Person p1){ }
+     private boolean doSwab(Person p1){
+         boolean result = false;
+         currentState.subtractResources(currentState.configs.swabsCost);
+         switch (p1.color) {
+             case YELLOW:
+             case RED:
+                 result = true;
+             default:
+                 break;
+         }
+         if (!result) return false;
+         if (!Rng.generateFortune(Config.SWAB_SUCCESS_RATE,1)){
+             result = false;
+         }
+         if (result) {
+             currentState.swabs.add(p1);
+         }
+         return result;
+     }
 
      /**
      * Termina la simulazione ed esegue le operazioni finali.

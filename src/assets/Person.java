@@ -15,8 +15,9 @@ public class Person {
     private Pair<Double, Double> speed;             //horizontalSpeed, verticalSpeed
     public boolean contact = false;
     public ColorStatus color = ColorStatus.GREEN;
-    private MovementStatus movement = MovementStatus.MOVING;
+    public MovementStatus movement = MovementStatus.MOVING;
     private int dayOfDeath = -1;
+    private int dayToStop = 0;
     private int daysFromInfection = -1;
     private double severityModifier = 1;
     private double infectivityModifier = 1;
@@ -52,7 +53,7 @@ public class Person {
      * togliere opportuno denaro dalle casse dello Stato.
      * Se la persona è in terapia intensiva (rossa), togliere
      * il denaro.
-     *
+     * Rendere indipendente il processo di stoppare le persone.
      */
     @ToRevise
     public void refresh() {
@@ -68,6 +69,8 @@ public class Person {
                     makeOfColor(ColorStatus.RED);
                     if (Rng.generateFortune(currentState.configs.letality, severityModifier)) {
                         dayOfDeath = ran.nextInt(currentState.configs.diseaseDuration - (daysFromInfection + 1) - 1) + daysFromInfection + 1;
+                    } else {
+                        dayToStop = currentState.configs.diseaseDuration-daysFromInfection;
                     }
                     currentState.subtractResources(3 * currentState.configs.swabsCost);
                 }
@@ -108,8 +111,8 @@ public class Person {
                     switchPerson(currentState.redBlue);         //Qui no perché è molto più raro che accada;
                 } else {
                     if (index != currentState.redBlue) switchPerson(currentState.redBlue);
-                    movement = MovementStatus.MOVING;
                 }
+                movement = MovementStatus.MOVING;
                 currentState.redBlue-=1;
                 isInfected = false;
                 this.color = ColorStatus.BLUE;
@@ -240,7 +243,7 @@ public class Person {
         return getPosition();
     }
 
-    Pair<Double,Double> getRandomSpeed() {
+    private Pair<Double,Double> getRandomSpeed() {
         double x = (ran.nextDouble()-0.5)*2;
         double y = Math.sqrt(1-Math.abs(x));
         if (ran.nextInt(2) == 0) {

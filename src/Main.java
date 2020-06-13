@@ -9,7 +9,9 @@ public class Main {
         Core x = new Core();
         CommandLineMenu c = new CommandLineMenu();
         x.newSimulation(new CommandLineMenu());
-        x.debug();
+
+        //x.run();
+       // x.debug();
     /*
         State state = new State();
         state.configs = new Config();

@@ -16,18 +16,20 @@ public class Config {
     public int diseaseDuration;
     public int maxAge;
     public Pair<Integer,Integer> size;              // width, height
+
     // ----------------------------------------------------------------------------------------------
 
     // ----------------------------- SIMULATION PARAMETERS (OPTIONAL) -------------------------------
 
     public int dayDuration = 500;                         //Loop duration measured in milliseconds
-    public double velocity = 1;
+    public double velocity = 2;
     public int socialDistance;
     boolean masks = false;
     public int frameADay = 12;
 
     // ----------------------------------------------------------------------------------------------
 
+    public static final double SWAB_SUCCESS_RATE = 99;
     public boolean isValid;
 
     /**

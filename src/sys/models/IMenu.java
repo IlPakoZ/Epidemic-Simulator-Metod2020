@@ -57,4 +57,18 @@ public interface IMenu {
      */
     void finalFeedback(State state);
 
+    /**
+     * Questo metodo viene richiamato da Simulation per aprire
+     * il menù della scelta dello scenario. In questo menù, verrà
+     * restituita un oggetto di Scenario che implementa IScenario in base
+     * al valore inserito dall'utente (quindi in base allo scenario che
+     * vorrà scegliere l'utente).
+     * Questo metodo conterrà anche una breve descrizione dello scenario
+     * che si vuole selezionare.
+     *
+     * @return un oggetto di una classe che implementa IScenario in base
+     *         alla scelta dell'utente.
+     */
+    IScenario selectScenario();
+
 }

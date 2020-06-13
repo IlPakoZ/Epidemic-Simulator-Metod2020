@@ -4,6 +4,8 @@ import sys.Core.*;
 import sys.Simulation;
 import sys.State;
 import sys.models.IMenu;
+import sys.models.IScenario;
+
 import java.util.Scanner;
 import java.io.Console;
 import java.io.IOException;
@@ -524,6 +526,12 @@ public class CommandLineMenu implements IMenu {
         System.out.println("Popolazione infettata " + state.totalInfected.indexOf(state.totalInfected.size()-1));
         System.out.println("Morti " + state.getDeathsNumber());  
         System.out.println("Risorse rimaste " + state.resources);
+    }
+
+    @NotImplemented
+    @Override
+    public IScenario selectScenario() {
+        return null;
     }
 
 }

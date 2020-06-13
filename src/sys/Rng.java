@@ -7,7 +7,15 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Rng {
+
     private static final double SEVERITY_PERCENT = 10;
+    private static final int YOUNG_RANGE = 29;
+    private static final int MIDDLE_AGE_RANGE = 59;
+    private static final double YOUNG_MODIFIER= 2;
+    private static final double MIDDLE_AGE_MODIFIER = 0;
+    private static final double OLD_AGE_MODIFIER = -2;
+    private static final double GAUSSIAN_AGE_MODIFIER = 20;
+
     /**
      * Restituisce un booleano che indica se l'evento casuale
      * deve essere eseguito oppure no. In base ad una certa
@@ -28,12 +36,10 @@ public class Rng {
     public static boolean generateFortune(double percent, double modifier){
         if (modifier == 0) return true;
         double newPercent;
-        if (modifier < 0) newPercent = percent + (percent*SEVERITY_PERCENT/100);
-        else newPercent = percent - (percent*SEVERITY_PERCENT/100);
+        newPercent = percent + (percent*modifier/100);
         if (newPercent>100) newPercent = percent;
         double isItGonna = Math.random();
-        if (isItGonna*100 <= newPercent) return true;
-        return false;
+        return isItGonna * 100 <= newPercent;
     }
 
     /**
@@ -47,13 +53,13 @@ public class Rng {
     @ToRevise
     private static double generateSeverityModifiers(int age){
         Random r = new Random();
-        double valore = 0;
-        if (age <= 29) {
-            valore = r.nextGaussian()+1.8;
-        }else if (age <= 59) {
-            valore = r.nextGaussian()+1;
+        double valore;
+        if (age <= YOUNG_RANGE) {
+            valore = r.nextGaussian()*SEVERITY_PERCENT+YOUNG_MODIFIER;
+        }else if (age <= MIDDLE_AGE_RANGE) {
+            valore = r.nextGaussian()*SEVERITY_PERCENT+MIDDLE_AGE_MODIFIER;
         }else {
-            valore = r.nextGaussian()+0.5;
+            valore = r.nextGaussian()*SEVERITY_PERCENT+OLD_AGE_MODIFIER;
         }
         return valore;
     }
@@ -89,7 +95,7 @@ public class Rng {
         for (int i=0;i<currentState.configs.populationNumber;i++){
             double age;
             do {
-                age = r.nextGaussian() * 20 + currentState.configs.ageAverage;
+                age = r.nextGaussian() * GAUSSIAN_AGE_MODIFIER + currentState.configs.ageAverage;
             }while(age<0 || age>currentState.configs.maxAge);
             //people[i] = new Person(currentState.configs.ageAverage, i, currentState);
             people[i] = new Person((int) age, i, currentState);
