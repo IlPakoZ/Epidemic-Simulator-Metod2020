@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Rng {
+    private static final double SEVERITY_PERCENT = 10;
     /**
      * Restituisce un booleano che indica se l'evento casuale
      * deve essere eseguito oppure no. In base ad una certa
@@ -26,7 +27,10 @@ public class Rng {
     @ToRevise
     public static boolean generateFortune(double percent, double modifier){
         if (modifier == 0) return true;
-        double newPercent = percent/modifier;
+        double newPercent;
+        if (modifier < 0) newPercent = percent + (percent*SEVERITY_PERCENT/100);
+        else newPercent = percent - (percent*SEVERITY_PERCENT/100);
+        if (newPercent>100) newPercent = percent;
         double isItGonna = Math.random();
         if (isItGonna*100 <= newPercent) return true;
         return false;
@@ -45,23 +49,11 @@ public class Rng {
         Random r = new Random();
         double valore = 0;
         if (age <= 29) {
-            valore = r.nextGaussian()+1.5;
-            if (valore>2)
-                valore = 2;
-            if (valore<0)
-                valore = 0;
+            valore = r.nextGaussian()+1.8;
         }else if (age <= 59) {
-            valore = r.nextGaussian()+0.8;
-            if (valore>2)
-                valore = 2;
-            if (valore<0)
-                valore = 0;
+            valore = r.nextGaussian()+1;
         }else {
-            valore = r.nextGaussian()+0.1;
-            if (valore>2)
-                valore = 2;
-            if (valore<0)
-                valore = 0;
+            valore = r.nextGaussian()+0.5;
         }
         return valore;
     }
