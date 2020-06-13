@@ -78,7 +78,7 @@ public class Simulation {
                     //Mostra il menù delle opzioni
                     break;
                 case 3:
-                    menu.selectScenario();
+                    currentScenario = menu.selectScenario();
                     state = 1;
                     //Mostra il menù di scelta dello scenario
                 default:
@@ -88,7 +88,7 @@ public class Simulation {
         currentState.startingPopulation = Rng.generatePopulation(currentState);
         currentState.startingPopulation[currentState.configs.populationNumber-1].setAsInfected();
         currentState.resources = currentState.configs.initialResources;
-        currentScenario.oneTimeAction(currentState);
+        currentScenario.oneTimeAction(this);
         start();
     }
 
@@ -116,7 +116,7 @@ public class Simulation {
                     startTime = Instant.now();
                 }
             }
-            currentScenario.frameAction(currentState);
+            currentScenario.frameAction(this);
             frame++;
         }
         end();
@@ -176,7 +176,7 @@ public class Simulation {
         currentState.totalInfected.add(currentState.configs.populationNumber-currentState.greenIncubation-1);
         currentState.dailyInfected.add(currentState.totalInfected.get(currentState.totalInfected.size()-1) - currentState.totalInfected.get(currentState.totalInfected.size()-2));
         menu.feedback(currentState);
-        currentScenario.dailyAction(currentState);
+        currentScenario.dailyAction(this);
         currentState.currentDay+=1;                                 //Controllare se l'incremento del giorno è nella posizione giusta (dovrebbe esserlo)
     }
 
@@ -234,7 +234,7 @@ public class Simulation {
      * @param p1    persona a cui sottoporre il tampone.
      */
      @NotImplemented
-     private boolean doSwab(Person p1){
+     public boolean doSwab(Person p1){
          boolean result = false;
          currentState.subtractResources(currentState.configs.swabsCost);
          switch (p1.color) {
