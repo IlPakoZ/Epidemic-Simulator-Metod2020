@@ -5,32 +5,29 @@ import sys.Simulation;
 import sys.State;
 import sys.models.IMenu;
 import java.util.Scanner;
+import java.io.Console;
 import java.io.IOException;
+import java.lang.Math; 
 
 public class CommandLineMenu implements IMenu {
 
-    public void clearScreen() {  
-        try {
-            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor(); 
-        } catch (InterruptedException e) { } 
-        catch (IOException s) { }  
+    public void clear() {
+        for(int i=0; i<50; i++) System.out.println();
     }
 
-    public void clearScreenFI() {  
-        try {
-            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor(); 
-        } catch (InterruptedException e) { } 
-        catch (IOException s) { }  
+    public void ScreenSH() {  
+        System.out.println("MENU' PRINCIPALE");
+        System.out.println("#");
+        System.out.println("#"); 
+    }
+
+    public void ScreenFI() {  
         System.out.println("CONFIGURAZIONE INIZIALE");
         System.out.println("#");
         System.out.println("#");   
     }
 
-    public void clearScreenSET() {  
-        try {
-            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor(); 
-        } catch (InterruptedException e) { } 
-        catch (IOException s) { }  
+    public void ScreenSET() {  
         System.out.println("MENU' OPZIONI");
         System.out.println("#");
         System.out.println("#");
@@ -43,25 +40,25 @@ public class CommandLineMenu implements IMenu {
         System.out.println("6 - Sintomaticita'");
         System.out.println("7 - Letalita'");
         System.out.println("8 - Eta' massima");
-        System.out.println("9 - Eta' minima");
+        System.out.println("9 - Eta' media");
+        System.out.println("10 - Larghezza e Altezza dello spazio grafico della simulazione");
         System.out.println("0 - Per uscire");
-   
     }
 
     @Override
     public int show() { 
         Scanner Input = new Scanner(System.in);
 
-        System.out.println("MENU' PRINCIPALE");
-        System.out.println("#");
-        System.out.println("#");
+        clear();
+        ScreenSH();
         System.out.println("Per far partire la simulazione digitare 0. Per configurare le impostazioni inziali digitare 2:");
         int action = Integer.parseInt(Input.nextLine()); 
         while(action != 0 && action != 2) {
+            clear();
+            ScreenSH();
             System.out.println("Parametro non valido. Reinserirlo:");
             action = Integer.parseInt(Input.nextLine());  
         }
-        clearScreen();
         return action; 
     }
 
@@ -69,130 +66,170 @@ public class CommandLineMenu implements IMenu {
     public void firstInput(Config config) {
         Scanner Input = new Scanner(System.in);
 
-        clearScreenFI();
+        clear();
+        ScreenFI();
         // Popolazione iniziale
         System.out.println("Inserire il numero della popolazione iniziale (max 100000):");
         int populationNumber = Integer.parseInt(Input.nextLine());
         while(populationNumber > 100000) {
-            clearScreenFI();
+            clear();
+            ScreenFI();
             System.out.println("Numero troppo grande. Reinserirlo:");
             populationNumber = Integer.parseInt(Input.nextLine());  
         }
         config.populationNumber = populationNumber;
         // Durata della malattia
-        clearScreenFI();
+        clear();
+        ScreenFI();
         System.out.println("Inserire la durata della malattia (max 90 giorni):");
         int diseaseDuration = Integer.parseInt(Input.nextLine());
         while(diseaseDuration > 90) {
-            clearScreenFI();
+            clear();
+            ScreenFI();
             System.out.println("Numero troppo grande. Reinserirlo:");
             diseaseDuration = Integer.parseInt(Input.nextLine());  
         }
         config.diseaseDuration = diseaseDuration;
         // Risorse iniziali
-        clearScreenFI();
+        clear();
+        ScreenFI();
         System.out.println("Inserire il numero delle risorse iniziali:");
-        System.out.println("(deve essere minore del prodotto fra popolazione e durata della malattia)");
+        System.out.println("(deve essere minore di "+(config.populationNumber*config.diseaseDuration)+")");
         int initialResource = Integer.parseInt(Input.nextLine());
-        while(initialResource > config.populationNumber * config.diseaseDuration) {
-            clearScreenFI();
+        while(initialResource >= config.populationNumber * config.diseaseDuration) {
+            clear();
+            ScreenFI();
             System.out.println("Numero troppo grande. Reinserirlo:");
-            System.out.println("(deve essere minore del prodotto fra popolazione e durata della malattia)");
+            System.out.println("(deve essere minore di "+(config.populationNumber*config.diseaseDuration)+")");
             initialResource = Integer.parseInt(Input.nextLine());  
         }
         config.initialResources = initialResource;
         // Costo del tampone
-        clearScreenFI();
+        clear();
+        ScreenFI();
         System.out.println("Inserire il costo del tampone:");
-        System.out.println("(deve essere maggiore di risore/popolazione*10)");
+        System.out.println("(deve essere maggiore di "+(config.initialResources/(config.populationNumber*10))+")");
         int swabsCost = Integer.parseInt(Input.nextLine());
-        while(swabsCost < config.initialResources/(config.populationNumber * 10)) {
-            clearScreenFI();
+        while(swabsCost <= config.initialResources/(config.populationNumber * 10)) {
+            clear();
+            ScreenFI();
             System.out.println("Numero troppo piccolo. Reinserirlo:");
-            System.out.println("(deve essere maggiore di risore/popolazione*10)");
+            System.out.println("(deve essere maggiore di "+(config.initialResources/(config.populationNumber*10))+")");
             swabsCost = Integer.parseInt(Input.nextLine());  
         }
         config.swabsCost = swabsCost;
         // Infettività
-        clearScreenFI();
+        clear();
+        ScreenFI();
         System.out.println("Inserire la percentuale di infettivita' :");
         System.out.println("(deve essere maggiore di 0)");
         Double infectivity = Double.parseDouble(Input.nextLine()); 
         while(infectivity <= 0.0 || infectivity > 100.0) {
-            clearScreenFI();
+            clear();
+            ScreenFI();
             System.out.println("Percentuale non valida. Reinserirla:");
             System.out.println("(deve essere maggiore di 0)");
             infectivity = Double.parseDouble(Input.nextLine()); 
         }
         config.infectivity= infectivity;
         // Sintomaticità
-        clearScreenFI();
+        clear();
+        ScreenFI();
         System.out.println("Inserire la percentuale di sintomaticita' :");
         System.out.println("(deve essere maggiore di 0)");
         Double sintomaticity = Double.parseDouble(Input.nextLine()); 
         while(sintomaticity <= 0.0 || sintomaticity > 100.0) {
-            clearScreenFI();
+            clear();
+            ScreenFI();
             System.out.println("Percentuale non valida. Reinserirla:");
             System.out.println("(deve essere maggiore di 0)");
             sintomaticity = Double.parseDouble(Input.nextLine());   
         }
         config.sintomaticity = sintomaticity;
         // Letalità
-        clearScreenFI();
-        System.out.println("Inserire la percentuale di sintomaticita' :");
+        clear();
+        ScreenFI();
+        System.out.println("Inserire la percentuale di letalita' :");
         System.out.println("(deve essere maggiore di 0)");
         Double letality = Double.parseDouble(Input.nextLine()); 
         while(letality <= 0.0 || letality > 100.0) {
-            clearScreenFI();
+            clear();
+            ScreenFI();
             System.out.println("Percentuale non valida. Reinserirla:");
             System.out.println("(deve essere maggiore di 0)");
             letality = Double.parseDouble(Input.nextLine());  
         }
         config.letality = letality;
         // Età massima
-        clearScreenFI();
+        clear();
+        ScreenFI();
         System.out.println("Inserire l'eta' massima (compresa tra 50 e 100) :");
         int maxAge = Integer.parseInt(Input.nextLine());
         while(maxAge < 50 || maxAge > 100) {
-            clearScreenFI();
+            clear();
+            ScreenFI();
             System.out.println("Eta' non valida. Reinserirla (compresa tra 50 e 100):");
             maxAge = Integer.parseInt(Input.nextLine());  
         }
         config.maxAge = maxAge;
-        // Età minima
-        clearScreenFI();
-        System.out.println("Inserire l'eta' minima (compresa tra 1 e 50) :");
-        int meanAge = Integer.parseInt(Input.nextLine());
-        while(meanAge < 1 || meanAge > 50) {
-            clearScreenFI();
-            System.out.println("Eta' non valida. Reinserirla (compresa tra 50 e 100):");
-            meanAge = Integer.parseInt(Input.nextLine());  
-        }
-        config.meanAge = meanAge;
         // Età media
-        config.ageAverage = (config.maxAge + config.meanAge)/2;
+        clear();
+        ScreenFI();
+        System.out.println("Inserire l'eta' media (compresa tra 20 e 80) :");
+        int ageAverage = Integer.parseInt(Input.nextLine());
+        while(ageAverage < 20 || ageAverage > 80) {
+            clear();
+            ScreenFI();
+            System.out.println("Eta' non valida. Reinserirla (compresa tra 20 e 80):");
+            ageAverage = Integer.parseInt(Input.nextLine());  
+        }
+        config.ageAverage = ageAverage;
+        
+        // Altezza e Larghezza
+        clear();
+        ScreenFI();
+        System.out.println("Inserire l'altezza e la larghezza dello spazio grafico dove verrà visualizzata la simulazione");
+        System.out.println("(Valore consigliati: "+(int)Math.sqrt(config.populationNumber*2)+")");
+        System.out.println("Il prodotto devve essere compreso tra "+(config.populationNumber*10)+" e "+(config.populationNumber/10)+")");
+        System.out.print("Larghezza: "); int width = Integer.parseInt(Input.nextLine());
+        System.out.print("Altezza: "); int heigth = Integer.parseInt(Input.nextLine());
+        while((width*heigth > config.populationNumber*10)||(width*heigth < config.populationNumber/10)) {
+            clear();
+            ScreenFI();
+            System.out.println("Parametri non validi. Reinserirli:");
+            System.out.println("(Valore consigliati: "+(int)Math.sqrt(config.populationNumber*2)+")");
+            System.out.println("Il prodotto delle due grandezze deve essere compreso tra "+(config.populationNumber*10)+" e "+(config.populationNumber/10)+")");
+            System.out.print("Larghezza: "); width = Integer.parseInt(Input.nextLine());
+            System.out.print("Altezza: "); heigth = Integer.parseInt(Input.nextLine());
+
+        }
+        // config.size[0] = width;  config.size[1] = heigth;   TOGLIERE IL COMMENTO   
     }
 
     @Override
     public int settings(Config config) { 
         Scanner Input = new Scanner(System.in);
 
-        clearScreenSET();
+        clear();
+        ScreenSET();
         int action = -1;
 
         while(action!=0) {
-            clearScreenSET();
+            clear();
+            ScreenSET();
             action = Integer.parseInt(Input.nextLine());
             switch(action) {
 
 
                 case(1):
-                clearScreenSET();
+                clear();
+                ScreenSET();
                 // Popolazione iniziale
                 System.out.println("Inserire il numero della popolazione iniziale (max 100000):");
                 int populationNumber = Integer.parseInt(Input.nextLine());
                 while(populationNumber > 100000) {
-                    clearScreenSET();
+                    clear();
+                    ScreenSET();
                     System.out.println("Numero troppo grande. Reinserirlo:");
                     populationNumber = Integer.parseInt(Input.nextLine());  
                 }
@@ -200,44 +237,73 @@ public class CommandLineMenu implements IMenu {
                 // settando un nuovo valore per la popolazione iniziale controllo se 
                 // il valore delle risorse inziali sia ancora buono
                 if(config.initialResources > config.populationNumber * config.diseaseDuration) {
-                    clearScreenSET();
+                    clear();
+                    ScreenSET();
                     System.out.println("ATTENZIONE! il numero delle risorse iniziali non è più valido:");
                     System.out.println("Inserire il numero delle risorse iniziali:");
-                    System.out.println("(deve essere minore del prodotto fra popolazione e durata della malattia)");
+                    System.out.println("(deve essere minore di "+(config.populationNumber*config.diseaseDuration)+")");
                     int initialResource = Integer.parseInt(Input.nextLine());
-                    while(initialResource > config.populationNumber * config.diseaseDuration) {
-                        clearScreenSET();
+                    while(initialResource >= config.populationNumber * config.diseaseDuration) {
+                        clear();
+                        ScreenSET();
                         System.out.println("Numero troppo grande. Reinserirlo:");
-                        System.out.println("(deve essere minore del prodotto fra popolazione e durata della malattia)");
+                        System.out.println("(deve essere minore di "+(config.populationNumber*config.diseaseDuration)+")");
                         initialResource = Integer.parseInt(Input.nextLine());  
                     }
                     config.initialResources = initialResource;
                 }
-                // e controllo se il valore del costo del tampone sia ancora buono
-                if(config.swabsCost > config.initialResources/config.populationNumber * 10) {
-                    clearScreenSET();
+                // controllo se il valore del costo del tampone sia ancora buono
+                if(config.swabsCost > config.initialResources/(config.populationNumber * 10)) {
+                    clear();
+                    ScreenSET();
                     System.out.println("ATTENZIONE! il costo del tampone non è più valido:");
                     System.out.println("Inserire il costo del tampone:");
-                    System.out.println("(deve essere maggiore di risore/popolazione*10)");
+                    System.out.println("(deve essere maggiore di "+(config.initialResources/(config.populationNumber*10))+")");
                     int swabsCost = Integer.parseInt(Input.nextLine());
-                    while(swabsCost < config.initialResources/(config.populationNumber * 10)) {
-                        clearScreenSET();
+                    while(swabsCost <= config.initialResources/(config.populationNumber * 10)) {
+                        clear();
+                        ScreenSET();
                         System.out.println("Numero troppo piccolo. Reinserirlo:");
-                        System.out.println("(deve essere maggiore di risore/popolazione*10)");
+                        System.out.println("(deve essere maggiore di "+(config.initialResources/(config.populationNumber*10))+")");
                         swabsCost = Integer.parseInt(Input.nextLine());  
                     }
                     config.swabsCost = swabsCost;
                 }
-                break;
+                // e controllo se i valori di altezza e larghezza siano ancora validi
+/* TOGLIERE IL COMMENTO
+                if((config.size[0]*config.size[1] > config.populationNumber*10)||(config.size[0]*config.size[1] < config.populationNumber/10)) {
+                    clear();
+                    ScreenSET();
+                    System.out.println("ATTENZIONE! I valori di altezza e larghezza non sono piu' validi");
+                    System.out.println("Inserire l'altezza e la larghezza dello spazio grafico dove verrà visualizzata la simulazione");
+                    System.out.println("(Valore consigliati: "+(int)Math.sqrt(config.populationNumber*2)+")");
+                    System.out.println("Il prodotto devve essere compreso tra "+(config.populationNumber*10)+" e "+(config.populationNumber/10)+")");
+                    System.out.print("Larghezza: "); int width = Integer.parseInt(Input.nextLine());
+                    System.out.print("Altezza: "); int heigth = Integer.parseInt(Input.nextLine());
+                    while((width*heigth > config.populationNumber*10)||(width*heigth < config.populationNumber/10)) {
+                        clear();
+                        ScreenSET();
+                        System.out.println("Parametri non validi. Reinserirli:");
+                        System.out.println("(Valore consigliati: "+(int)Math.sqrt(config.populationNumber*2)+")");
+                        System.out.println("Il prodotto delle due grandezze deve essere compreso tra "+(config.populationNumber*10)+" e "+(config.populationNumber/10)+")");
+                        System.out.print("Larghezza: "); width = Integer.parseInt(Input.nextLine());
+                        System.out.print("Altezza: "); heigth = Integer.parseInt(Input.nextLine());
 
+                    }
+                    // config.size[0] = width;  config.size[1] = heigth;      
+                }*/
+                break;
+            
 
                 case(2):
                 // Durata della malattia
-                clearScreenSET();
+                clear();
+                ScreenSET();
                 System.out.println("Inserire la durata della malattia (max 90 giorni):");
                 int diseaseDuration = Integer.parseInt(Input.nextLine());
                 while(diseaseDuration > 90) {
-                    clearScreenSET();
+                    clear();
+                    ScreenSET();
                     System.out.println("Numero troppo grande. Reinserirlo:");
                     diseaseDuration = Integer.parseInt(Input.nextLine());  
                 }
@@ -245,15 +311,17 @@ public class CommandLineMenu implements IMenu {
                 // cambiando la durata della malattia controllo se il numero delle risorse iniziali
                 // sia ancora buono
                 if(config.initialResources > config.populationNumber * config.diseaseDuration) {
-                    clearScreenSET();
+                    clear();
+                    ScreenSET();
                     System.out.println("ATTENZIONE! il numero delle risorse iniziali non è più valido:");
                     System.out.println("Inserire il numero delle risorse iniziali:");
-                    System.out.println("(deve essere minore del prodotto fra popolazione e durata della malattia)");
+                    System.out.println("(deve essere minore di "+(config.populationNumber*config.diseaseDuration)+")");
                     int initialResource = Integer.parseInt(Input.nextLine());
-                    while(initialResource > config.populationNumber * config.diseaseDuration) {
-                        clearScreenSET();
+                    while(initialResource >= config.populationNumber * config.diseaseDuration) {
+                        clear();
+                        ScreenSET();
                         System.out.println("Numero troppo grande. Reinserirlo:");
-                        System.out.println("(deve essere minore del prodotto fra popolazione e durata della malattia)");
+                        System.out.println("(deve essere minore di "+(config.populationNumber*config.diseaseDuration)+")");
                         initialResource = Integer.parseInt(Input.nextLine());  
                     }
                     config.initialResources = initialResource;
@@ -263,28 +331,32 @@ public class CommandLineMenu implements IMenu {
 
                 case(3):
                 // Risorse iniziali
-                clearScreenSET();
+                clear();
+                ScreenSET();
                 System.out.println("Inserire il numero delle risorse iniziali:");
-                System.out.println("(deve essere minore del prodotto fra popolazione e durata della malattia)");
+                System.out.println("(deve essere minore di "+(config.populationNumber*config.diseaseDuration)+")");
                 int initialResource = Integer.parseInt(Input.nextLine());
-                while(initialResource > config.populationNumber * config.diseaseDuration) {
-                    clearScreenSET();
+                while(initialResource >= config.populationNumber * config.diseaseDuration) {
+                    clear();
+                    ScreenSET();
                     System.out.println("Numero troppo grande. Reinserirlo:");
-                    System.out.println("(deve essere minore del prodotto fra popolazione e durata della malattia)");
+                    System.out.println("(deve essere minore di "+(config.populationNumber*config.diseaseDuration)+")");
                     initialResource = Integer.parseInt(Input.nextLine());  
                 }
                 config.initialResources = initialResource;
                 // cambiando il numero delle risorse iniziali controllo se il costo del tampone sia ancora buono
-                if(config.swabsCost > config.initialResources/config.populationNumber * 10) {
-                    clearScreenSET();
+                if(config.swabsCost > config.initialResources/(config.populationNumber * 10)) {
+                    clear();
+                    ScreenSET();
                     System.out.println("ATTENZIONE! il costo del tampone non è più valido:");
                     System.out.println("Inserire il costo del tampone:");
-                    System.out.println("(deve essere maggiore di risore/popolazione*10)");
+                    System.out.println("(deve essere maggiore di "+(config.initialResources/(config.populationNumber*10))+")");
                     int swabsCost = Integer.parseInt(Input.nextLine());
-                    while(swabsCost < config.initialResources/(config.populationNumber * 10)) {
-                        clearScreenSET();
+                    while(swabsCost <= config.initialResources/(config.populationNumber * 10)) {
+                        clear();
+                        ScreenSET();
                         System.out.println("Numero troppo piccolo. Reinserirlo:");
-                        System.out.println("(deve essere maggiore di risore/popolazione*10)");
+                        System.out.println("(deve essere maggiore di "+(config.initialResources/(config.populationNumber*10))+")");
                         swabsCost = Integer.parseInt(Input.nextLine());  
                     }
                     config.swabsCost = swabsCost;
@@ -294,14 +366,16 @@ public class CommandLineMenu implements IMenu {
 
                 case(4):
                 // Costo del tampone
-                clearScreenSET();
+                clear();
+                ScreenSET();
                 System.out.println("Inserire il costo del tampone:");
-                System.out.println("(deve essere maggiore di risore/popolazione*10)");
+                System.out.println("(deve essere maggiore di "+(config.initialResources/(config.populationNumber*10))+")");
                 int swabsCost = Integer.parseInt(Input.nextLine());
-                while(swabsCost < config.initialResources/(config.populationNumber * 10)) {
-                    clearScreenSET();
+                while(swabsCost <= config.initialResources/(config.populationNumber * 10)) {
+                    clear();
+                    ScreenSET();
                     System.out.println("Numero troppo piccolo. Reinserirlo:");
-                    System.out.println("(deve essere maggiore di risore/popolazione*10)");
+                    System.out.println("(deve essere maggiore di "+(config.initialResources/(config.populationNumber*10))+")");
                     swabsCost = Integer.parseInt(Input.nextLine());  
                 }
                 config.swabsCost = swabsCost;
@@ -310,12 +384,14 @@ public class CommandLineMenu implements IMenu {
 
                 case(5):
                 // Infettività
-                clearScreenSET();
+                clear();
+                ScreenSET();
                 System.out.println("Inserire la percentuale di infettivita' :");
                 System.out.println("(deve essere maggiore di 0)");
                 Double infectivity = Double.parseDouble(Input.nextLine());
                 while(infectivity <= 0.0 || infectivity > 100.0) {
-                    clearScreenSET();
+                    clear();
+                    ScreenSET();
                     System.out.println("Percentuale non valida. Reinserirla:");
                     System.out.println("(deve essere maggiore di 0)");
                     infectivity = Double.parseDouble(Input.nextLine()); 
@@ -326,12 +402,14 @@ public class CommandLineMenu implements IMenu {
 
                 case(6):
                 // Sintomaticità
-                clearScreenSET();
+                clear();
+                ScreenSET();
                 System.out.println("Inserire la percentuale di sintomaticita' :");
                 System.out.println("(deve essere maggiore di 0)");
                 Double sintomaticity = Double.parseDouble(Input.nextLine()); 
                 while(sintomaticity <= 0.0 || sintomaticity > 100.0) {
-                    clearScreenSET();
+                    clear();
+                    ScreenSET();
                     System.out.println("Percentuale non valida. Reinserirla:");
                     System.out.println("(deve essere maggiore di 0)");
                     sintomaticity = Double.parseDouble(Input.nextLine());  
@@ -342,12 +420,14 @@ public class CommandLineMenu implements IMenu {
 
                 case(7):
                 // Letalità
-                clearScreenSET();
-                System.out.println("Inserire la percentuale di sintomaticita' :");
+                clear();
+                ScreenSET();
+                System.out.println("Inserire la percentuale di letalita' :");
                 System.out.println("(deve essere maggiore di 0)");
                 Double letality = Double.parseDouble(Input.nextLine()); 
                 while(letality <= 0.0 || letality > 100.0) {
-                    clearScreenSET();
+                    clear();
+                    ScreenSET();
                     System.out.println("Percentuale non valida. Reinserirla:");
                     System.out.println("(deve essere maggiore di 0)");
                     letality = Double.parseDouble(Input.nextLine());  
@@ -358,32 +438,56 @@ public class CommandLineMenu implements IMenu {
 
                 case(8):
                 // Età massima
-                clearScreenSET();
+                clear();
+                ScreenSET();
                 System.out.println("Inserire l'eta' massima (compresa tra 50 e 100) :");
                 int maxAge = Integer.parseInt(Input.nextLine());
                 while(maxAge < 50 || maxAge > 100) {
-                    clearScreenSET();
+                    clear();
+                    ScreenSET();
                     System.out.println("Eta' non valida. Reinserirla (compresa tra 50 e 100):");
                     maxAge = Integer.parseInt(Input.nextLine());  
                 }
                 config.maxAge = maxAge;
-                config.ageAverage = (config.maxAge + config.meanAge)/2;
                 break;
 
 
                 case(9):
                 // Età minima
-                clearScreenSET();
-                System.out.println("Inserire l'eta' minima (compresa tra 1 e 50) :");
-                int meanAge = Integer.parseInt(Input.nextLine());
-                while(meanAge < 1 || meanAge > 50) {
-                    clearScreenSET();
-                    System.out.println("Eta' non valida. Reinserirla (compresa tra 1 e 50):");
-                    meanAge = Integer.parseInt(Input.nextLine());  
+                clear();
+                ScreenSET();
+                System.out.println("Inserire l'eta' media (compresa tra 20 e 80) :");
+                int ageAverage = Integer.parseInt(Input.nextLine());
+                while(ageAverage < 20 || ageAverage > 80) {
+                    clear();
+                    ScreenSET();
+                    System.out.println("Eta' non valida. Reinserirla (compresa tra 20 e 80):");
+                    ageAverage = Integer.parseInt(Input.nextLine());  
                 }
-                config.meanAge = meanAge;
-                config.ageAverage = (config.maxAge + config.meanAge)/2;
+                config.ageAverage = ageAverage;
                 break;
+
+
+                /*case(10):
+                clear(); //TOGLIERE IL COMMENTO
+                ScreenSET();
+                System.out.println("Inserire l'altezza e la larghezza dello spazio grafico dove verrà visualizzata la simulazione");
+                System.out.println("(Valore consigliati: "+(int)Math.sqrt(config.populationNumber*2)+")");
+                System.out.println("Il prodotto devve essere compreso tra "+(config.populationNumber*10)+" e "+(config.populationNumber/10)+")");
+                System.out.print("Larghezza: "); int width = Integer.parseInt(Input.nextLine());
+                System.out.print("Altezza: "); int heigth = Integer.parseInt(Input.nextLine());
+                while((width*heigth > config.populationNumber*10)||(width*heigth < config.populationNumber/10)) {
+                    clear();
+                    ScreenSET();
+                    System.out.println("Parametri non validi. Reinserirli:");
+                    System.out.println("(Valore consigliati: "+(int)Math.sqrt(config.populationNumber*2)+")");
+                    System.out.println("Il prodotto delle due grandezze deve essere compreso tra "+(config.populationNumber*10)+" e "+(config.populationNumber/10)+")");
+                    System.out.print("Larghezza: "); width = Integer.parseInt(Input.nextLine());
+                    System.out.print("Altezza: "); heigth = Integer.parseInt(Input.nextLine());
+                }
+                // config.size[0] = width;  config.size[1] = heigth;
+                break;
+                */
 
 
                 case(0):
@@ -396,19 +500,30 @@ public class CommandLineMenu implements IMenu {
     @Override
     public void feedback(State state){
         System.out.println("GIORNO " + state.currentDay);
+
         if(state.unoPatientFound) System.out.println("Paziente zero trovato");
         else System.out.println("Paziente zero non ancora trovato");
-        System.out.println("Popolazione infetta " + state.totalInfected.size());
+
+        System.out.println("Popolazione sana " + state.getHealthyNumber());
+        System.out.println("Popolazione guarita " + state.getCuredNumber());
+
+        if(state.currentDay > 1) {
+        System.out.print("Popolazione infettata " + state.totalInfected.indexOf(state.totalInfected.size()-1));
+        System.out.println(" (" + (state.totalInfected.indexOf(state.totalInfected.size()-1)-state.totalInfected.indexOf(state.totalInfected.size()-2)) +" in più rispetto a ieri)");
+        }else System.out.print("Popolazione infettata " + state.totalInfected.indexOf(state.totalInfected.size()-1));
+
+        System.out.println("Morti " + state.getDeathsNumber());
         System.out.println("Risorse disponibili " + state.resources);
     }
 
     @Override
     public void finalFeedback(State state) {
         System.out.println("GIORNI PASSATI " + state.currentDay);
-        System.out.println("Popolazione infettata " + state.totalInfected.size());
+        System.out.println("Popolazione sana " + state.getHealthyNumber());
+        System.out.println("Popolazione guarita " + state.getCuredNumber());
+        System.out.println("Popolazione infettata " + state.totalInfected.indexOf(state.totalInfected.size()-1));
+        System.out.println("Morti " + state.getDeathsNumber());  
         System.out.println("Risorse rimaste " + state.resources);
     }
-
-
 
 }
