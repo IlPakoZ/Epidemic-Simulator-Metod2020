@@ -20,7 +20,7 @@ public class Simulation {
 
     private State currentState;
     private IMenu menu;
-    private IScenario scenario = new DefaultScenario();
+    private IScenario currentScenario = new DefaultScenario();
 
     /**
      * Costruttore della simulazione.
@@ -88,6 +88,7 @@ public class Simulation {
         currentState.startingPopulation = Rng.generatePopulation(currentState);
         currentState.startingPopulation[currentState.configs.populationNumber-1].setAsInfected();
         currentState.resources = currentState.configs.initialResources;
+        currentScenario.oneTimeAction(currentState);
         start();
     }
 
@@ -115,6 +116,7 @@ public class Simulation {
                     startTime = Instant.now();
                 }
             }
+            currentScenario.frameAction(currentState);
             frame++;
         }
         end();
@@ -174,6 +176,7 @@ public class Simulation {
         currentState.totalInfected.add(currentState.configs.populationNumber-currentState.greenIncubation-1);
         currentState.dailyInfected.add(currentState.totalInfected.get(currentState.totalInfected.size()-1) - currentState.totalInfected.get(currentState.totalInfected.size()-2));
         menu.feedback(currentState);
+        currentScenario.dailyAction(currentState);
         currentState.currentDay+=1;                                 //Controllare se l'incremento del giorno è nella posizione giusta (dovrebbe esserlo)
     }
 
