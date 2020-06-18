@@ -30,7 +30,13 @@ public class Config {
     // ----------------------------------------------------------------------------------------------
 
     public static final double SWAB_SUCCESS_RATE = 99;
+    public static final int DAILY_COST_IF_STATIONARY = 1;
+    public static final double INCUBATION_TO_YELLOW_DEADLINE = 1/6.0;
+    public static final double YELLOW_TO_RED_DEADLINE = 1/3.0;
+
     public boolean isValid;
+    public int incubationToYellowDeadline;  //Deve essere impostato a currentState.configs.diseaseDuration*Config.INCUBATION_TO_YELLOW_DEADLINE (facendo casting ad intero)
+    public int yellowToRedDeadline;         //Deve essere impostato a currentState.configs.diseaseDuration*Config.YELLOW_TO_RED_DEADLINE (facendo casting ad intero)
 
     /**
      * Se una configurazione è pronta per l'esecuzione,

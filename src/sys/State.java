@@ -24,6 +24,7 @@ public class State {
     public int currentDay = 0;
     public boolean defaultScenario = true;
     public HashMap<Pair<Integer, Integer>, ArrayList<Person>> space;
+    public int currentlyStationary = 0;
 
     // ---------------------------------------------------------------------------------
 

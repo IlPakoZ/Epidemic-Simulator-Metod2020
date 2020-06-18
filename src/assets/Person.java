@@ -1,10 +1,11 @@
 package assets;
 import javafx.util.Pair;
+import sun.misc.Unsafe;
+import sys.Config;
 import sys.Core.*;
 import sys.Rng;
 import sys.State;
 
-import java.math.BigInteger;
 import java.util.Random;
 
 public class Person {
@@ -59,34 +60,73 @@ public class Person {
     @ToRevise
     public void refresh() {
         if (movement == MovementStatus.STATIONARY){
-            currentState.subtractResources(1);
+            currentState.currentlyStationary+=1;
             if (dayToStop > -1) dayToStop--;
         }
         if (isInfected) {
             daysFromInfection = daysFromInfection + 1;
-            if (daysFromInfection == (currentState.configs.diseaseDuration / 6)) {
+            if (daysFromInfection == currentState.configs.incubationToYellowDeadline) {
                 makeOfColor(ColorStatus.YELLOW);
-            } else if (daysFromInfection == (currentState.configs.diseaseDuration / 3)) {
+            } else if (daysFromInfection == currentState.configs.yellowToRedDeadline) {
                 if (Rng.generateFortune(currentState.configs.sintomaticity, severityModifier)) {
+                    int toStop;
                     makeOfColor(ColorStatus.RED);
                     if (Rng.generateFortune(currentState.configs.letality, severityModifier)) {
                         dayOfDeath = ran.nextInt(currentState.configs.diseaseDuration - (daysFromInfection + 1) - 1) + daysFromInfection + 1;
+                        toStop = -1;
                     } else {
-                        dayToStop = currentState.configs.diseaseDuration-daysFromInfection;
+                        toStop = currentState.configs.diseaseDuration - daysFromInfection;
                     }
-                    currentState.subtractResources(3 * currentState.configs.swabsCost);
+                    try {
+                        setStationary(toStop);
+                    } catch (UnsafeMovementStatusChangeException ignored) {}    //Se si entra nel catch, allora l'errore probabilmente è stato generato
+                                                                                //a causa di una modifica proveniente dall'esterno non strutturata correttamente.
                 }
             } else if (daysFromInfection == dayOfDeath) {
                 makeOfColor(ColorStatus.BLACK);
             } else if (daysFromInfection == currentState.configs.diseaseDuration) {
                 makeOfColor(ColorStatus.BLUE);
-            } else if (color == ColorStatus.RED) {
-                currentState.subtractResources(3 * currentState.configs.swabsCost);
             }
         }
         if (dayToStop == 0) {
+            try {
+                setMoving();
+            } catch (UnsafeMovementStatusChangeException ignored) {}    //Se si entra nel catch, allora l'errore probabilmente è stato generato
+                                                                        //a causa di una modifica proveniente dall'esterno non strutturata correttamente.
+        }
+    }
+
+    /**
+     * Imposta l'attributo movement di Person a MovementStatus.STATIONARY per una certa
+     * durata "duration" espressa in giorni. Se la persona è già ferma, allora viene lanciata
+     * una eccezione, poiché il metodo non è stato usato correttamente.
+     * @param duration Indica il tempo (in giorni) per il quale la persona deve essere ferma.
+     *                 Se vale -1, allora la persona sarà ferma fino a modifica manuale
+     *                 del parametro.
+     *
+     */
+    @Ready
+    public void setStationary(int duration) throws UnsafeMovementStatusChangeException {
+        if (duration < -1) duration = -1;
+        if (movement == MovementStatus.STATIONARY) throw new UnsafeMovementStatusChangeException();
+        else {
+            dayToStop = duration;
+            movement = MovementStatus.STATIONARY;
+        }
+    }
+
+    /**
+     * Imposta l'attributo movement di Person a MovementStatus.MOVING.
+     * Se la persona è ferma e il suo movimento riprende prima di quanto stabilito
+     * nell'attributo "dayToStop", viene lanciata una eccezione, poiché il metodo
+     * non è stato usato correttamente.
+     */
+    @Ready
+    public void setMoving() throws UnsafeMovementStatusChangeException {
+        if (dayToStop > 0) throw new UnsafeMovementStatusChangeException();
+        else {
+            dayToStop = -1;
             movement = MovementStatus.MOVING;
-            dayToStop--;
         }
     }
 
@@ -108,7 +148,6 @@ public class Person {
                 this.color = ColorStatus.RED;
                 if (index != currentState.yellowRed) switchPerson(currentState.yellowRed);
                 currentState.yellowRed-=1;
-                movement = MovementStatus.STATIONARY;
                 break;
             case BLUE:
                 if (this.color==ColorStatus.YELLOW){
@@ -255,5 +294,42 @@ public class Person {
         }
         return new Pair<>(x*currentState.configs.velocity, -y*currentState.configs.velocity);
     }
+
+    static class UnsafeMovementStatusChangeException extends Exception{
+        UnsafeMovementStatusChangeException(){
+            super("Unsafe movement status change from external class.");
+        }
+    }
+
+    // ------------------------- DEBUGGING ---------------------------
+
+    @Debug
+    public void debugForceColor(ColorStatus color){
+        try {
+            switch (color) {
+                case YELLOW:
+                    setAsInfected();
+                    makeOfColor(ColorStatus.YELLOW);
+                    break;
+                case RED:
+                    debugForceColor(ColorStatus.YELLOW);
+                    makeOfColor(ColorStatus.RED);
+                    setStationary(currentState.configs.diseaseDuration - daysFromInfection);
+                    break;
+                case BLUE:
+                    debugForceColor(ColorStatus.RED);
+                    makeOfColor(ColorStatus.BLUE);
+                case BLACK:
+                    debugForceColor(ColorStatus.RED);
+                    makeOfColor(ColorStatus.BLACK);
+                    setStationary(-1);
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + color);
+            }
+        }catch (UnsafeMovementStatusChangeException ignored) {}
+    }
+
+
 }
 

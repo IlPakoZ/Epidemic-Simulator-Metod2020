@@ -11,6 +11,10 @@ public class Core {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.METHOD,ElementType.CONSTRUCTOR})
+    public @interface Debug{ boolean value() default true;}
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.METHOD,ElementType.CONSTRUCTOR})
     public @interface NotImplemented{ boolean value() default true;}
 
     @Retention(RetentionPolicy.RUNTIME)
@@ -46,12 +50,9 @@ public class Core {
         }
     }
 
-    public void debug() {
-        try {
-            sim.debug();
-        }catch (InterruptedException ex){
-            
-        }
+    public Simulation debug() {
+        sim.debug();
+        return sim;
     }
 
 }

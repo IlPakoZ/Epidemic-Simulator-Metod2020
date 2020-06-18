@@ -39,7 +39,7 @@ public class Rng {
         newPercent = percent + (percent*modifier/100);
         if (newPercent>100) newPercent = percent;
         double isItGonna = Math.random();
-        return isItGonna * 100 <= newPercent;
+        return isItGonna * 100 < newPercent;
     }
 
     /**

@@ -5,13 +5,20 @@ import sys.applications.CommandLineMenu;
 import java.awt.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Core x = new Core();
         CommandLineMenu c = new CommandLineMenu();
         x.newSimulation(new CommandLineMenu());
 
         //x.run();
-        x.debug();
+        Simulation simulation = x.debug();
+        State state = simulation.getCurrentState();
+        /*state.startingPopulation[0].debugForceColor(ColorStatus.BLACK);
+        state.startingPopulation[0].debugForceColor(ColorStatus.BLACK);
+        state.startingPopulation[0].debugForceColor(ColorStatus.BLACK);*/
+        state.startingPopulation[0].debugForceColor(ColorStatus.RED);
+        simulation.debugDisableInfections();
+        simulation.debugRun();
     /*
         State state = new State();
         state.configs = new Config();

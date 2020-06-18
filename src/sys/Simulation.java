@@ -39,23 +39,6 @@ public class Simulation {
         currentState.swabs = new HashSet<>();
     }
 
-    @Ready
-    public void debug() throws InterruptedException {
-        currentState.configs.populationNumber = 100000;
-        currentState.configs.infectivity = 10;
-        currentState.configs.letality = 20;
-        currentState.configs.sintomaticity = 20;
-        currentState.configs.swabsCost = 3;
-        currentState.configs.size = new Pair<>(500,500);
-        currentState.configs.initialResources = 100000;
-        currentState.configs.diseaseDuration = 50;
-        currentState.configs.ageAverage = 50;
-        currentState.configs.maxAge = 110;
-        currentState.startingPopulation = Rng.generatePopulation(currentState);
-        currentState.startingPopulation[currentState.configs.populationNumber-1].setAsInfected();
-        currentState.resources = currentState.configs.initialResources;
-        start();
-    }
     /**
      * Mostra il menù principale.
      * Serve all'utente per interfacciarsi alla simulazione
@@ -164,7 +147,6 @@ public class Simulation {
      */
     @ToRevise
     private void nextDay(){
-        //Potrei fare quella cosa degli indici anche qui?
         for (int i = currentState.redBlue; i > -1 ; i--)             //TODO: Controllare che gli indici siano giusti (voglio refreshare tutti tranne i verdi non incubati, blu e neri)
         {
             currentState.startingPopulation[i].refresh();
@@ -173,7 +155,9 @@ public class Simulation {
 
         currentState.totalInfected.add(currentState.configs.populationNumber-currentState.greenIncubation-1);
         currentState.dailyInfected.add(currentState.totalInfected.get(currentState.totalInfected.size()-1) - currentState.totalInfected.get(currentState.totalInfected.size()-2));
+        currentState.subtractResources(currentState.getSymptomaticNumber()*currentState.configs.swabsCost + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
         menu.feedback(currentState);
+        currentState.currentlyStationary = currentState.getDeathsNumber();
         currentScenario.dailyAction();
         currentState.currentDay+=1;                                 //Controllare se l'incremento del giorno è nella posizione giusta (dovrebbe esserlo)
     }
@@ -184,7 +168,7 @@ public class Simulation {
      * @param config    istanza di Config, contiene le configurazioni da cariare nella simulazione.
      */
     @ToRevise
-    void loadConfigs(Config config){
+    public void loadConfigs(Config config){
         currentState.configs.copy(config);
     }
 
@@ -193,9 +177,16 @@ public class Simulation {
      * @return      configurazioni attuali.
      */
     @ToRevise
-    Config getConfigs(){
+    public Config getConfigs(){
         return currentState.configs;
     }
+
+    /**
+     * Restituisce lo stato della simulazione corrente.
+     * @return      stato attuale.
+     */
+    @Ready
+    public State getCurrentState() {return currentState;}
 
     /**
      * Questo metodo prende in input due parametri: una prima persona
@@ -261,5 +252,34 @@ public class Simulation {
     @ToRevise
     private void end() {menu.finalFeedback(currentState);}
 
+    // ------------------------- DEBUGGING ---------------------------
+
+    @Debug
+    public void debug() {
+        currentState.configs.populationNumber = 100000;
+        currentState.configs.infectivity = 10;
+        currentState.configs.letality = 20;
+        currentState.configs.sintomaticity = 20;
+        currentState.configs.swabsCost = 3;
+        currentState.configs.size = new Pair<>(500,500);
+        currentState.configs.initialResources = 100000;
+        currentState.configs.diseaseDuration = 50;
+        currentState.configs.ageAverage = 50;
+        currentState.configs.maxAge = 110;
+        currentState.configs.incubationToYellowDeadline = (int)(currentState.configs.diseaseDuration*Config.INCUBATION_TO_YELLOW_DEADLINE);
+        currentState.configs.yellowToRedDeadline = (int)(currentState.configs.diseaseDuration*Config.YELLOW_TO_RED_DEADLINE);
+
+        currentState.startingPopulation = Rng.generatePopulation(currentState);
+        currentState.resources = currentState.configs.initialResources;
+    }
+
+    @Debug
+    public void debugRun() throws InterruptedException {
+        start();
+    }
+
+    public void debugDisableInfections() {
+        currentState.configs.infectivity = 0;
+    }
 
 }
