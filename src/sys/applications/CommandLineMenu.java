@@ -1,15 +1,12 @@
 package sys.applications;
 import sys.Config;
 import sys.Core.*;
-import sys.Simulation;
 import sys.State;
 import sys.models.IMenu;
-import sys.models.IScenario;
+import sys.models.Scenario;
 
 import java.util.Scanner;
-import java.io.Console;
-import java.io.IOException;
-import java.lang.Math; 
+import java.lang.Math;
 
 public class CommandLineMenu implements IMenu {
 
@@ -442,12 +439,12 @@ public class CommandLineMenu implements IMenu {
                 // Età massima
                 clear();
                 ScreenSET();
-                System.out.println("Inserire l'eta' massima (compresa tra 50 e 100) :");
+                System.out.println("Inserire l'eta' massima (compresa tra 50 e 100): ");
                 int maxAge = Integer.parseInt(Input.nextLine());
                 while(maxAge < 50 || maxAge > 100) {
                     clear();
                     ScreenSET();
-                    System.out.println("Eta' non valida. Reinserirla (compresa tra 50 e 100):");
+                    System.out.println("Eta' non valida. Reinserirla (compresa tra 50 e 100): ");
                     maxAge = Integer.parseInt(Input.nextLine());  
                 }
                 config.maxAge = maxAge;
@@ -509,10 +506,10 @@ public class CommandLineMenu implements IMenu {
         System.out.println("Popolazione sana " + state.getHealthyNumber());
         System.out.println("Popolazione guarita " + state.getCuredNumber());
 
-        if(state.currentDay > 1) {
-        System.out.print("Popolazione infettata " + state.totalInfected.indexOf(state.totalInfected.size()-1));
-        System.out.println(" (" + (state.totalInfected.indexOf(state.totalInfected.size()-1)-state.totalInfected.indexOf(state.totalInfected.size()-2)) +" in più rispetto a ieri)");
-        }else System.out.print("Popolazione infettata " + state.totalInfected.indexOf(state.totalInfected.size()-1));
+
+        System.out.print("Popolazione infettata " + state.totalInfected.get(state.totalInfected.size()-1));
+        System.out.println(" (" + state.dailyInfected.get(state.dailyInfected.size()-1) +" in più rispetto a ieri)");
+
 
         System.out.println("Morti " + state.getDeathsNumber());
         System.out.println("Risorse disponibili " + state.resources);
@@ -523,14 +520,14 @@ public class CommandLineMenu implements IMenu {
         System.out.println("GIORNI PASSATI " + state.currentDay);
         System.out.println("Popolazione sana " + state.getHealthyNumber());
         System.out.println("Popolazione guarita " + state.getCuredNumber());
-        System.out.println("Popolazione infettata " + state.totalInfected.indexOf(state.totalInfected.size()-1));
+        System.out.println("Popolazione infettata " + state.totalInfected.get(state.totalInfected.size()-1));
         System.out.println("Morti " + state.getDeathsNumber());  
         System.out.println("Risorse rimaste " + state.resources);
     }
 
     @NotImplemented
     @Override
-    public IScenario selectScenario() {
+    public Scenario selectScenario() {
         return null;
     }
 

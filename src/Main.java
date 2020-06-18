@@ -11,7 +11,7 @@ public class Main {
         x.newSimulation(new CommandLineMenu());
 
         //x.run();
-       // x.debug();
+        x.debug();
     /*
         State state = new State();
         state.configs = new Config();

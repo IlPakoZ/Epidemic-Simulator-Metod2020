@@ -1,25 +1,29 @@
 package sys.applications;
 
 import sys.Simulation;
-import sys.State;
 import sys.Core.*;
-import sys.models.IScenario;
+import sys.models.Scenario;
 
 
-public class DefaultScenario implements IScenario {
+public class DefaultScenario extends Scenario {
+
+    @Ready
+    public DefaultScenario(Simulation currentSimulation){
+        super(currentSimulation);
+    }
 
     //Non fa nulla
     @Ready
     @Override
-    public void oneTimeAction(Simulation currentSimulation) { }
+    public void oneTimeAction() { }
 
     //Non fa nulla
     @Ready
     @Override
-    public void dailyAction(Simulation currentSimulation) { }
+    public void dailyAction() { }
 
     //Non fa nulla
     @Ready
     @Override
-    public void frameAction(Simulation currentSimulation) { }
+    public void frameAction() { }
 }

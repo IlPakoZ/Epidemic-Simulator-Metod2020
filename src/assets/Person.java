@@ -4,6 +4,7 @@ import sys.Core.*;
 import sys.Rng;
 import sys.State;
 
+import java.math.BigInteger;
 import java.util.Random;
 
 public class Person {
@@ -17,7 +18,7 @@ public class Person {
     public ColorStatus color = ColorStatus.GREEN;
     public MovementStatus movement = MovementStatus.MOVING;
     private int dayOfDeath = -1;
-    private int dayToStop = 0;
+    private int dayToStop = -1;                     //Indica che la persona o è sempre ferma o è sempre in movimento
     private int daysFromInfection = -1;
     private double severityModifier = 1;
     private double infectivityModifier = 1;
@@ -59,6 +60,7 @@ public class Person {
     public void refresh() {
         if (movement == MovementStatus.STATIONARY){
             currentState.subtractResources(1);
+            if (dayToStop > -1) dayToStop--;
         }
         if (isInfected) {
             daysFromInfection = daysFromInfection + 1;
@@ -81,6 +83,10 @@ public class Person {
             } else if (color == ColorStatus.RED) {
                 currentState.subtractResources(3 * currentState.configs.swabsCost);
             }
+        }
+        if (dayToStop == 0) {
+            movement = MovementStatus.MOVING;
+            dayToStop--;
         }
     }
 
@@ -112,7 +118,6 @@ public class Person {
                 } else {
                     if (index != currentState.redBlue) switchPerson(currentState.redBlue);
                 }
-                movement = MovementStatus.MOVING;
                 currentState.redBlue-=1;
                 isInfected = false;
                 this.color = ColorStatus.BLUE;
@@ -123,7 +128,6 @@ public class Person {
                 switchPerson(currentState.blueBlack);           //Anche qui è più raro che accada
                 currentState.blueBlack-=1;
                 currentState.redBlue-=1;
-                movement = MovementStatus.STATIONARY;
                 isInfected = false;
                 break;
             default:
