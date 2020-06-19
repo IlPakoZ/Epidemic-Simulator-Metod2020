@@ -25,7 +25,7 @@ public class Config {
     public double velocity = 2;
     public int socialDistance;
     boolean masks = false;
-    public int frameADay = 12;
+    public int frameADay = 15;
 
     // ----------------------------------------------------------------------------------------------
 

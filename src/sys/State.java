@@ -1,7 +1,8 @@
 package sys;
 
 import assets.Person;
-import javafx.util.Pair;
+
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +24,7 @@ public class State {
     public ArrayList<Integer> dailyInfected;
     public int currentDay = 0;
     public boolean defaultScenario = true;
-    public HashMap<Pair<Integer, Integer>, ArrayList<Person>> space;
+    public PersonList[][] space;
     public int currentlyStationary = 0;
 
     // ---------------------------------------------------------------------------------
@@ -71,6 +72,14 @@ public class State {
     @Ready
     public int getDeathsNumber(){
         return configs.populationNumber-blueBlack-1;
+    }
+
+    @Ready
+    public int getCurrentAgeAverage(int startIndex, int endIndex) {
+        int totalAge = 0;
+        if ((endIndex > configs.populationNumber) || (startIndex < 0)) throw new InvalidParameterException("Illegal parameter.");
+        for (int i=startIndex; i< endIndex; i++) totalAge+= startingPopulation[i].getAge();
+        return totalAge/ (endIndex-startIndex);
     }
 
 }

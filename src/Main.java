@@ -16,8 +16,9 @@ public class Main {
         /*state.startingPopulation[0].debugForceColor(ColorStatus.BLACK);
         state.startingPopulation[0].debugForceColor(ColorStatus.BLACK);
         state.startingPopulation[0].debugForceColor(ColorStatus.BLACK);*/
-        state.startingPopulation[0].debugForceColor(ColorStatus.RED);
-        simulation.debugDisableInfections();
+        //state.startingPopulation[0].debugForceColor(ColorStatus.RED);
+        state.startingPopulation[0].debugForceColor(ColorStatus.YELLOW);
+        //simulation.debugDisableInfections();
         simulation.debugRun();
     /*
         State state = new State();

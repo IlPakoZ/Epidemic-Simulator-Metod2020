@@ -13,8 +13,8 @@ public class Person {
     private State currentState;
     private int age;
     private int index;
-    Pair<Double, Double> position;                  //x, y
-    private Pair<Double, Double> speed;             //horizontalSpeed, verticalSpeed
+    private double x, y;                      //x, y
+    private double speedX, speedY;            //horizontalSpeed, verticalSpeed
     public boolean contact = false;
     public ColorStatus color = ColorStatus.GREEN;
     public MovementStatus movement = MovementStatus.MOVING;
@@ -39,8 +39,11 @@ public class Person {
         this.age = age;
         this.index = index;
         this.currentState = currentState;
-        this.speed = getRandomSpeed();
-        this.position = new Pair<>((double)ran.nextInt(currentState.configs.size.getKey()), (double)ran.nextInt(currentState.configs.size.getValue()));
+        Pair<Double, Double> speed = getRandomSpeed();
+        speedX = speed.getKey();
+        speedY = speed.getValue();
+        this.x = ran.nextInt(currentState.configs.size.getKey());
+        this.y = ran.nextInt(currentState.configs.size.getValue());
     }
 
     /**
@@ -136,9 +139,9 @@ public class Person {
      *
      * @param color     colore di destinazione
      */
-    @ToRevise
-    private void makeOfColor(ColorStatus color){
-        switch (color){
+            @ToRevise
+            private void makeOfColor(ColorStatus color){
+                switch (color){
             case YELLOW:
                 this.color = ColorStatus.YELLOW;
                 if (index != currentState.incubationYellow) switchPerson(currentState.incubationYellow);
@@ -255,33 +258,45 @@ public class Person {
         return infectivityModifier;
     }
 
-
-
-    public Pair<Integer, Integer> getPosition() {
-        return new Pair<>(position.getKey().intValue(),position.getValue().intValue());
+    /**
+     * Restituisce l'attributo age
+     * @return restituisce l'attributo age
+     */
+    @Ready
+    public int getAge(){
+        return age;
     }
 
+    @Ready
+    public Pair<Integer, Integer> getPosition() {
+        return new Pair<>((int)x, (int)y);
+    }
+
+    @Ready
     public Pair<Integer,Integer> nextPosition() {
         if (movement == MovementStatus.MOVING) {
             if (contact) {
                 Pair<Double, Double> speedA = getRandomSpeed();
-                speed = new Pair<>(Math.copySign(speedA.getKey(), -speed.getKey()), Math.copySign(speedA.getValue(), -speed.getKey()));
+                speedX = Math.copySign(speedA.getKey(), -speedX);
+                speedY = Math.copySign(speedA.getValue(), -speedY);
                 contact = false;
             }
-            double newSpeedX = speed.getKey();
-            double newSpeedY = speed.getValue();
+            double newSpeedX = speedX;
+            double newSpeedY = speedY;
 
             boolean changed = false;
-            if ((position.getKey() + newSpeedX <= 0) || (position.getKey() + newSpeedX > currentState.configs.size.getKey())) {
+            if ((x + newSpeedX <= 0) || (x + newSpeedX >= currentState.configs.size.getKey())) {
                 changed = true;
                 newSpeedX = -newSpeedX;
             }
-            if ((position.getValue() + newSpeedY <= 0) || (position.getValue() + newSpeedY > currentState.configs.size.getValue())) {
+            if ((y + newSpeedY <= 0) || (y + newSpeedY >= currentState.configs.size.getValue())) {
                 changed = true;
                 newSpeedY = -newSpeedY;
             }
-            if (changed) speed = new Pair<>(newSpeedX, newSpeedY);
-            position = new Pair<>(position.getKey() + newSpeedX, position.getValue() + newSpeedY);
+            if (changed) {speedX = newSpeedX; speedY = newSpeedY;}
+
+            x += newSpeedX;
+            y += newSpeedY;
         }
         return getPosition();
     }
@@ -310,10 +325,12 @@ public class Person {
                 case YELLOW:
                     setAsInfected();
                     makeOfColor(ColorStatus.YELLOW);
+                    daysFromInfection = currentState.configs.diseaseDuration/6;
                     break;
                 case RED:
                     debugForceColor(ColorStatus.YELLOW);
                     makeOfColor(ColorStatus.RED);
+                    daysFromInfection = currentState.configs.diseaseDuration/3;
                     setStationary(currentState.configs.diseaseDuration - daysFromInfection);
                     break;
                 case BLUE:

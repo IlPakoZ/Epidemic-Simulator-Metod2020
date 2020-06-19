@@ -112,17 +112,22 @@ public class Simulation {
      */
     @ToRevise
     private boolean loop() {
-        currentState.space = new HashMap<>();
+
+        currentState.space = new PersonList[currentState.configs.size.getKey()][currentState.configs.size.getValue()];
         for (int i=currentState.incubationYellow+1;i<=currentState.redBlue;i++){
             Pair<Integer, Integer> position = currentState.startingPopulation[i].nextPosition();
-            currentState.space.putIfAbsent(position, new ArrayList<>());
-            currentState.space.get(position).add(currentState.startingPopulation[i]);
+            if (currentState.space[position.getKey()][position.getValue()] == null){
+                currentState.space[position.getKey()][position.getValue()] = new PersonList();
+            }
+            currentState.space[position.getKey()][position.getValue()].addElement(currentState.startingPopulation[i]);
         }
+
         if (currentState.redBlue - currentState.incubationYellow != 0) {
             for (int i = currentState.greenIncubation; i > -1; i--) {
                 Person person = currentState.startingPopulation[i];
-                if (currentState.space.containsKey(person.nextPosition())) {
-                    for (Person contatto : currentState.space.get(person.getPosition())) {
+                Pair<Integer,Integer> newPosition = person.nextPosition();
+                if (currentState.space[newPosition.getKey()][newPosition.getValue()] != null) {
+                    for (Person contatto : currentState.space[newPosition.getKey()][newPosition.getValue()]) {
                         contact(contatto, person);
                     }
                 }
@@ -155,7 +160,7 @@ public class Simulation {
 
         currentState.totalInfected.add(currentState.configs.populationNumber-currentState.greenIncubation-1);
         currentState.dailyInfected.add(currentState.totalInfected.get(currentState.totalInfected.size()-1) - currentState.totalInfected.get(currentState.totalInfected.size()-2));
-        currentState.subtractResources(currentState.getSymptomaticNumber()*currentState.configs.swabsCost + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
+        currentState.subtractResources(currentState.getSymptomaticNumber()*currentState.configs.swabsCost*3 + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
         menu.feedback(currentState);
         currentState.currentlyStationary = currentState.getDeathsNumber();
         currentScenario.dailyAction();
@@ -256,7 +261,7 @@ public class Simulation {
 
     @Debug
     public void debug() {
-        currentState.configs.populationNumber = 100000;
+        currentState.configs.populationNumber = 200000;
         currentState.configs.infectivity = 10;
         currentState.configs.letality = 20;
         currentState.configs.sintomaticity = 20;
@@ -271,6 +276,9 @@ public class Simulation {
 
         currentState.startingPopulation = Rng.generatePopulation(currentState);
         currentState.resources = currentState.configs.initialResources;
+        System.out.println(currentState.getCurrentAgeAverage(0, currentState.getCurrentAgeAverage(0,currentState.configs.populationNumber)));
+
+
     }
 
     @Debug
@@ -278,6 +286,7 @@ public class Simulation {
         start();
     }
 
+    @Debug
     public void debugDisableInfections() {
         currentState.configs.infectivity = 0;
     }
