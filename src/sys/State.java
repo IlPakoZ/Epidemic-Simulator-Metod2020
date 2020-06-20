@@ -27,6 +27,7 @@ public class State {
     public boolean defaultScenario = true;
     public PersonList[][] space;
     public int currentlyStationary = 0;
+    public Queue<Person> swabPersons;
 
     // ---------------------------------------------------------------------------------
 

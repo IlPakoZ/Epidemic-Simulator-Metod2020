@@ -10,9 +10,9 @@ public class Config {
     public int populationNumber;
     public int initialResources;
     public int swabsCost;
-    public double infectivity;
-    public double sintomaticity;
-    public double letality;
+    public int infectivity;
+    public int sintomaticity;
+    public int letality;
     public int diseaseDuration;
     public int maxAge;
     public Pair<Integer,Integer> size;              // width, height
@@ -72,4 +72,166 @@ public class Config {
     void validate(boolean status){
         isValid = status;
     }
+
+    /**
+     * Controlla se il numero della popolazione in input
+     * è regolare ed entro i limiti del programma, se si,
+     * inserisce il dato e restituisce true, altrimenti
+     * restituisce false.
+     *
+     * @param number   input populationNumber
+     * @return
+     */
+    public boolean setPopulationNumber(int number){
+        if (number > 100000 || number <= 1){
+            return false;
+        }
+        populationNumber = number;
+        return true;
+    }
+
+    /**
+     * Quando richiamata, restituisce il parametro
+     * del numero della popolazione.
+     *
+     * @return
+     */
+    public int getPopulationNumber(){
+        return populationNumber;
+    }
+
+    /**
+     * Controlla se la durata della malattia in input
+     * è regolare ed entro i limiti del programma, se si,
+     * inserisce il dati e restituisce true, altrimenti
+     * restituisce false.
+     *
+     * @param number   input diseaseDuration
+     * @return
+     */
+    public boolean setDiseaseDuration(int number){
+        if (number > 90 || number <=0){
+            return false;
+        }
+        diseaseDuration = number;
+        return true;
+    }
+
+    /**
+     *  Quando richiamata, restituisce il paramentro
+     *  della durata della malattia.
+     * @return
+     */
+    public int getDiseaseDuration(){
+        return diseaseDuration;
+    }
+
+    /**
+     * Controlla se le risorse iniziali in input
+     * sono regolari ed entro i limiti del programma, se si,
+     * inserisce il dato e restituisce true, altrimenti
+     * restituisce false.
+     *
+     * @param number  input initialResources
+     * @return
+     */
+    public boolean setInitialResources(int number){
+        if (number >= (populationNumber * diseaseDuration) || number <= 0){
+            return false;
+        }
+        initialResources = number;
+        return true;
+    }
+
+    /**
+     *  Quando richiamata, restituisce il paramentro
+     *  delle risorse iniziali.
+     *
+     * @return
+     */
+    public int getInitialResources(){
+        return initialResources;
+    }
+
+    /**
+     * Controlla se il costo del tampone in input
+     * è regolare ed entro i limiti del programma, se si,
+     * inserisce il dato e restituisce true, altrimenti
+     * restituisce false.
+     *
+     * @param number  input swabsCost
+     * @return
+     */
+    public boolean setSwabsCost(int number){
+        if (number <= (initialResources/(populationNumber*10))){
+            return false;
+        }
+        swabsCost = number;
+        return true;
+    }
+
+    /**
+     *  Quando richiamata, restituisce il paramentro
+     *  del costo del tampone.
+     *
+     * @return
+     */
+    public int getSwabsCost(){
+        return swabsCost;
+    }
+
+    /**
+     * Controlla se la percentuale di infettività
+     * è regolare ed entro i limiti del programma, se si,
+     * inserisce il dato e restituisce true, altrimenti
+     * restituisce false.
+     *
+     * @param number  input infectivity
+     * @return
+     */
+    public boolean setInfectivity(int number){
+        if (number <= 0.0 || number > 100.0){
+            return false;
+        }
+        infectivity = number;
+        return true;
+    }
+
+    /**
+     *  Quando richiamata, restituisce il paramentro
+     *  dell'infettività.
+     *
+     * @return
+     */
+    public int getInfectivity(){
+        return infectivity;
+    }
+
+    /**
+     * Controlla se la percentuale di sintomaticità
+     * è regolare ed entro i limiti del programma, se si,
+     * inserisce il dato e restituisce true, altrimenti
+     * restituisce false.
+     *
+     * @param number  input sintomaticity
+     * @return
+     */
+    public boolean setSintomaticity(int number){
+        if (number <= 0.0 || number > 100.0){
+            return false;
+        }
+        sintomaticity = number;
+        return true;
+    }
+
+    /**
+     *  Quando richiamata, restituisce il paramentro
+     *  della sintomacity.
+     *
+     * @return
+     */
+    public int getSintomaticity(){
+        return sintomaticity;
+    }
+
 }

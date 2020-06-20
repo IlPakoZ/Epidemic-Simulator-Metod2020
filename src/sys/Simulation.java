@@ -18,7 +18,7 @@ public class Simulation {
 
     private State currentState;
     private IMenu menu;
-    private Scenario currentScenario = new DefaultScenario(this);
+    private CustomScenario currentScenario = new CustomScenario(this);
 
     /**
      * Costruttore della simulazione.
@@ -37,6 +37,7 @@ public class Simulation {
         currentState.dailyInfected = new ArrayList<>();
         currentState.contacts = new HashMap<>();
         currentState.swabs = new HashSet<>();
+        currentScenario.addScenario(new DefaultScenario(this));
     }
 
     /**
@@ -99,6 +100,7 @@ public class Simulation {
             }
             currentScenario.frameAction();
             frame++;
+            if (currentState.currentDay==150) going = false;
         }
         end();
     }
@@ -115,19 +117,19 @@ public class Simulation {
 
         currentState.space = new PersonList[currentState.configs.size.getKey()][currentState.configs.size.getValue()];
         for (int i=currentState.incubationYellow+1;i<=currentState.redBlue;i++){
-            Pair<Integer, Integer> position = currentState.startingPopulation[i].nextPosition();
-            if (currentState.space[position.getKey()][position.getValue()] == null){
-                currentState.space[position.getKey()][position.getValue()] = new PersonList();
+            int[] position = currentState.startingPopulation[i].nextPosition();
+            if (currentState.space[position[0]][position[1]] == null){
+                currentState.space[position[0]][position[1]] = new PersonList();
             }
-            currentState.space[position.getKey()][position.getValue()].addElement(currentState.startingPopulation[i]);
+            currentState.space[position[0]][position[1]].addElement(currentState.startingPopulation[i]);
         }
 
         if (currentState.redBlue - currentState.incubationYellow != 0) {
             for (int i = currentState.greenIncubation; i > -1; i--) {
                 Person person = currentState.startingPopulation[i];
-                Pair<Integer,Integer> newPosition = person.nextPosition();
-                if (currentState.space[newPosition.getKey()][newPosition.getValue()] != null) {
-                    for (Person contatto : currentState.space[newPosition.getKey()][newPosition.getValue()]) {
+                int[] position = person.nextPosition();
+                if (currentState.space[position[0]][position[1]] != null) {
+                    for (Person contatto : currentState.space[position[0]][position[1]]) {
                         contact(contatto, person);
                     }
                 }
@@ -194,6 +196,30 @@ public class Simulation {
     public State getCurrentState() {return currentState;}
 
     /**
+     * Fa il tampone alle persone scelte per quel determinato giorno e, se una di queste
+     * risulta positivo, aggiunge alla coda le persone con cui è entrata in contatto.
+     *
+     * @param percent   percentuale di fare il tampone ad una persona.
+     *
+     */
+
+    @ToRevise
+    public void swabQueue(double percent){
+        int oldSize = currentState.swabPersons.getSize();
+        for (int i = 0; i < oldSize; i++) {
+            Person x = currentState.swabPersons.dequeue();
+            if (Rng.generateFortune(percent, 1)) {
+                if (doSwab(x)) {
+                    for (Person person : currentState.contacts.get(x)) {
+                        if (!currentState.swabs.contains(person))
+                            currentState.swabPersons.enqueue(person);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Questo metodo prende in input due parametri: una prima persona
      * (quella sana) e una seconda persona (quella contagiata). Questo metodo
      * si occupa innanzitutto di richiamare i metodi della classe Rng per
@@ -249,29 +275,6 @@ public class Simulation {
      }
 
     /**
-     * Fa il tampone alle persone scelte per quel determinato giorno e, se una di queste
-     * risulta positivo, aggiunge alla coda le persone con cui è entrata in contatto.
-     *
-     * @param percent   percentuale di fare il tampone ad una persona.
-     *
-     */
-    @NotImplemented
-    public void swabQueue(double percent){
-        Queue<Person> nextDay = new Queue<>();
-        for (int i = 0; i < currentState.swabPersons.getSize(); i++) {
-            Person x = currentState.swabPersons.dequeue();
-            if (Rng.generateFortune(percent, 1) && doSwab(x)) {
-                for (int j = 0; j < currentState.contacts.get(x).size(); j++) {
-                    if (!currentState.swabs.contains(currentState.contacts.get(x).get(j)))
-                        nextDay.enqueue(currentState.contacts.get(x).get(j));
-                }
-            }
-        }
-        for (int i = 0; i < nextDay.getSize(); i++)
-            currentState.swabPersons.enqueue(nextDay.dequeue());
-    }
-
-    /**
      * Termina la simulazione ed esegue le operazioni finali.
      * Mostra a schermo i risultati. Della visualizzazione dei
      * risultati e delle statistiche finali si occupa la classe
@@ -284,7 +287,7 @@ public class Simulation {
 
     @Debug
     public void debug() {
-        currentState.configs.populationNumber = 200000;
+        currentState.configs.populationNumber = 100000;
         currentState.configs.infectivity = 10;
         currentState.configs.letality = 20;
         currentState.configs.sintomaticity = 20;

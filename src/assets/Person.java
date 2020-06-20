@@ -1,7 +1,5 @@
 package assets;
 import javafx.util.Pair;
-import sun.misc.Unsafe;
-import sys.Config;
 import sys.Core.*;
 import sys.Rng;
 import sys.State;
@@ -268,12 +266,12 @@ public class Person {
     }
 
     @Ready
-    public Pair<Integer, Integer> getPosition() {
-        return new Pair<>((int)x, (int)y);
+    public int[] getPosition() {
+        return new int[]{(int)x, (int)y};
     }
 
     @Ready
-    public Pair<Integer,Integer> nextPosition() {
+    public int[] nextPosition() {
         if (movement == MovementStatus.MOVING) {
             if (contact) {
                 Pair<Double, Double> speedA = getRandomSpeed();
