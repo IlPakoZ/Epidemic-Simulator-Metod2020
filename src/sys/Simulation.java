@@ -272,30 +272,7 @@ public class Simulation {
          }
          return result;
      }
-
-    /**
-     * Fa il tampone alle persone scelte per quel determinato giorno e, se una di queste
-     * risulta positivo, aggiunge alla coda le persone con cui è entrata in contatto.
-     *
-     * @param percent   percentuale di fare il tampone ad una persona.
-     *
-     */
-    @NotImplemented
-    public void swabQueue(double percent){
-        Queue<Person> nextDay = new Queue<>();
-        for (int i = 0; i < currentState.swabPersons.getSize(); i++) {
-            Person x = currentState.swabPersons.dequeue();
-            if (Rng.generateFortune(percent, 1) && doSwab(x)) {
-                for (int j = 0; j < currentState.contacts.get(x).size(); j++) {
-                    if (!currentState.swabs.contains(currentState.contacts.get(x).get(j)))
-                        nextDay.enqueue(currentState.contacts.get(x).get(j));
-                }
-            }
-        }
-        for (int i = 0; i < nextDay.getSize(); i++)
-            currentState.swabPersons.enqueue(nextDay.dequeue());
-    }
-
+     
     /**
      * Termina la simulazione ed esegue le operazioni finali.
      * Mostra a schermo i risultati. Della visualizzazione dei
