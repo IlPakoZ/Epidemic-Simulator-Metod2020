@@ -10,6 +10,7 @@ import java.lang.Math;
 
 public class CommandLineMenu implements IMenu {
 
+
     public void clear() {
         for(int i=0; i<50; i++) System.out.println();
     }
@@ -43,6 +44,20 @@ public class CommandLineMenu implements IMenu {
         System.out.println("10 - Larghezza e Altezza dello spazio grafico della simulazione");
         System.out.println("0 - Per uscire");
     }
+
+    
+    public void ScreenSEN() {
+        System.out.println("MENU' SCENARIO");
+        System.out.println("#");
+        System.out.println("#");
+        System.out.println("Scegli una strategia per contrastare il virus:");
+        System.out.println("0 - Strategia di default");
+        System.out.println("1 - Tamponi casuali sulle persone ogni giorno");
+        System.out.println("2 - Tamponi sui contatti delle persone risultate positive al tampone");
+        System.out.println("3 - In modo casuale, vengono fermate persone per un tempo limitato");
+        System.out.println("4 - Tutta la popolazione, o una parte, usa le mascherine (maggior consumo di risorse)");
+    }
+    
 
     @Override
     public int show() { 
@@ -89,6 +104,8 @@ public class CommandLineMenu implements IMenu {
             diseaseDuration = Integer.parseInt(Input.nextLine());  
         }
         config.diseaseDuration = diseaseDuration;
+        config.incubationToYellowDeadline = (int) (diseaseDuration * config.INCUBATION_TO_YELLOW_DEADLINE);
+        config.yellowToRedDeadline = (int) (diseaseDuration * config.YELLOW_TO_RED_DEADLINE);
         // Risorse iniziali
         clear();
         ScreenFI();
@@ -307,6 +324,8 @@ public class CommandLineMenu implements IMenu {
                     diseaseDuration = Integer.parseInt(Input.nextLine());  
                 }
                 config.diseaseDuration = diseaseDuration;
+                config.incubationToYellowDeadline = (int) (diseaseDuration * config.INCUBATION_TO_YELLOW_DEADLINE);
+                config.yellowToRedDeadline = (int) (diseaseDuration * config.YELLOW_TO_RED_DEADLINE);
                 // cambiando la durata della malattia controllo se il numero delle risorse iniziali
                 // sia ancora buono
                 if(config.initialResources > config.populationNumber * config.diseaseDuration) {
@@ -513,10 +532,12 @@ public class CommandLineMenu implements IMenu {
 
         System.out.println("Morti " + state.getDeathsNumber());
         System.out.println("Risorse disponibili " + state.resources);
+        System.out.println("\n\n");
     }
 
     @Override
     public void finalFeedback(State state) {
+        System.out.println("SIMULAZIONE TERMINATA. Resoconto finale:");
         System.out.println("GIORNI PASSATI " + state.currentDay);
         System.out.println("Popolazione sana " + state.getHealthyNumber());
         System.out.println("Popolazione guarita " + state.getCuredNumber());
@@ -525,9 +546,48 @@ public class CommandLineMenu implements IMenu {
         System.out.println("Risorse rimaste " + state.resources);
     }
 
+    
     @NotImplemented
     @Override
-    public Scenario selectScenario() {
+    public Scenario selectScenario() {   // BOZZA. DA MIGLIORARE
+        Scanner Input = new Scanner(System.in);
+
+        clear();
+        ScreenSEN();
+        System.out.print("Digita il numero dello scenario da attivare: ");
+        int action = Integer.parseInt(Input.nextLine());
+        while(action < 0 && action > 4) {
+            clear();
+            ScreenSEN();
+            System.out.print("Valore non valido. Reinserirlo: ");
+            action = Integer.parseInt(Input.nextLine());
+        }
+
+        switch(action){
+            case 0:
+            return null;
+
+            case 1:
+            // Scenario1 new_scen = new Scenario1()
+            // return new_scen
+            return null;
+
+            case 2:
+            // Scenario2 new_scen = new Scenario2()
+            // return new_scen
+            return null;
+
+            case 3:
+            // Scenario2 new_scen = new Scenario2()
+            // return new_scen
+            return null;
+
+            case 4:
+            // Scenario2 new_scen = new Scenario2()
+            // return new_scen
+            return null;
+        }
+
         return null;
     }
 
