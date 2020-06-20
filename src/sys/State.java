@@ -18,7 +18,6 @@ public class State {
     public HashMap<Person, ArrayList<Person>> contacts;     // Infected person, {set of people met}
     public HashSet<Person> swabs;                           // If present, the person represented by the instance
                                                             // is positive to the swab
-    public Queue<Person> swabPersons;
     public boolean unoPatientFound = false;
     public SimulationStatus status = SimulationStatus.NOT_YET_STARTED;     // Simulation status
     public ArrayList<Integer> totalInfected;

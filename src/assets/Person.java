@@ -137,9 +137,9 @@ public class Person {
      *
      * @param color     colore di destinazione
      */
-            @ToRevise
-            private void makeOfColor(ColorStatus color){
-                switch (color){
+    @ToRevise
+    private void makeOfColor(ColorStatus color){
+        switch (color){
             case YELLOW:
                 this.color = ColorStatus.YELLOW;
                 if (index != currentState.incubationYellow) switchPerson(currentState.incubationYellow);
@@ -147,6 +147,7 @@ public class Person {
                 break;
             case RED:
                 this.color = ColorStatus.RED;
+                currentState.swabs.add(this);
                 if (index != currentState.yellowRed) switchPerson(currentState.yellowRed);
                 currentState.yellowRed-=1;
                 break;

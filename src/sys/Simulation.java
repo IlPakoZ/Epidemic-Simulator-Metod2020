@@ -18,7 +18,7 @@ public class Simulation {
 
     private State currentState;
     private IMenu menu;
-    private CustomScenario currentScenario = new CustomScenario(this);
+    private Scenario currentScenario = new DefaultScenario(this);
 
     /**
      * Costruttore della simulazione.
@@ -37,7 +37,6 @@ public class Simulation {
         currentState.dailyInfected = new ArrayList<>();
         currentState.contacts = new HashMap<>();
         currentState.swabs = new HashSet<>();
-        currentScenario.addScenario(new DefaultScenario(this));
     }
 
     /**
@@ -60,7 +59,7 @@ public class Simulation {
                     //Mostra il menù delle opzioni
                     break;
                 case 3:
-                    currentScenario = menu.selectScenario();
+                    currentScenario = menu.selectScenario(this);
                     state = 1;
                     //Mostra il menù di scelta dello scenario
                 default:
@@ -196,13 +195,37 @@ public class Simulation {
     public State getCurrentState() {return currentState;}
 
     /**
+     * Restituisce lo scenario attualmente in uso.
+     * @return      scenario attuale
+     */
+    @Ready
+    public Scenario getCurrentScenario() {return currentScenario;}
+
+    /**
+     * Controlla se lo scenario passato come parametro
+     * è attivo nella simulazione corrente.
+     *
+     * @param scenario  scenario da controllare.
+     * @return          true se attivo, false altrimenti.
+     */
+    @Ready
+    public boolean isScenarioEnabled(Scenario scenario){
+        if (currentScenario instanceof DefaultScenario){
+            return scenario == null;
+        }
+        else if (currentScenario instanceof CustomScenario) {
+            return ((CustomScenario) currentScenario).containsScenario(scenario.getID());
+        }
+        return false;
+    }
+
+    /**
      * Fa il tampone alle persone scelte per quel determinato giorno e, se una di queste
      * risulta positivo, aggiunge alla coda le persone con cui è entrata in contatto.
      *
      * @param percent   percentuale di fare il tampone ad una persona.
      *
      */
-
     @ToRevise
     public void swabQueue(double percent){
         int oldSize = currentState.swabPersons.getSize();
@@ -253,7 +276,7 @@ public class Simulation {
      * Il tampone verrà usato o meno in base allo scenario che si sceglie.
      * @param p1    persona a cui sottoporre il tampone.
      */
-     @NotImplemented
+     @ToRevise
      public boolean doSwab(Person p1){
          boolean result = false;
          currentState.subtractResources(currentState.configs.swabsCost);
@@ -303,8 +326,6 @@ public class Simulation {
         currentState.startingPopulation = Rng.generatePopulation(currentState);
         currentState.resources = currentState.configs.initialResources;
         System.out.println(currentState.getCurrentAgeAverage(0, currentState.getCurrentAgeAverage(0,currentState.configs.populationNumber)));
-
-
     }
 
     @Debug

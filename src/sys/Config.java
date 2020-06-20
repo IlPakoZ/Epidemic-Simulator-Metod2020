@@ -1,6 +1,7 @@
 package sys;
 
 import javafx.util.Pair;
+import sys.Core.*;
 
 public class Config {
 
@@ -25,7 +26,7 @@ public class Config {
     public double velocity = 2;
     public int socialDistance;
     boolean masks = false;
-    public int frameADay = 15;
+    public int frameADay = 30;
 
     // ----------------------------------------------------------------------------------------------
 
@@ -82,6 +83,7 @@ public class Config {
      * @param number   input populationNumber
      * @return
      */
+    @ToRevise
     public boolean setPopulationNumber(int number){
         if (number > 100000 || number <= 1){
             return false;
@@ -107,8 +109,9 @@ public class Config {
      * restituisce false.
      *
      * @param number   input diseaseDuration
-     * @return
+     * @return         true se il valore è nel formato corretto, false altrimenti.
      */
+    @ToRevise
     public boolean setDiseaseDuration(int number){
         if (number > 90 || number <=0){
             return false;
@@ -216,6 +219,7 @@ public class Config {
      * @param number  input sintomaticity
      * @return
      */
+
     public boolean setSintomaticity(int number){
         if (number <= 0.0 || number > 100.0){
             return false;

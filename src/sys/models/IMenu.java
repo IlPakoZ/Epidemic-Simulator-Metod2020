@@ -1,5 +1,6 @@
 package sys.models;
 
+import sys.Simulation;
 import sys.State;
 import sys.Config;
 import sys.applications.CustomScenario;
@@ -70,6 +71,6 @@ public interface IMenu {
      * @return un oggetto di una classe che implementa IScenario in base
      *         alla scelta dell'utente.
      */
-    CustomScenario selectScenario();
+    Scenario selectScenario(Simulation simulation);
 
 }

@@ -9,6 +9,7 @@ public class Main {
         Core x = new Core();
         CommandLineMenu c = new CommandLineMenu();
         x.newSimulation(new CommandLineMenu());
+        //Integer lel = c.<Integer>getInput(Integer.class);
 
         //x.run();
         Simulation simulation = x.debug();
@@ -18,8 +19,9 @@ public class Main {
         state.startingPopulation[0].debugForceColor(ColorStatus.BLACK);*/
         //state.startingPopulation[0].debugForceColor(ColorStatus.RED);
         state.startingPopulation[0].debugForceColor(ColorStatus.YELLOW);
+
         //simulation.debugDisableInfections();
-        simulation.debugRun();
+        //simulation.debugRun();
     /*
         State state = new State();
         state.configs = new Config();
