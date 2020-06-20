@@ -18,7 +18,7 @@ public class Simulation {
 
     private State currentState;
     private IMenu menu;
-    private Scenario currentScenario = new DefaultScenario(this);
+    private CustomScenario currentScenario = new CustomScenario(this);
 
     /**
      * Costruttore della simulazione.
@@ -37,6 +37,7 @@ public class Simulation {
         currentState.dailyInfected = new ArrayList<>();
         currentState.contacts = new HashMap<>();
         currentState.swabs = new HashSet<>();
+        currentScenario.addScenario(new DefaultScenario(this));
     }
 
     /**
@@ -272,7 +273,7 @@ public class Simulation {
          }
          return result;
      }
-     
+
     /**
      * Termina la simulazione ed esegue le operazioni finali.
      * Mostra a schermo i risultati. Della visualizzazione dei
