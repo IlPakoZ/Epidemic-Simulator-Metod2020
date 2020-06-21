@@ -22,7 +22,6 @@ public class Person {
     private double severityModifier = 1;
     private double infectivityModifier = 1;
     private boolean isInfected = false;
-    private final static Random ran = new Random();
 
     /**
      * Costruttore di Person. Crea una nuova persona
@@ -40,8 +39,8 @@ public class Person {
         Pair<Double, Double> speed = getRandomSpeed();
         speedX = speed.getKey();
         speedY = speed.getValue();
-        this.x = ran.nextInt(currentState.configs.size.getKey());
-        this.y = ran.nextInt(currentState.configs.size.getValue());
+        this.x = Rng.R.nextInt(currentState.configs.size.getKey());
+        this.y = Rng.R.nextInt(currentState.configs.size.getValue());
     }
 
     /**
@@ -52,11 +51,7 @@ public class Person {
      * bisogna chiamare il metodo makeOfColor per far diventare
      * lo status della persona di un certo colore.
      * Se la persona diventa rossa, questa deve
-     * essere impostata come ferma. Se la persona è ferma,
-     * togliere opportuno denaro dalle casse dello Stato.
-     * Se la persona è in terapia intensiva (rossa), togliere
-     * il denaro.
-     * Rendere indipendente il processo di stoppare le persone.
+     * essere impostata come ferma.
      */
     @ToRevise
     public void refresh() {
@@ -74,7 +69,7 @@ public class Person {
                     int toStop;
                     makeOfColor(ColorStatus.RED);
                     if (Rng.generateFortune(currentState.configs.letality, currentState.isPoorCountry() ? severityModifier*5 :severityModifier)) {
-                        dayOfDeath = ran.nextInt(currentState.configs.diseaseDuration - (daysFromInfection + 1) - 1) + daysFromInfection + 1;
+                        dayOfDeath = Rng.R.nextInt(currentState.configs.diseaseDuration - (daysFromInfection + 1) - 1) + daysFromInfection + 1;
                         toStop = -1;
                     } else {
                         toStop = currentState.configs.diseaseDuration - daysFromInfection;
@@ -132,6 +127,11 @@ public class Person {
         }
     }
 
+    /**
+     * Restituisce l'attributo movement.
+     *
+     * @return movement
+     */
     @Ready
     public MovementStatus getMovement() {
         return movement;
@@ -227,7 +227,8 @@ public class Person {
      * Imposta il modificatore di infettività in base
      * al parametro in input. Questo metodo è utilizzato
      * dalla classe Rng.
-     * @param infectivityModifier   modificatore di infettivitò generato da Rng
+     *
+     * @param infectivityModifier   modificatore di infettività generato da Rng
      */
     @ToRevise
     public void setInfectivityModifier(double infectivityModifier){
@@ -238,6 +239,7 @@ public class Person {
      * Imposta il modificatore di infettività in base
      * al parametro in input. Questo metodo è utilizzato dalla
      * classe Rng durante la creazione della popolazione.
+     *
      * @param severityModifier     modificatore di morte generato da Rng
      */
     @ToRevise
@@ -246,7 +248,8 @@ public class Person {
     }
 
     /**
-     * Restituisce l'attributo deathModifier
+     * Restituisce l'attributo deathModifier.
+     *
      * @return  restituisce l'attributo deathModifier
      */
     @Ready
@@ -255,7 +258,8 @@ public class Person {
     }
 
     /**
-     * Restituisce l'attributo infectivityModifier
+     * Restituisce l'attributo infectivityModifier.
+     *
      * @return  restituisce l'attributo infectivityModifier
      */
     @Ready
@@ -264,7 +268,8 @@ public class Person {
     }
 
     /**
-     * Restituisce l'attributo age
+     * Restituisce l'attributo age.
+     *
      * @return restituisce l'attributo age
      */
     @Ready
@@ -272,11 +277,23 @@ public class Person {
         return age;
     }
 
+    /**
+     * Restituisce la posizione della persona sulla quale viene invocato il metodo.
+     *
+     * @return  la posizione della persona
+     */
     @Ready
     public int[] getPosition() {
         return new int[]{(int)x, (int)y};
     }
 
+    /**
+     * Calcola la prossima posizione che la persona deve assumere e,
+     * se c'è un contatto, sia questo con un muro dello spazio
+     * o con un'altra persona, gestisce le loro velocità e posizioni future.
+     *
+     * @return  la prossima posizione della persona
+     */
     @Ready
     public int[] nextPosition() {
         if (movement == MovementStatus.MOVING) {
@@ -306,10 +323,15 @@ public class Person {
         return getPosition();
     }
 
+    /**
+     * Restituisce due velocità (una orizzontale e una verticale) generate randomicamente.
+     *
+     * @return  le velocità di movimento
+     */
     private Pair<Double,Double> getRandomSpeed() {
-        double x = (ran.nextDouble()-0.5)*2;
+        double x = (Rng.R.nextDouble()-0.5)*2;
         double y = Math.sqrt(1-Math.abs(x));
-        if (ran.nextInt(2) == 0) {
+        if (Rng.R.nextInt(2) == 0) {
             return new Pair<>(x*currentState.configs.velocity, y*currentState.configs.velocity);
         }
         return new Pair<>(x*currentState.configs.velocity, -y*currentState.configs.velocity);

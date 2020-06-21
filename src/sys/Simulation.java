@@ -4,7 +4,8 @@ import assets.Person;
 
 import javafx.util.Pair;
 import sys.Core.*;
-import sys.applications.*;
+import sys.applications.scenarios.CustomScenario;
+import sys.applications.scenarios.DefaultScenario;
 import sys.models.IMenu;
 import sys.models.Scenario;
 
@@ -37,7 +38,9 @@ public class Simulation {
         currentState.total.add(new ArrayList<>());
         currentState.total.add(new ArrayList<>());
         currentState.total.add(new ArrayList<>());
+        currentState.total.add(new ArrayList<>());
         currentState.daily = new ArrayList<>();
+        currentState.daily.add(new ArrayList<>());
         currentState.daily.add(new ArrayList<>());
         currentState.daily.add(new ArrayList<>());
         currentState.daily.add(new ArrayList<>());
@@ -118,7 +121,7 @@ public class Simulation {
                     startTime = Instant.now();
                 }
             }
-            currentScenario.frameAction();
+            if (currentState.unoPatientFound) currentScenario.frameAction();
             frame++;
             if (currentState.currentDay==150) going = false;
         }
@@ -130,7 +133,8 @@ public class Simulation {
      * eseguite in ripetizione. Restituisce true se il loop
      * deve continuare la sua esecuzione, altrimenti restituisce
      * false.
-     * @return      booleano che indica se il loop è ancora in esecuzione
+     *
+     * @return      booleano che indica se il loop deve essere ancora eseguito
      */
     @ToRevise
     private boolean loop() {
@@ -164,7 +168,7 @@ public class Simulation {
 
 
     /**
-     * Passa al giorno della simulazione successivo,
+     * Passa al giorno successivo della simulazione e
      * aggiorna i valori della simulazione. Contiene il
      * payload da eseguire ad ogni cambiamento di giorno.
      * Calcola anche il valore vd (vedere specifiche progetto).
@@ -183,15 +187,17 @@ public class Simulation {
         currentState.total.get(0).add(currentState.configs.populationNumber-currentState.greenIncubation-1);    //Tutti gli infetti (quelli in incubazione sono compresi)
         currentState.total.get(1).add(currentState.getSymptomaticNumber());                                     //Tutti i malati gravi
         currentState.total.get(2).add(currentState.getDeathsNumber());                                          //Tutti i morti
+        currentState.total.get(3).add(currentState.getTotalSwabsNumber());
 
         currentState.daily.get(0).add(currentState.total.get(0).get(currentState.total.get(0).size()-1) - currentState.total.get(0).get(currentState.total.get(0).size()-2));   //Gli infetti giornalieri
         currentState.daily.get(1).add(currentState.getSymptomaticNumber()-currentState.total.get(1).get(currentState.total.get(1).size()-1));                                   //I malati gravi giornalieri
         currentState.daily.get(2).add(currentState.getDeathsNumber()-currentState.total.get(2).get(currentState.total.get(2).size()-1));                                        //I morti giornalieri
+        currentState.daily.get(3).add(currentState.getTotalSwabsNumber()-currentState.total.get(3).get(currentState.total.get(3).size()-1));
 
         boolean result = currentState.subtractResources(currentState.getSymptomaticNumber()*currentState.configs.swabsCost*3 + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
         menu.feedback(currentState);
         currentState.currentlyStationary = currentState.getDeathsNumber();
-        currentScenario.dailyAction();
+        if (currentState.unoPatientFound) currentScenario.dailyAction();
         currentState.currentDay+=1;
         return result;
     }
@@ -199,7 +205,8 @@ public class Simulation {
     /**
      * Sostituisci le configurazioni correnti della simulazione
      * con le configurazioni passate in input.
-     * @param config    istanza di Config, contiene le configurazioni da cariare nella simulazione.
+     *
+     * @param config    istanza di Config, contiene le configurazioni da cariare nella simulazione
      */
     @ToRevise
     public void loadConfigs(Config config){
@@ -208,7 +215,8 @@ public class Simulation {
 
     /**
      * Restituisce le configurazioni della simulazione corrente.
-     * @return      configurazioni attuali.
+     *
+     * @return      configurazioni attuali
      */
     @ToRevise
     public Config getConfigs(){
@@ -217,13 +225,15 @@ public class Simulation {
 
     /**
      * Restituisce lo stato della simulazione corrente.
-     * @return      stato attuale.
+     *
+     * @return      stato attuale
      */
     @Ready
     public State getCurrentState() {return currentState;}
 
     /**
      * Restituisce lo scenario attualmente in uso.
+     *
      * @return      scenario attuale
      */
     @Ready
@@ -249,7 +259,7 @@ public class Simulation {
 
     /**
      * Fa il tampone alle persone scelte per quel determinato giorno e, se una di queste
-     * risulta positivo, aggiunge alla coda le persone con cui è entrata in contatto.
+     * risulta positiva, aggiunge alla coda le persone con cui è entrata in contatto.
      *
      * @param percent   percentuale di fare il tampone ad una persona.
      *
@@ -276,7 +286,7 @@ public class Simulation {
      * si occupa innanzitutto di richiamare i metodi della classe Rng per
      * calcolare se la persona sana deve risultare contagiata. Se il risultato
      * è positivo e se il paziente uno è stato trovato, bisogna memorizzare il
-     * contatto nel dizionario che conterrà i contatti di una certa persona.
+     * contatto nel dizionario che conterrà gli incontri di una certa persona.
      *
      * @param p1    persona sana che è venuta in contatto con un infetto
      * @param p2    persona infetta.
@@ -296,16 +306,18 @@ public class Simulation {
 
     /**
      * Toglie denaro dalle casse dello Stato per effettuare un tampone
-     * sulla persona. Effettuato il tempone, se la persona è nella
+     * sulla persona. Effettuato il tampone, se la persona è nella
      * lista dei contatti, si può decidere di eseguire un tampone
      * anche ai contatti (contact tracing). Il tampone ha una certa
      * probabilità di fallire. Usare il metodo "generateFortune" in Rng
      * per calcolare le probabilità di riuscita.
      * Il tampone verrà usato o meno in base allo scenario che si sceglie.
+     *
      * @param p1    persona a cui sottoporre il tampone.
      */
      @ToRevise
      public boolean doSwab(Person p1){
+         currentState.totalSwabsNumber++;
          boolean result = false;
          currentState.subtractResources(currentState.configs.swabsCost);
          switch (p1.color) {

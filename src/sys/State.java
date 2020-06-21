@@ -23,6 +23,7 @@ public class State {
     public SimulationStatus status = SimulationStatus.NOT_YET_STARTED;     // Simulation status
     public ArrayList<ArrayList<Integer>> total;
     public ArrayList<ArrayList<Integer>> daily;
+    public int totalSwabsNumber = 0;
     public int currentDay = 0;
     public boolean defaultScenario = true;
     public PersonList[][] space;
@@ -42,7 +43,8 @@ public class State {
 
     /**
      * Sottrae value dalle risorse. Se il nuovo valore calcolato
-     * è minore di zero, allora impostalo a zero.
+     * è minore di zero, allora viene impostato a zero.
+     *
      * @param value     risorse da togliere
      * @return          restituisce True se ci sono ancora risorse disponibili, False altrimenti
      */
@@ -63,6 +65,7 @@ public class State {
      * poterle ricaricare in seguito.
      * Se le configurazioni vengono modificate, il backup
      * viene perso.
+     *
      * @param el    codice
      * @return      un intero che segnala al menù cosa eseguire
      */
@@ -108,30 +111,70 @@ public class State {
         return bigBrother;
     }
 
+    /**
+     * Restituisce il numero di persone sane.
+     *
+     * @return  numero di persone sane
+     */
     @Ready
     public int getHealthyNumber(){
         return greenIncubation+1;
     }
+
+    /**
+     * Restituisce il numero di persone in incubazione.
+     *
+     * @return  numero di persone in incubazione
+     */
     @Ready
     public int getIncubationNumber(){
         return incubationYellow - greenIncubation;
     }
+
+    /**
+     * Restituisce il numero di persone asintomatiche.
+     *
+     * @return  numero di persone asintomatiche
+     */
     @Ready
     public int getAsymptomaticNumber(){ return yellowRed - incubationYellow; }
 
+    /**
+     * Restituisce il numero di persone sintomatiche.
+     *
+     * @return  numero di persone sintomatiche
+     */
     @Ready
     public int getSymptomaticNumber(){ return redBlue - yellowRed; }
 
+    /**
+     * Restituisce il numero di persone guarite.
+     *
+     * @return  numero di persone guarite
+     */
     @Ready
     public int getCuredNumber(){
         return blueBlack - redBlue;
     }
 
+    /**
+     * Restituisce il numero di persone morte.
+     *
+     * @return  numero di persone morte
+     */
     @Ready
     public int getDeathsNumber(){
         return configs.populationNumber-blueBlack-1;
     }
 
+    /**
+     * Restituisce l'età media delle persone comprese tra due indici
+     * (startIndex e endIndex) presi in input.
+     *
+     * @param startIndex    l'indice dal quale iniziare a calcolare l'età media
+     * @param endIndex      l'indice al quale finire di calcolare l'età media
+     * @return              l'età media delle persone comprese tra startIndex e endIndex
+     */
     @Ready
     public int getCurrentAgeAverage(int startIndex, int endIndex) {
         int totalAge = 0;
@@ -139,6 +182,13 @@ public class State {
         for (int i=startIndex; i< endIndex; i++) totalAge+= startingPopulation[i].getAge();
         return totalAge/ (endIndex-startIndex);
     }
+
+    /**
+     * Restituisce il numero totale di tamponi effettuati.
+     *
+     * @return  il numero totale di tamponi effettuati
+     */
+    public int getTotalSwabsNumber() {return totalSwabsNumber;}
 
 
 }

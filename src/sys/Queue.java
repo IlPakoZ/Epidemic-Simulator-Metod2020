@@ -3,6 +3,10 @@ import sys.Core.*;
 import assets.Person;
 
 public class Queue<T> {
+    /**
+     * Un'implementazione di una coda semplice, utilizzata per fare i tamponi.
+     */
+
     private Node first = null;
     private Node last = null;
     private int size = 0;
@@ -17,6 +21,13 @@ public class Queue<T> {
         }
     }
 
+
+    /**
+     * Elimina l'elemento in cima alla coda e lo restituisce, se la coda non è vuota.
+     *
+     * @return  l'elemento in cima alla coda
+     * @throws  IndexOutOfBoundsException
+     */
     @Ready
     public T dequeue() throws IndexOutOfBoundsException{
         if (size!=0){
@@ -29,6 +40,11 @@ public class Queue<T> {
         throw new IndexOutOfBoundsException();
     }
 
+    /**
+     * Aggiunge l'elemento preso in input alla coda, in ultima posizione
+     * .
+     * @param item  l'elemento da aggiungere alla coda
+     */
     @Ready
     public void enqueue(T item){
         Node oldLast = last;
@@ -38,6 +54,11 @@ public class Queue<T> {
         size++;
     }
 
+    /**
+     * Restituisce la grandezza della coda.
+     *
+     * @return  la grandezza della coda
+     */
     @Ready
     public int getSize(){
         return size;

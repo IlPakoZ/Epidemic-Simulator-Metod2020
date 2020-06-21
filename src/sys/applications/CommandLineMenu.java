@@ -1,4 +1,5 @@
 package sys.applications;
+import javafx.application.Preloader;
 import javafx.util.Pair;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
@@ -11,34 +12,47 @@ import sys.Config;
 import sys.Core.*;
 import sys.Simulation;
 import sys.State;
+import sys.applications.scenarios.CustomScenario;
+import sys.applications.scenarios.DefaultScenario;
+import sys.applications.scenarios.PeopleMetGetsTestedScenario;
 import sys.models.IMenu;
 import sys.models.Scenario;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
 import java.lang.Math;
 import java.util.function.IntPredicate;
-import java.util.function.IntSupplier;
 
 public class CommandLineMenu implements IMenu {
     private Scanner input = new Scanner(System.in);
     private DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.ITALIAN);
 
-    public void createDataset(State currentState){
-        double[] x1 = new double[currentState.total.get(0).size()];
-        double[] y1 = new double[currentState.total.get(0).size()];
-        double[] y2 = new double[currentState.total.get(0).size()];
-        double[] y3 = new double[currentState.total.get(0).size()];
+    public void createDataset(State currentState, int value) {
+        ArrayList<ArrayList<Integer>> timeRange;
+        File file;
+        if (value == 0) {// total
+            timeRange = currentState.total;
+            file = new File(currentState.configs.outputTotalFile);
+        } else {//daily
+            timeRange = currentState.daily;
+            file = new File(currentState.configs.outputDailyFile);
+        }
+        double[] x1 = new double[timeRange.get(0).size()];
+        double[] y1 = new double[timeRange.get(0).size()];
+        double[] y2 = new double[timeRange.get(0).size()];
+        double[] y3 = new double[timeRange.get(0).size()];
+        double[] y4 = new double[timeRange.get(0).size()];
 
         for (int i=0; i<y1.length; i++) {
-            y1[i] = currentState.total.get(0).get(i);
-            y2[i] = currentState.total.get(1).get(i);
-            y3[i] = currentState.total.get(2).get(i);
+            y1[i] = timeRange.get(0).get(i);
+            y2[i] = timeRange.get(1).get(i);
+            y3[i] = timeRange.get(2).get(i);
+            y4[i] = timeRange.get(3).get(i);
             x1[i] = i;
         }
 
@@ -46,18 +60,20 @@ public class CommandLineMenu implements IMenu {
         dataset.addSeries("Total infected", new double[][]{x1,y1});
         dataset.addSeries("Total symptomatics", new double[][]{x1,y2});
         dataset.addSeries("Total deaths", new double[][]{x1,y3});
+        dataset.addSeries("Total swabs", new double[][]{x1,y4});
 
         JFreeChart chart = ChartFactory.createXYLineChart("People", "Day passed", "Number of people", dataset);
 
         XYPlot plot = chart.getXYPlot();
 
-        NumberAxis naxis = (NumberAxis) plot.getDomainAxis();
+        NumberAxis nAxis = (NumberAxis) plot.getDomainAxis();
         NumberTickUnit unit = new NumberTickUnit(10);
-        naxis.setTickUnit(unit);
+        nAxis.setTickUnit(unit);
 
         try {
-            ChartUtils.saveChartAsPNG(new File("prova.png"), chart, 1000, 700);
+            ChartUtils.saveChartAsPNG(file, chart, 1000, 700);
         }catch (IOException ignored) {}
+
     }
 
     public void clear() {
@@ -127,11 +143,12 @@ public class CommandLineMenu implements IMenu {
         return action+1;
     }
 
-    private <E> void inputIntUntilValid(IntPredicate f, String errorMessage){
-        boolean redo = f.test(getInput(Integer.class));
+    @Ready
+    private <E> void inputUntilValid(Functional<E> f, Class<E> type, String errorMessage){
+        boolean redo = f.test(getInput(type));
         while(!redo) {
             System.out.print(errorMessage);
-            redo = f.test(getInput(Integer.class));
+            redo = f.test(getInput(type));
         }
     }
 
@@ -139,55 +156,31 @@ public class CommandLineMenu implements IMenu {
     public void firstInput(Config config) {
         System.out.println();
         ScreenFI();
+
         // Popolazione iniziale
         System.out.print("Inserire il numero della popolazione iniziale (<= "+ Config.POPULATION_NUMBER_UPPER_BOUND +"): ");
-        boolean redo = config.setPopulationNumber(getInput(Integer.class));
-        while(!redo) {
-            System.out.print("Numero non valido. Reinserirlo (<= "+Config.POPULATION_NUMBER_UPPER_BOUND+"): ");
-            redo = config.setPopulationNumber(getInput(Integer.class));
-        }
+        inputUntilValid(config::setPopulationNumber, Integer.class, "Numero non valido. Reinserirlo (<= "+Config.POPULATION_NUMBER_UPPER_BOUND+"): ");
 
         // Durata della malattia
         System.out.print("Inserire la durata della malattia in giorni ("+ Config.DISEASE_DURATION_LOWER_BOUND+"< "+ Config.DISEASE_DURATION_UPPER_BOUND +"): ");
-        redo = config.setDiseaseDuration(getInput(Integer.class));
-        while(!redo) {
-            System.out.print("Numero non valido. Reinserirlo (<= " + Config.DISEASE_DURATION_UPPER_BOUND + "): ");
-            redo = config.setDiseaseDuration(getInput(Integer.class));
-        }
+        inputUntilValid(config::setDiseaseDuration, Integer.class, "Numero non valido. Reinserirlo (<= " + Config.DISEASE_DURATION_UPPER_BOUND + "): ");
 
         // Risorse iniziali
         System.out.print("Inserire il numero delle risorse iniziali (<" +(config.populationNumber*config.diseaseDuration)+ "): ");
-        int initialResource = getInput(Integer.class);
-        while(initialResource >= config.populationNumber * config.diseaseDuration) {
-            System.out.print("Numero non valido. Reinserirlo (<" +(config.populationNumber*config.diseaseDuration)+ "): ");
-            initialResource = getInput(Integer.class);
-        }
-        config.initialResources = initialResource;
+        inputUntilValid(config::setInitialResources, Integer.class, "Numero non valido. Reinserirlo ("+ Config.RESOURCES_LOWER_BOUND + "<x<" +(config.populationNumber*config.diseaseDuration)+ "): ");
+
         // Costo del tampone
         System.out.print("Inserire il costo del tampone (> "+ (config.initialResources/(config.populationNumber*10)) +"): ");
-        int swabsCost = getInput(Integer.class);
-        while(swabsCost <= config.initialResources/(config.populationNumber * 10)) {
-            System.out.print("Numero troppo piccolo. Reinserirlo (> " + (config.initialResources/(config.populationNumber*10)) +"): ");
-            swabsCost = getInput(Integer.class);
-        }
-        config.swabsCost = swabsCost;
+        inputUntilValid(config::setSwabsCost, Integer.class, "Numero troppo piccolo. Reinserirlo (> " + (config.initialResources/(config.populationNumber*10)) +"): ");
+
         // Infettività
         System.out.print("Inserire la percentuale di infettivita' (0<=x<100): ");
-        Integer infectivity = getInput(Integer.class);
-        while(infectivity <= 0.0 || infectivity > 100.0) {
-            System.out.print("Percentuale non valida. Reinserirla (0<=x<100): ");
-            infectivity = getInput(Integer.class);
-        }
-        config.infectivity = infectivity;
-        // Sintomaticità
+        inputUntilValid(config::setInfectivity, Integer.class, "Percentuale non valida. Reinserirla (0<=x<100): ");
 
+        // Sintomaticità
         System.out.print("Inserire la percentuale di sintomaticita' (0<=x<100): ");
-        Integer sintomaticity = getInput(Integer.class);
-        while(sintomaticity <= 0.0 || sintomaticity > 100.0) {
-            System.out.print("Percentuale non valida. Reinserirla (0<=x<100): ");
-            sintomaticity = getInput(Integer.class);
-        }
-        config.sintomaticity = sintomaticity;
+        inputUntilValid(config::setSintomaticity, Integer.class, "Percentuale non valida. Reinserirla (0<=x<100): ");
+
         // Letalità
         System.out.print("Inserire la percentuale di letalita' (0<=x<100): ");
         Integer letality = getInput(Integer.class);
@@ -196,11 +189,12 @@ public class CommandLineMenu implements IMenu {
             letality = getInput(Integer.class);
         }
         config.letality = letality;
+
         System.out.println("\nInserire l'altezza e la larghezza dello spazio grafico dove avverrà la simulazione.");
         System.out.println("Più lo spazio è grande, meno spesso avverranno i contatti tra le persone!\n");
         System.out.print("Larghezza: (>2, valore consigliato "+(int)Math.sqrt(config.populationNumber)*2+"): ");
         int width = getInput(Integer.class);
-        System.out.print("Altezza: ("+ Math.max(2, (config.populationNumber/10)/width) + "<x<" +((config.populationNumber*10)/width)+ ", valore consigliato "+ (4*populationNumber/width)+"): ");
+        System.out.print("Altezza: ("+ Math.max(2, (config.populationNumber/10)/width) + "<x<" +((config.populationNumber*10)/width)+ ", valore consigliato "+ (4*config.populationNumber/width)+"): ");
         int height = getInput(Integer.class);
 
         while(width*height > config.populationNumber*4 | width<2 | height <2) {
@@ -208,7 +202,7 @@ public class CommandLineMenu implements IMenu {
             System.out.print("Larghezza: (>2, valore consigliato "+(int)Math.sqrt(config.populationNumber)*2+"): ");
             width = getInput(Integer.class);
 
-            System.out.print("Altezza: ("+ Math.max(2, (config.populationNumber/10)/width) + "<x<" +((config.populationNumber*10)/width)+ ", valore consigliato "+ (4*populationNumber/width)+"): ");
+            System.out.print("Altezza: ("+ Math.max(2, (config.populationNumber/10)/width) + "<x<" +((config.populationNumber*10)/width)+ ", valore consigliato "+ (4*config.populationNumber/width)+"): ");
             height = getInput(Integer.class);
         }
         config.size = new Pair<>(width, height);
@@ -577,7 +571,7 @@ public class CommandLineMenu implements IMenu {
         System.out.println("Morti: " + state.getDeathsNumber());
         System.out.println("Risorse rimaste: " + state.resources);
         System.out.println("Motivo termine simulazione: " + state.status);
-        createDataset(state);
+        createTotalDataset(state);
     }
 
     @Ready
@@ -608,6 +602,7 @@ public class CommandLineMenu implements IMenu {
 
     @NotImplemented
     private void customScenarioMenu(){
+       printPersonalizedTitle("Custom Scenario");
 
     }
 
@@ -621,26 +616,29 @@ public class CommandLineMenu implements IMenu {
     @ToRevise
     private boolean askConfirmation(String customMessage){
         String positiveFeedback = "si";
-
         System.out.print(customMessage + " (si per accettare): ");
         String response = getInput(String.class);
         return response.equalsIgnoreCase(positiveFeedback);
     }
 
     @ToRevise
-    private Scenario enableDisable(Simulation simulation, Scenario scenario){
-        printPersonalizedTitle("Hai scelto " + scenario.getName());
+    private <E extends Scenario> void printScenarioIntro(Class<E> type){
+        printPersonalizedTitle("Hai scelto " + type.getInfos().getName());
         System.out.println(scenario.getInfos());
+    }
+
+    @ToRevise
+    private Scenario enableDisable(Simulation simulation, Scenario scenario){
         boolean response;
 
         if (simulation.isScenarioEnabled(scenario)) {
             if (scenario instanceof DefaultScenario) {
                 System.out.println("Lo scenario di default non può essere disabilitato.");
             } else {
-                System.out.println("Lo scenario '" + scenario.getName() + "' è abilitato.");
-                response = askConfirmation("Sei sicuro di voler disabilitare '" + scenario.getName() + "'?");
+                System.out.println("Lo scenario '" + scenario.getInfos().getName() + "' è abilitato.");
+                response = askConfirmation("Sei sicuro di voler disabilitare '" + scenario.getInfos().getName() + "'?");
                 if (response) {
-                    System.out.println("Lo scenario '"+ scenario.getName()+"' è stato disattivato.");
+                    System.out.println("Lo scenario '"+ scenario.getInfos().getName()+"' è stato disattivato.");
                     if (simulation.getCurrentScenario() instanceof CustomScenario) {
                         ((CustomScenario) simulation.getCurrentScenario()).removeScenario(scenario);
                         scenario = simulation.getCurrentScenario();
@@ -662,7 +660,7 @@ public class CommandLineMenu implements IMenu {
                     System.out.println("Hai annullato la modifica.");
                 }
             } else {
-                response = askConfirmation("Sei sicuro di voler abilitare '" + scenario.getName() + "'?");
+                response = askConfirmation("Sei sicuro di voler abilitare '" + scenario.getInfos().getName() + "'?");
                 if (response) {
                     if (simulation.getCurrentScenario() instanceof CustomScenario) {
                         ((CustomScenario) simulation.getCurrentScenario()).addScenario(scenario);
@@ -693,6 +691,7 @@ public class CommandLineMenu implements IMenu {
 
             switch (action){
                 case 1:
+                    printScenarioIntro(DefaultScenario.class);
                     result = enableDisable(simulation, defaultScenario);
                     break;
                 case 2:
@@ -704,7 +703,6 @@ public class CommandLineMenu implements IMenu {
                     System.out.println("Valore non valido!");
             }
         }
-
         return result;
     }
 
@@ -717,15 +715,14 @@ public class CommandLineMenu implements IMenu {
 
         while(action != 0){
             clear();
-            //ScreenSEN();
             customScenarioMenu();
             System.out.print("Digita il numero dello scenario da attivare: ");
             action = getInput(Integer.class);
 
             switch(action) {
                 case 1:
-                    // Scenario1 new_scen = new Scenario1()
-                    // return new_scen
+                    PeopleMetGetsTestedScenario new_scen = new PeopleMetGetsTestedScenario();
+                    printScenarioIntro(PeopleMetGetsTestedScenario.class);
                     break;
                 case 2:
 
@@ -733,10 +730,6 @@ public class CommandLineMenu implements IMenu {
                     // return new_scen
                     break;
                 case 3:
-                    // Scenario2 new_scen = new Scenario2()
-                    // return new_scen
-                    break;
-                case 4:
                     // Scenario2 new_scen = new Scenario2()
                     // return new_scen
                     break;
@@ -749,5 +742,9 @@ public class CommandLineMenu implements IMenu {
             }
         }
         return customScenario;
+    }
+
+    public interface Functional<T>{
+       public abstract boolean test(T parameter);
     }
 }

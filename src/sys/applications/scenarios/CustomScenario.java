@@ -1,4 +1,4 @@
-package sys.applications;
+package sys.applications.scenarios;
 
 import sys.Core.*;
 import sys.Simulation;
@@ -8,12 +8,17 @@ import java.util.HashSet;
 
 public class CustomScenario extends Scenario {
 
-    private static final int ID = 0;
-
     private Scenario[] scenarioSlots = new Scenario[100];
     private HashSet<Integer> scenariosInserted = new HashSet<>();
+    private static final ScenarioInfos SCENARIO_INFOS = new ScenarioInfos(0);
 
-    CustomScenario(Simulation currentSimulation) {
+    static {
+        SCENARIO_INFOS.setInfos("E' uno scenario personalizzato che contiene al suo interno altri scenari."+
+                "Non viene utilizzata nessuna trategia particolare per\nil contenimento della malattia.");
+        SCENARIO_INFOS.setInfos("Scenario Personalizzato");
+    }
+
+    public CustomScenario(Simulation currentSimulation) {
         super(currentSimulation);
     }
 
@@ -39,31 +44,34 @@ public class CustomScenario extends Scenario {
      */
     @Ready
     public void addScenario(Scenario newScenario){
-        if (!containsScenario(newScenario.getID())) {
-            scenarioSlots[newScenario.getID()] = newScenario;
-            scenariosInserted.add(newScenario.getID());
+        if (!containsScenario(newScenario.getInfos().getID())) {
+            scenarioSlots[newScenario.getInfos().getID()] = newScenario;
+            scenariosInserted.add(newScenario.getInfos().getID());
         } else {
-            if (newScenario.getClass() != scenarioSlots[newScenario.getID()].getClass()){
+            if (newScenario.getClass() != scenarioSlots[newScenario.getInfos().getID()].getClass()){
                 try {
                     throw new DuplicatedIDScenarioException();
                 } catch (DuplicatedIDScenarioException e) { e.printStackTrace(); System.exit(-1);}
             }
         }
-    }
+     }
 
-    /**
-     * Aggiunge uno scenario tra gli scenari
+     /**
+     * Rimuove uno scenario tra gli scenari
      * abilitati.
      * @param scenario      scenario da rimuovere.
      */
     @Ready
     public void removeScenario(Scenario scenario){
-        if (scenarioSlots[scenario.getID()] != null){
-            scenarioSlots[scenario.getID()] = null;
-            scenariosInserted.remove(scenario.getID());
+        if (scenarioSlots[scenario.getInfos().getID()] != null){
+            scenarioSlots[scenario.getInfos().getID()] = null;
+            scenariosInserted.remove(scenario.getInfos().getID());
         }
     }
 
+    /**
+     * Esegue le oneTimeAction di tutti gli scenari abilitati.
+     */
     @Ready
     @Override
     public void oneTimeAction() {
@@ -72,6 +80,10 @@ public class CustomScenario extends Scenario {
         }
     }
 
+
+    /**
+     * Esegue le dailyAction di tutti gli scenari abilitati.
+     */
     @Ready
     @Override
     public void dailyAction() {
@@ -80,6 +92,9 @@ public class CustomScenario extends Scenario {
         }
     }
 
+    /**
+     * Esegue le frameAction di tutti gli scenari abilitati.
+     */
     @Ready
     @Override
     public void frameAction() {
@@ -88,21 +103,13 @@ public class CustomScenario extends Scenario {
         }
     }
 
-    @Ready
+    /**
+     * Restituisce una breve descrizione dello scenario e dei parametri di cui necessita per essere eseguito.
+     * @return  oggetto ScenariosInfos contenente le informazioni dello scenario.
+     */
     @Override
-    public int getID() {
-        return ID;
-    }
-
-    @NotImplemented
-    @Override
-    public String getInfos() {
-        return null;
-    }
-
-    @Override
-    public String getName() {
-        return "Scenario personalizzato.\n";
+    public ScenarioInfos getInfos() {
+        return SCENARIO_INFOS;
     }
 
     static class DuplicatedIDScenarioException extends Exception{

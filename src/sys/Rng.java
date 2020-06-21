@@ -15,22 +15,21 @@ public class Rng {
     private static final double MIDDLE_AGE_MODIFIER = 0;
     private static final double OLD_AGE_MODIFIER = +8;
     private static final double GAUSSIAN_AGE_MODIFIER = 20;
-    private static final Random R = new Random();
+    public static final Random R = new Random();
 
     /**
      * Restituisce un booleano che indica se l'evento casuale
      * deve essere eseguito oppure no. In base ad una certa
      * probabilità specificata come parametro (double da 0 a 100)
-     * e ad un modificatore (double da 0 a 2) che rende l'evento
-     * più o meno probabile, restituisce true se l'evento deve
-     * essere eseguito e false se non deve essere eseguito.
+     * e ad un modificatore che rende l'evento più o meno probabile,
+     * restituisce true se l'evento deve essere eseguito e false se
+     * non deve essere eseguito.
      * Può essere usato per un calcolo generico di probabilità.
      *
      * @param percent   double da 0 a 100 che specifica la probabilità che l'evento dia risultato positivo
-     * @param modifier  double da 0 (evento certo) a 2 (evento meno probabile) che modifica la probabilità
-     *                  che l'evento dia risultato positivo. Viene diviso al numero massimo generato
-     *                  in modo tale che un numero basso aumenti le possibilità che l'evento venga eseguito e uno
-     *                  alto le diminuisca fino a dimezzarle.
+     * @param modifier  double che modifica la probabilità che l'evento dia risultato positivo.
+     *                  Alla percentuale viene aggiunta (o sottratta, se il parametro è negativo) una certa
+     *                  sua percentuale.
      * @return          se l'evento deve essere eseguito o no
      */
     @ToRevise
@@ -65,7 +64,7 @@ public class Rng {
     }
 
     /**
-     * Restituisce un double da utilizzare come modificatore nel motodo
+     * Restituisce un double da utilizzare come modificatore nel metodo
      * generateFortune che modifica la probabilità di contagiare qualcuno
      * in base a se possiede la mascherina o no.
      *
@@ -86,7 +85,8 @@ public class Rng {
      * parametro currentState della simulazione per generare un certo numero
      * di persone di una determinata età.
      *
-     * @return  restituisce l'array di persone
+     * @param currentState  lo stato della simulazione
+     * @return              restituisce l'array di persone
      */
     @ToRevise
     public static Person[] generatePopulation(State currentState){
