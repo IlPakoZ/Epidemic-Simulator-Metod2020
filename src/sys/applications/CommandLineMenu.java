@@ -23,6 +23,7 @@ import java.util.Locale;
 import java.util.Scanner;
 import java.lang.Math;
 import java.util.function.IntPredicate;
+import java.util.function.IntSupplier;
 
 public class CommandLineMenu implements IMenu {
     private Scanner input = new Scanner(System.in);
@@ -114,7 +115,7 @@ public class CommandLineMenu implements IMenu {
         clear();
         ScreenSH();
         int action = 0;
-        IntPredicate condition = (x -> x<0 | x>3);
+        IntPredicate condition = (x -> x < 0 | x > 3);
         System.out.print("\nInserire un valore: ");
         do{
             if (condition.test(action)){
@@ -126,28 +127,34 @@ public class CommandLineMenu implements IMenu {
         return action+1;
     }
 
+    private <E> void inputIntUntilValid(IntPredicate f, String errorMessage){
+        boolean redo = f.test(getInput(Integer.class));
+        while(!redo) {
+            System.out.print(errorMessage);
+            redo = f.test(getInput(Integer.class));
+        }
+    }
+
     @Override
     public void firstInput(Config config) {
         System.out.println();
         ScreenFI();
         // Popolazione iniziale
-        System.out.print("Inserire il numero della popolazione iniziale (<= 100.000): ");
-        int populationNumber = getInput(Integer.class);
-        while(populationNumber > 100000) {
-            System.out.print("Numero non valido. Reinserirlo (<= 100.000): ");
-            populationNumber = getInput(Integer.class);
+        System.out.print("Inserire il numero della popolazione iniziale (<= "+ Config.POPULATION_NUMBER_UPPER_BOUND +"): ");
+        boolean redo = config.setPopulationNumber(getInput(Integer.class));
+        while(!redo) {
+            System.out.print("Numero non valido. Reinserirlo (<= "+Config.POPULATION_NUMBER_UPPER_BOUND+"): ");
+            redo = config.setPopulationNumber(getInput(Integer.class));
         }
-        config.populationNumber = populationNumber;
+
         // Durata della malattia
-        System.out.print("Inserire la durata della malattia in giorni (<= 90): ");
-        int diseaseDuration = getInput(Integer.class);
-        while(diseaseDuration > 90) {
-            System.out.print("Numero non valido. Reinserirlo (<= 90): ");
-            diseaseDuration = getInput(Integer.class);
+        System.out.print("Inserire la durata della malattia in giorni ("+ Config.DISEASE_DURATION_LOWER_BOUND+"< "+ Config.DISEASE_DURATION_UPPER_BOUND +"): ");
+        redo = config.setDiseaseDuration(getInput(Integer.class));
+        while(!redo) {
+            System.out.print("Numero non valido. Reinserirlo (<= " + Config.DISEASE_DURATION_UPPER_BOUND + "): ");
+            redo = config.setDiseaseDuration(getInput(Integer.class));
         }
-        config.diseaseDuration = diseaseDuration;
-        config.incubationToYellowDeadline = (int) (diseaseDuration * Config.INCUBATION_TO_YELLOW_DEADLINE);
-        config.yellowToRedDeadline = (int) (diseaseDuration * Config.YELLOW_TO_RED_DEADLINE);
+
         // Risorse iniziali
         System.out.print("Inserire il numero delle risorse iniziali (<" +(config.populationNumber*config.diseaseDuration)+ "): ");
         int initialResource = getInput(Integer.class);
