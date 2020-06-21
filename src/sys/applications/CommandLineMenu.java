@@ -555,7 +555,7 @@ public class CommandLineMenu implements IMenu {
         System.out.println("Morti: " + state.getDeathsNumber());
         System.out.println("Risorse rimaste: " + state.resources);
         System.out.println("Motivo termine simulazione: " + state.status);
-        createDataset(state);
+        createTotalDataset(state);
     }
 
     @Ready
