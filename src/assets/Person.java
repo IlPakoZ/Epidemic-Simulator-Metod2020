@@ -22,6 +22,7 @@ public class Person {
     private double severityModifier = 1;
     private double infectivityModifier = 1;
     private boolean isInfected = false;
+    private boolean wasRed = false;
     private static Random ran = new Random();
 
     /**
@@ -68,11 +69,12 @@ public class Person {
             daysFromInfection = daysFromInfection + 1;
             if (daysFromInfection == currentState.configs.incubationToYellowDeadline) {
                 makeOfColor(ColorStatus.YELLOW);
+                if (currentState.isBigBrother()) try{ setStationary(currentState.configs.yellowToRedDeadline-daysFromInfection); } catch (UnsafeMovementStatusChangeException ignored ){ }
             } else if (daysFromInfection == currentState.configs.yellowToRedDeadline) {
-                if (Rng.generateFortune(currentState.configs.sintomaticity, severityModifier)) {
+                if (Rng.generateFortune(currentState.configs.sintomaticity, currentState.isPoorCountry() ? severityModifier*5 :severityModifier)) {
                     int toStop;
                     makeOfColor(ColorStatus.RED);
-                    if (Rng.generateFortune(currentState.configs.letality, severityModifier)) {
+                    if (Rng.generateFortune(currentState.configs.letality, currentState.isPoorCountry() ? severityModifier*5 :severityModifier)) {
                         dayOfDeath = ran.nextInt(currentState.configs.diseaseDuration - (daysFromInfection + 1) - 1) + daysFromInfection + 1;
                         toStop = -1;
                     } else {
@@ -150,6 +152,7 @@ public class Person {
                 currentState.swabs.add(this);
                 if (index != currentState.yellowRed) switchPerson(currentState.yellowRed);
                 currentState.yellowRed-=1;
+                wasRed = true;
                 break;
             case BLUE:
                 if (this.color==ColorStatus.YELLOW){
@@ -313,6 +316,15 @@ public class Person {
         UnsafeMovementStatusChangeException(){
             super("Unsafe movement status change from external class.");
         }
+    }
+
+    /**
+     * Restituisce il valore di wasRed
+     * @return  wasRed
+     */
+    @Ready
+    public boolean getWasRed(){
+        return wasRed;
     }
 
     // ------------------------- DEBUGGING ---------------------------

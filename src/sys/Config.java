@@ -7,7 +7,6 @@ public class Config {
 
     // ----------------------------- SIMULATION PARAMETERS (COMPULSORY) -----------------------------
 
-    public int ageAverage;
     public int populationNumber;
     public int initialResources;
     public int swabsCost;
@@ -15,7 +14,6 @@ public class Config {
     public int sintomaticity;
     public int letality;
     public int diseaseDuration;
-    public int maxAge;
     public Pair<Integer,Integer> size;              // width, height
 
     // ----------------------------------------------------------------------------------------------
@@ -26,7 +24,9 @@ public class Config {
     public double velocity = 2;
     public int socialDistance;
     boolean masks = false;
-    public int frameADay = 30;
+    public int frameADay = 25;
+    public int maxAge = 110;
+    public int ageAverage = 50;
 
     // ----------------------------------------------------------------------------------------------
 
@@ -35,9 +35,10 @@ public class Config {
     public static final double INCUBATION_TO_YELLOW_DEADLINE = 1/6.0;
     public static final double YELLOW_TO_RED_DEADLINE = 1/3.0;
 
-    public boolean isValid;
+    private boolean isValid = true;
     public int incubationToYellowDeadline;  //Deve essere impostato a currentState.configs.diseaseDuration*Config.INCUBATION_TO_YELLOW_DEADLINE (facendo casting ad intero)
     public int yellowToRedDeadline;         //Deve essere impostato a currentState.configs.diseaseDuration*Config.YELLOW_TO_RED_DEADLINE (facendo casting ad intero)
+    private boolean configsChanged = false;
 
     /**
      * Se una configurazione è pronta per l'esecuzione,
@@ -81,10 +82,11 @@ public class Config {
      * restituisce false.
      *
      * @param number   input populationNumber
-     * @return
+     * @return  true se il dato è valido, false altrimenti
      */
     @ToRevise
     public boolean setPopulationNumber(int number){
+        configsChanged = true;
         if (number > 100000 || number <= 1){
             return false;
         }
@@ -93,10 +95,10 @@ public class Config {
     }
 
     /**
-     * Quando richiamata, restituisce il parametro
+     * Quando richiamata, restituisce l'attributo
      * del numero della popolazione.
      *
-     * @return
+     * @return  numero della popolazione
      */
     public int getPopulationNumber(){
         return populationNumber;
@@ -113,6 +115,7 @@ public class Config {
      */
     @ToRevise
     public boolean setDiseaseDuration(int number){
+        configsChanged = true;
         if (number > 90 || number <=0){
             return false;
         }
@@ -121,9 +124,9 @@ public class Config {
     }
 
     /**
-     *  Quando richiamata, restituisce il paramentro
+     *  Quando richiamata, restituisce l'attributo
      *  della durata della malattia.
-     * @return
+     * @return  durata della malattia
      */
     public int getDiseaseDuration(){
         return diseaseDuration;
@@ -135,10 +138,11 @@ public class Config {
      * inserisce il dato e restituisce true, altrimenti
      * restituisce false.
      *
-     * @param number  input initialResources
-     * @return
+     * @param number    input initialResources
+     * @return          true se il valore è nel formato corretto, false altrimenti.
      */
     public boolean setInitialResources(int number){
+        configsChanged = true;
         if (number >= (populationNumber * diseaseDuration) || number <= 0){
             return false;
         }
@@ -147,10 +151,10 @@ public class Config {
     }
 
     /**
-     *  Quando richiamata, restituisce il paramentro
+     *  Quando richiamata, restituisce l'attributo
      *  delle risorse iniziali.
      *
-     * @return
+     * @return  risorse iniziali
      */
     public int getInitialResources(){
         return initialResources;
@@ -162,10 +166,11 @@ public class Config {
      * inserisce il dato e restituisce true, altrimenti
      * restituisce false.
      *
-     * @param number  input swabsCost
-     * @return
+     * @param number    input swabsCost
+     * @return          true se il valore è nel formato corretto, false altrimenti.
      */
     public boolean setSwabsCost(int number){
+        configsChanged = true;
         if (number <= (initialResources/(populationNumber*10))){
             return false;
         }
@@ -174,10 +179,10 @@ public class Config {
     }
 
     /**
-     *  Quando richiamata, restituisce il paramentro
+     *  Quando richiamata, restituisce l'attributo
      *  del costo del tampone.
      *
-     * @return
+     * @return  costo del tampone
      */
     public int getSwabsCost(){
         return swabsCost;
@@ -189,10 +194,11 @@ public class Config {
      * inserisce il dato e restituisce true, altrimenti
      * restituisce false.
      *
-     * @param number  input infectivity
-     * @return
+     * @param number    input infectivity
+     * @return          true se il valore è nel formato corretto, false altrimenti.
      */
     public boolean setInfectivity(int number){
+        configsChanged = true;
         if (number <= 0.0 || number > 100.0){
             return false;
         }
@@ -201,10 +207,10 @@ public class Config {
     }
 
     /**
-     *  Quando richiamata, restituisce il paramentro
+     *  Quando richiamata, restituisce l'attributo
      *  dell'infettività.
      *
-     * @return
+     * @return  infettività
      */
     public int getInfectivity(){
         return infectivity;
@@ -216,11 +222,12 @@ public class Config {
      * inserisce il dato e restituisce true, altrimenti
      * restituisce false.
      *
-     * @param number  input sintomaticity
-     * @return
+     * @param number    input sintomaticity
+     * @return          true se il valore è nel formato corretto, false altrimenti.
      */
 
     public boolean setSintomaticity(int number){
+        configsChanged = true;
         if (number <= 0.0 || number > 100.0){
             return false;
         }
@@ -229,13 +236,16 @@ public class Config {
     }
 
     /**
-     *  Quando richiamata, restituisce il paramentro
+     *  Quando richiamata, restituisce l'attributo
      *  della sintomacity.
      *
-     * @return
+     * @return  sintomaticità
      */
     public int getSintomaticity(){
         return sintomaticity;
     }
 
+    boolean haveConfigsChanged() { return configsChanged; }
+
+    void setConfigsChanged(boolean changed) {this.configsChanged = changed;}
 }

@@ -33,6 +33,9 @@ public abstract class Scenario {
      */
     public abstract String getName();
 
-
+    /**
+     * Restituisce la simulazione corrente
+     * @return  simulazione corrente.
+     */
     public Simulation getCurrentSimulation(){ return currentSimulation; }
 }

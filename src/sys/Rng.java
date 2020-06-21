@@ -11,10 +11,11 @@ public class Rng {
     private static final double SEVERITY_PERCENT = 10;
     private static final int YOUNG_RANGE = 29;
     private static final int MIDDLE_AGE_RANGE = 59;
-    private static final double YOUNG_MODIFIER= 2;
+    private static final double YOUNG_MODIFIER= -8;
     private static final double MIDDLE_AGE_MODIFIER = 0;
-    private static final double OLD_AGE_MODIFIER = -2;
+    private static final double OLD_AGE_MODIFIER = +8;
     private static final double GAUSSIAN_AGE_MODIFIER = 20;
+    private static final Random R = new Random();
 
     /**
      * Restituisce un booleano che indica se l'evento casuale
@@ -52,14 +53,13 @@ public class Rng {
      */
     @ToRevise
     private static double generateSeverityModifiers(int age){
-        Random r = new Random();
         double valore;
         if (age <= YOUNG_RANGE) {
-            valore = r.nextGaussian()*SEVERITY_PERCENT+YOUNG_MODIFIER;
+            valore = R.nextGaussian()*SEVERITY_PERCENT+YOUNG_MODIFIER;
         }else if (age <= MIDDLE_AGE_RANGE) {
-            valore = r.nextGaussian()*SEVERITY_PERCENT+MIDDLE_AGE_MODIFIER;
+            valore = R.nextGaussian()*SEVERITY_PERCENT+MIDDLE_AGE_MODIFIER;
         }else {
-            valore = r.nextGaussian()*SEVERITY_PERCENT+OLD_AGE_MODIFIER;
+            valore = R.nextGaussian()*SEVERITY_PERCENT+OLD_AGE_MODIFIER;
         }
         return valore;
     }
@@ -91,11 +91,10 @@ public class Rng {
     @ToRevise
     public static Person[] generatePopulation(State currentState){
         Person[] people = new Person[currentState.configs.populationNumber];
-        Random r = new Random();
         for (int i=0;i<currentState.configs.populationNumber;i++){
             double age;
             do {
-                age = r.nextGaussian() * GAUSSIAN_AGE_MODIFIER + currentState.configs.ageAverage;
+                age = R.nextGaussian() * GAUSSIAN_AGE_MODIFIER + currentState.configs.ageAverage;
             }while(age<0 || age>currentState.configs.maxAge);
             //people[i] = new Person(currentState.configs.ageAverage, i, currentState);
             people[i] = new Person((int) age, i, currentState);

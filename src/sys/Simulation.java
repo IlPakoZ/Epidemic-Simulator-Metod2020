@@ -33,8 +33,14 @@ public class Simulation {
         this.menu = menu;
         currentState = new State();
         currentState.configs = new Config();
-        currentState.totalInfected = new ArrayList<>();
-        currentState.dailyInfected = new ArrayList<>();
+        currentState.total = new ArrayList<>();
+        currentState.total.add(new ArrayList<>());
+        currentState.total.add(new ArrayList<>());
+        currentState.total.add(new ArrayList<>());
+        currentState.daily = new ArrayList<>();
+        currentState.daily.add(new ArrayList<>());
+        currentState.daily.add(new ArrayList<>());
+        currentState.daily.add(new ArrayList<>());
         currentState.contacts = new HashMap<>();
         currentState.swabs = new HashSet<>();
     }
@@ -62,6 +68,9 @@ public class Simulation {
                     currentScenario = menu.selectScenario(this);
                     state = 1;
                     //Mostra il menù di scelta dello scenario
+                case 4:
+
+                    break;
                 default:
                     throw new UnsupportedOperationException();
             }
@@ -86,11 +95,19 @@ public class Simulation {
             going = loop();
             if (frame % currentState.configs.frameADay == 0){
                 if (frame == 0){
-                    currentState.totalInfected.add(0);
-                    currentState.dailyInfected.add(0);
+                    for (ArrayList<Integer> arr: currentState.total){
+                        arr.add(0);
+                    }
+                    for (ArrayList<Integer> arr: currentState.daily){
+                        arr.add(0);
+                    }
                     menu.feedback(currentState);
                 }else{
-                    nextDay();
+                    boolean result = nextDay();
+                    if (!result) {
+                        going = false;
+                        currentState.status = SimulationStatus.NO_MORE_RESOURCES;
+                    }
                     Instant endTime = Instant.now();
                     int duration = Duration.between(startTime, endTime).getNano()/1000000;
                     if (duration < currentState.configs.dayDuration) Thread.sleep(currentState.configs.dayDuration-duration);
@@ -152,20 +169,27 @@ public class Simulation {
      * sono considerate infette).
      */
     @ToRevise
-    private void nextDay(){
+    private boolean nextDay(){
         for (int i = currentState.redBlue; i > -1 ; i--)             //TODO: Controllare che gli indici siano giusti (voglio refreshare tutti tranne i verdi non incubati, blu e neri)
         {
             currentState.startingPopulation[i].refresh();
         }
         if (currentState.redBlue-currentState.yellowRed!=0) currentState.unoPatientFound = true;
 
-        currentState.totalInfected.add(currentState.configs.populationNumber-currentState.greenIncubation-1);
-        currentState.dailyInfected.add(currentState.totalInfected.get(currentState.totalInfected.size()-1) - currentState.totalInfected.get(currentState.totalInfected.size()-2));
-        currentState.subtractResources(currentState.getSymptomaticNumber()*currentState.configs.swabsCost*3 + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
+        currentState.total.get(0).add(currentState.configs.populationNumber-currentState.greenIncubation-1);    //Tutti gli infetti (quelli in incubazione sono compresi)
+        currentState.total.get(1).add(currentState.getSymptomaticNumber());                                     //Tutti i malati gravi
+        currentState.total.get(2).add(currentState.getDeathsNumber());                                          //Tutti i morti
+
+        currentState.daily.get(0).add(currentState.total.get(0).get(currentState.total.get(0).size()-1) - currentState.total.get(0).get(currentState.total.get(0).size()-2));   //Gli infetti giornalieri
+        currentState.daily.get(1).add(currentState.getSymptomaticNumber()-currentState.total.get(1).get(currentState.total.get(1).size()-1));                                   //I malati gravi giornalieri
+        currentState.daily.get(2).add(currentState.getDeathsNumber()-currentState.total.get(2).get(currentState.total.get(2).size()-1));                                        //I morti giornalieri
+
+        boolean result = currentState.subtractResources(currentState.getSymptomaticNumber()*currentState.configs.swabsCost*3 + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
         menu.feedback(currentState);
         currentState.currentlyStationary = currentState.getDeathsNumber();
         currentScenario.dailyAction();
-        currentState.currentDay+=1;                                 //Controllare se l'incremento del giorno è nella posizione giusta (dovrebbe esserlo)
+        currentState.currentDay+=1;
+        return result;
     }
 
     /**
@@ -258,7 +282,7 @@ public class Simulation {
         p1.contact = true;
         p2.contact = true;
         if(!p2.isInfected()){
-            if(Rng.generateFortune(currentState.configs.infectivity, p2.getInfectivityModifier())) {
+            if(Rng.generateFortune(currentState.configs.infectivity, currentState.isPoorCountry() ? p2.getInfectivityModifier()*5 : p2.getInfectivityModifier())) {
                 p2.setAsInfected();
             }
         }
@@ -325,7 +349,7 @@ public class Simulation {
 
         currentState.startingPopulation = Rng.generatePopulation(currentState);
         currentState.resources = currentState.configs.initialResources;
-        System.out.println(currentState.getCurrentAgeAverage(0, currentState.getCurrentAgeAverage(0,currentState.configs.populationNumber)));
+        //System.out.println(currentState.getCurrentAgeAverage(0, currentState.getCurrentAgeAverage(0,currentState.configs.populationNumber)));
     }
 
     @Debug

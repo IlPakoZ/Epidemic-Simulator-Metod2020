@@ -9,16 +9,17 @@ public class Main {
         Core x = new Core();
         CommandLineMenu c = new CommandLineMenu();
         x.newSimulation(new CommandLineMenu());
+        x.run();
         //Integer lel = c.<Integer>getInput(Integer.class);
 
         //x.run();
-        Simulation simulation = x.debug();
-        State state = simulation.getCurrentState();
+        //Simulation simulation = x.debug();
+        //State state = simulation.getCurrentState();
         /*state.startingPopulation[0].debugForceColor(ColorStatus.BLACK);
         state.startingPopulation[0].debugForceColor(ColorStatus.BLACK);
         state.startingPopulation[0].debugForceColor(ColorStatus.BLACK);*/
         //state.startingPopulation[0].debugForceColor(ColorStatus.RED);
-        state.startingPopulation[0].debugForceColor(ColorStatus.YELLOW);
+        //state.startingPopulation[0].debugForceColor(ColorStatus.YELLOW);
 
         //simulation.debugDisableInfections();
         //simulation.debugRun();
