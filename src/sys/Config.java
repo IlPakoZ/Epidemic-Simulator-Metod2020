@@ -336,6 +336,32 @@ public class Config {
      */
     public int getAgeAverage() { return ageAverage; }
 
+    /**
+     * Controlla se la larghezza e l'altezza
+     * sono regolari ed entro i limiti del programma,
+     * se si, inserisce il dato e resituisce true,
+     * altrimenti false.
+     *
+     * @param number    input width
+     * @param number2   input heigth
+     * @return          true se i valori sono nel formato corretto, false altrimenti.
+     */
+    public boolean setSize(int number, int number2){
+        if (number > (populationNumber*10) || number < (populationNumber/10) || number > (populationNumber*10) || number < (populationNumber/10) || number*number2 > (populationNumber*10) || number*number2 < (populationNumber/10)){
+            return false;
+        }
+        size = number, number2;
+        configsChanged = true;
+        return true;
+    }
+
+    /**
+     *  Quando richiamata, restituisce i dati
+     *  della larghezza e dell altezza
+     *
+     * @return  larghezza, altezza
+     */
+    public int getSize() { return size}
 
     boolean haveConfigsChanged() { return configsChanged; }
 
