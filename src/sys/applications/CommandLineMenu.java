@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
 import java.lang.Math;
@@ -29,16 +30,27 @@ public class CommandLineMenu implements IMenu {
     private Scanner input = new Scanner(System.in);
     private DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.ITALIAN);
 
-    public void createTotalDataset(State currentState){
-        double[] x1 = new double[currentState.total.get(0).size()];
-        double[] y1 = new double[currentState.total.get(0).size()];
-        double[] y2 = new double[currentState.total.get(0).size()];
-        double[] y3 = new double[currentState.total.get(0).size()];
+    public void createDataset(State currentState, int value) {
+        ArrayList<ArrayList<Integer>> timeRange;
+        File file;
+        if (value == 0) {// total
+            timeRange = currentState.total;
+            file = new File(currentState.configs.outputTotalFile);
+        } else {//daily
+            timeRange = currentState.daily;
+            file = new File(currentState.configs.outputDailyFile);
+        }
+        double[] x1 = new double[timeRange.get(0).size()];
+        double[] y1 = new double[timeRange.get(0).size()];
+        double[] y2 = new double[timeRange.get(0).size()];
+        double[] y3 = new double[timeRange.get(0).size()];
+        double[] y4 = new double[timeRange.get(0).size()];
 
         for (int i=0; i<y1.length; i++) {
-            y1[i] = currentState.total.get(0).get(i);
-            y2[i] = currentState.total.get(1).get(i);
-            y3[i] = currentState.total.get(2).get(i);
+            y1[i] = timeRange.get(0).get(i);
+            y2[i] = timeRange.get(1).get(i);
+            y3[i] = timeRange.get(2).get(i);
+            y4[i] = timeRange.get(3).get(i);
             x1[i] = i;
         }
 
@@ -46,6 +58,7 @@ public class CommandLineMenu implements IMenu {
         dataset.addSeries("Total infected", new double[][]{x1,y1});
         dataset.addSeries("Total symptomatics", new double[][]{x1,y2});
         dataset.addSeries("Total deaths", new double[][]{x1,y3});
+        dataset.addSeries("Total swabs", new double[][]{x1,y4});
 
         JFreeChart chart = ChartFactory.createXYLineChart("People", "Day passed", "Number of people", dataset);
 
@@ -56,8 +69,9 @@ public class CommandLineMenu implements IMenu {
         nAxis.setTickUnit(unit);
 
         try {
-            ChartUtils.saveChartAsPNG(new File(currentState.configs.outputTotalFile), chart, 1000, 700);
+            ChartUtils.saveChartAsPNG(file, chart, 1000, 700);
         }catch (IOException ignored) {}
+
     }
 
     public void clear() {
