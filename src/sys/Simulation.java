@@ -1,5 +1,6 @@
 package sys;
 
+import assets.ColorStatus;
 import assets.Person;
 
 import javafx.util.Pair;
@@ -252,7 +253,7 @@ public class Simulation {
             return scenario == null;
         }
         else if (currentScenario instanceof CustomScenario) {
-            return ((CustomScenario) currentScenario).containsScenario(scenario.getID());
+            return ((CustomScenario) currentScenario).containsScenario(scenario.getInfos().getID());
         }
         return false;
     }
@@ -320,12 +321,8 @@ public class Simulation {
          currentState.totalSwabsNumber++;
          boolean result = false;
          currentState.subtractResources(currentState.configs.swabsCost);
-         switch (p1.color) {
-             case YELLOW:
-             case RED:
-                 result = true;
-             default:
-                 break;
+         if (p1.color == ColorStatus.YELLOW) {
+             result = true;
          }
          if (!result) return false;
          if (!Rng.generateFortune(Config.SWAB_SUCCESS_RATE,1)){

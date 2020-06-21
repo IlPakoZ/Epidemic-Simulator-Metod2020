@@ -348,11 +348,11 @@ public class Config {
      * @return          true se i valori sono nel formato corretto, false altrimenti.
      */
     public boolean setSize(int number, int number2){
-        if (number > (populationNumber*10) || number < (populationNumber/10) || number > (populationNumber*10) || number < (populationNumber/10) || number*number2 > (populationNumber*10) || number*number2 < (populationNumber/10)){
+        /*if (number > (populationNumber*10) || number < (populationNumber/10) || number > (populationNumber*10) || number < (populationNumber/10) || number*number2 > (populationNumber*10) || number*number2 < (populationNumber/10)){
             return false;
         }
         size = number, number2;
-        configsChanged = true;
+        configsChanged = true;*/
         return true;
     }
 
@@ -362,7 +362,7 @@ public class Config {
      *
      * @return  larghezza, altezza
      */
-    public int getSize() { return size}
+    public Pair<Integer, Integer> getSize() { return size; }
 
     boolean haveConfigsChanged() { return configsChanged; }
 

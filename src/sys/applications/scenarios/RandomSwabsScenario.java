@@ -12,7 +12,7 @@ public class RandomSwabsScenario extends Scenario{
     private State currentState;
     private static final int ID = 1;
     private int swabsNumber;
-    private static final ScenarioInfos SCENARIO_INFOS = new ScenarioInfos(1);
+    public static final ScenarioInfos SCENARIO_INFOS = new ScenarioInfos(1);
 
     static {
         SCENARIO_INFOS.setInfos("In questo scenario, ogni giorno vengono testate un massimo numero preso in input di persone, scelte casualmente.\n" +

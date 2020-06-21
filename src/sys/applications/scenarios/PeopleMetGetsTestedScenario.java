@@ -7,7 +7,7 @@ public class PeopleMetGetsTestedScenario extends Scenario {
 
     private Simulation currentSimulation;
     private double percent;
-    private static final ScenarioInfos SCENARIO_INFOS = new ScenarioInfos(2);
+    public static final ScenarioInfos SCENARIO_INFOS = new ScenarioInfos(2);
 
     static {
         SCENARIO_INFOS.setInfos("In questo scenario, quando viene fatto il tampone ad una persona infetta e risulta positiva, si testano le persone che ha incontrato.\n" +

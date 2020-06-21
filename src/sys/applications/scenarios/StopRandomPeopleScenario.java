@@ -16,7 +16,7 @@ public class StopRandomPeopleScenario extends Scenario{
     private int duration;
     private int ratio;
     private Integer firstTime;
-    private static final ScenarioInfos SCENARIO_INFOS = new ScenarioInfos(3);
+    public static final ScenarioInfos SCENARIO_INFOS = new ScenarioInfos(3);
 
     static {
         SCENARIO_INFOS.setInfos("In questo scenario, ogni giorno vengono fermate un numero preso in input di persone per un numero di giorni presi in input.\n" +

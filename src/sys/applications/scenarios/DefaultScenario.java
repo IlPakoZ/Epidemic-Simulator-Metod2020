@@ -6,7 +6,7 @@ import sys.models.Scenario;
 
 
 public class DefaultScenario extends Scenario {
-    private static final ScenarioInfos SCENARIO_INFOS = new ScenarioInfos(-1);
+    public static final ScenarioInfos SCENARIO_INFOS = new ScenarioInfos(-1);
 
     static {
         SCENARIO_INFOS.setInfos("In questo scenario, non viene fatto nessun tampone.\n"+

@@ -1,5 +1,4 @@
 package sys.applications;
-import javafx.application.Preloader;
 import javafx.util.Pair;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
@@ -15,6 +14,7 @@ import sys.State;
 import sys.applications.scenarios.CustomScenario;
 import sys.applications.scenarios.DefaultScenario;
 import sys.applications.scenarios.PeopleMetGetsTestedScenario;
+import sys.applications.scenarios.ScenarioInfos;
 import sys.models.IMenu;
 import sys.models.Scenario;
 
@@ -571,7 +571,8 @@ public class CommandLineMenu implements IMenu {
         System.out.println("Morti: " + state.getDeathsNumber());
         System.out.println("Risorse rimaste: " + state.resources);
         System.out.println("Motivo termine simulazione: " + state.status);
-        createTotalDataset(state);
+        createDataset(state, 0);
+        createDataset(state, 1);
     }
 
     @Ready
@@ -622,9 +623,9 @@ public class CommandLineMenu implements IMenu {
     }
 
     @ToRevise
-    private <E extends Scenario> void printScenarioIntro(Class<E> type){
-        printPersonalizedTitle("Hai scelto " + type.getInfos().getName());
-        System.out.println(scenario.getInfos());
+    private void printScenarioIntro(ScenarioInfos infos){
+        //printPersonalizedTitle("Hai scelto " + type.getInfos().getName());
+        //System.out.println(scenario.getInfos());
     }
 
     @ToRevise
@@ -691,7 +692,7 @@ public class CommandLineMenu implements IMenu {
 
             switch (action){
                 case 1:
-                    printScenarioIntro(DefaultScenario.class);
+                    printScenarioIntro(DefaultScenario.SCENARIO_INFOS);
                     result = enableDisable(simulation, defaultScenario);
                     break;
                 case 2:
@@ -721,8 +722,8 @@ public class CommandLineMenu implements IMenu {
 
             switch(action) {
                 case 1:
-                    PeopleMetGetsTestedScenario new_scen = new PeopleMetGetsTestedScenario();
-                    printScenarioIntro(PeopleMetGetsTestedScenario.class);
+                    printScenarioIntro(PeopleMetGetsTestedScenario.SCENARIO_INFOS);
+                    //PeopleMetGetsTestedScenario new_scen = new PeopleMetGetsTestedScenario();
                     break;
                 case 2:
 
