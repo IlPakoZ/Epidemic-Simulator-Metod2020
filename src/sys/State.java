@@ -23,6 +23,7 @@ public class State {
     public SimulationStatus status = SimulationStatus.NOT_YET_STARTED;     // Simulation status
     public ArrayList<ArrayList<Integer>> total;
     public ArrayList<ArrayList<Integer>> daily;
+    public int totalSwabsNumber = 0;
     public int currentDay = 0;
     public boolean defaultScenario = true;
     public PersonList[][] space;
@@ -181,6 +182,13 @@ public class State {
         for (int i=startIndex; i< endIndex; i++) totalAge+= startingPopulation[i].getAge();
         return totalAge/ (endIndex-startIndex);
     }
+
+    /**
+     * Restituisce il numero totale di tamponi effettuati.
+     *
+     * @return  il numero totale di tamponi effettuati
+     */
+    public int getTotalSwabsNumber() {return totalSwabsNumber;}
 
 
 }

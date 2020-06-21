@@ -38,7 +38,9 @@ public class Simulation {
         currentState.total.add(new ArrayList<>());
         currentState.total.add(new ArrayList<>());
         currentState.total.add(new ArrayList<>());
+        currentState.total.add(new ArrayList<>());
         currentState.daily = new ArrayList<>();
+        currentState.daily.add(new ArrayList<>());
         currentState.daily.add(new ArrayList<>());
         currentState.daily.add(new ArrayList<>());
         currentState.daily.add(new ArrayList<>());
@@ -185,10 +187,12 @@ public class Simulation {
         currentState.total.get(0).add(currentState.configs.populationNumber-currentState.greenIncubation-1);    //Tutti gli infetti (quelli in incubazione sono compresi)
         currentState.total.get(1).add(currentState.getSymptomaticNumber());                                     //Tutti i malati gravi
         currentState.total.get(2).add(currentState.getDeathsNumber());                                          //Tutti i morti
+        currentState.total.get(3).add(currentState.getTotalSwabsNumber());
 
         currentState.daily.get(0).add(currentState.total.get(0).get(currentState.total.get(0).size()-1) - currentState.total.get(0).get(currentState.total.get(0).size()-2));   //Gli infetti giornalieri
         currentState.daily.get(1).add(currentState.getSymptomaticNumber()-currentState.total.get(1).get(currentState.total.get(1).size()-1));                                   //I malati gravi giornalieri
         currentState.daily.get(2).add(currentState.getDeathsNumber()-currentState.total.get(2).get(currentState.total.get(2).size()-1));                                        //I morti giornalieri
+        currentState.daily.get(3).add(currentState.getTotalSwabsNumber()-currentState.total.get(3).get(currentState.total.get(3).size()-1));
 
         boolean result = currentState.subtractResources(currentState.getSymptomaticNumber()*currentState.configs.swabsCost*3 + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
         menu.feedback(currentState);
@@ -313,6 +317,7 @@ public class Simulation {
      */
      @ToRevise
      public boolean doSwab(Person p1){
+         currentState.totalSwabsNumber++;
          boolean result = false;
          currentState.subtractResources(currentState.configs.swabsCost);
          switch (p1.color) {
