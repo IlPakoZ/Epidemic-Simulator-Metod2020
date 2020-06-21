@@ -14,19 +14,26 @@ public class StopRandomPeopleScenario extends Scenario{
     private int peopleToStop;
     private int duration;
     private static final int ID = 3;
+    private int ratio;
+    private int firstTime;
 
-    public StopRandomPeopleScenario(Simulation currentSimulation, int people, int duration) {
+    public StopRandomPeopleScenario(Simulation currentSimulation, int people, int duration, int ratio) {
         super(currentSimulation);
         this.duration = duration;
+        this.ratio = ratio;
         currentState = currentSimulation.getCurrentState();
         peopleToStop = people;
     }
 
+    //Non fa nulla
     @Override
-    public void oneTimeAction() {
+    public void oneTimeAction() { }
 
-    }
 
+    /**
+     * Ferma un numero preso in input di persone, scelte casualmente tra la
+     * popolazione, per un numero di giorni preso in input.
+     */
     @Override
     public void dailyAction()  {
         Random r = new Random();
@@ -40,21 +47,34 @@ public class StopRandomPeopleScenario extends Scenario{
         }
     }
 
+    //Non fa nulla
     @Override
-    public void frameAction() {
+    public void frameAction() { }
 
-    }
-
+    /**
+     * Restituisce l'ID univoco che identifica uno scenario.
+     * @return  ID dello scenario.
+     */
     @Override
     public int getID() {
         return ID;
     }
 
+    /**
+     * Restituisce una breve descrizione dello scenario e dei parametri di cui necessita per essere eseguito.
+     * @return  breve descrizione dello scenario.
+     */
     @Override
     public String getInfos() {
-        return "In questo scenario, ogni giorno vengono fermate un numero preso in input di persone.\n";
+        return "In questo scenario, ogni giorno vengono fermate un numero preso in input di persone per un numero di giorni presi in input.\n" +
+                "Parametri:\n" +
+                "\t-numero massimo di persone da testare giornalmente (il numero non sarà fisso sempre).";
     }
 
+    /**
+     * Restituisce il nome dello scenario.
+     * @return  nome dello scenario.
+     */
     @Override
     public String getName() {
         return "Stop Random People Scenario\n";

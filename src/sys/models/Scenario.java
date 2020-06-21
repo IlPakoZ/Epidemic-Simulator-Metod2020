@@ -22,7 +22,7 @@ public abstract class Scenario {
     public abstract int getID();
 
     /**
-     * Restituisce una breve descrizione dello scenario.
+     * Restituisce una breve descrizione dello scenario e dei parametri di cui necessita per essere eseguito.
      * @return  breve descrizione dello scenario.
      */
     public abstract String getInfos();

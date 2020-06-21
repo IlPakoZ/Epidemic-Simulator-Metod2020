@@ -49,10 +49,10 @@ public class CustomScenario extends Scenario {
                 } catch (DuplicatedIDScenarioException e) { e.printStackTrace(); System.exit(-1);}
             }
         }
-    }
+     }
 
-    /**
-     * Aggiunge uno scenario tra gli scenari
+     /**
+     * Rimuove uno scenario tra gli scenari
      * abilitati.
      * @param scenario      scenario da rimuovere.
      */
@@ -64,6 +64,9 @@ public class CustomScenario extends Scenario {
         }
     }
 
+    /**
+     * Esegue le oneTimeAction di tutti gli scenari abilitati.
+     */
     @Ready
     @Override
     public void oneTimeAction() {
@@ -72,6 +75,10 @@ public class CustomScenario extends Scenario {
         }
     }
 
+
+    /**
+     * Esegue le dailyAction di tutti gli scenari abilitati.
+     */
     @Ready
     @Override
     public void dailyAction() {
@@ -80,6 +87,9 @@ public class CustomScenario extends Scenario {
         }
     }
 
+    /**
+     * Esegue le frameAction di tutti gli scenari abilitati.
+     */
     @Ready
     @Override
     public void frameAction() {
@@ -88,21 +98,33 @@ public class CustomScenario extends Scenario {
         }
     }
 
+    /**
+     * Restituisce l'ID univoco che identifica uno scenario.
+     * @return  ID dello scenario.
+     */
     @Ready
     @Override
     public int getID() {
         return ID;
     }
 
+    /**
+     * Restituisce una breve descrizione dello scenario e dei parametri di cui necessita per essere eseguito.
+     * @return  breve descrizione dello scenario.
+     */
     @NotImplemented
     @Override
     public String getInfos() {
         return null;
     }
 
+    /**
+     * Restituisce il nome dello scenario.
+     * @return  nome dello scenario.
+     */
     @Override
     public String getName() {
-        return "Scenario personalizzato.\n";
+        return "Scenario Personalizzato\n";
     }
 
     static class DuplicatedIDScenarioException extends Exception{

@@ -26,7 +26,8 @@ public class Config {
     public int frameADay = 25;
     public int maxAge = 110;
     public int ageAverage = 50;
-
+    public String outputTotalFile = "total.png";
+    public String outputDailyFile = "daily.png";
 
     // ----------------------------------------- CONSTANTS ------------------------------------------
 

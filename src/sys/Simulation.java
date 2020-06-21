@@ -118,7 +118,7 @@ public class Simulation {
                     startTime = Instant.now();
                 }
             }
-            currentScenario.frameAction();
+            if (currentState.unoPatientFound) currentScenario.frameAction();
             frame++;
             if (currentState.currentDay==150) going = false;
         }
@@ -191,7 +191,7 @@ public class Simulation {
         boolean result = currentState.subtractResources(currentState.getSymptomaticNumber()*currentState.configs.swabsCost*3 + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
         menu.feedback(currentState);
         currentState.currentlyStationary = currentState.getDeathsNumber();
-        currentScenario.dailyAction();
+        if (currentState.unoPatientFound) currentScenario.dailyAction();
         currentState.currentDay+=1;
         return result;
     }
