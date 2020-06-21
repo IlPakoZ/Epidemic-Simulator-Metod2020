@@ -31,6 +31,7 @@ public class Core {
     /**
      * Crea un'istanza di una nuova simulazione
      * prendendo in input il menù col quale interagire.
+     *
      * @param menu  implementazione dell'interfaccia IMenu
      */
     public void newSimulation (IMenu menu){ sim = new Simulation(menu); }
