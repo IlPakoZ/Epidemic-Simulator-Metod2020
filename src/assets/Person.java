@@ -23,7 +23,7 @@ public class Person {
     private double infectivityModifier = 1;
     private boolean isInfected = false;
     private boolean wasRed = false;
-    private static Random ran = new Random();
+    private final static Random ran = new Random();
 
     /**
      * Costruttore di Person. Crea una nuova persona

@@ -43,6 +43,7 @@ public class Simulation {
         currentState.daily.add(new ArrayList<>());
         currentState.contacts = new HashMap<>();
         currentState.swabs = new HashSet<>();
+
     }
 
     /**
@@ -53,28 +54,31 @@ public class Simulation {
     @ToRevise
     void run() throws InterruptedException {
         menu.firstInput(getConfigs());
-        int state = 1;
+        int state = 0;
         do {
-            switch (state) {
-                case 1:
+            switch (state){
+                case 0:
                     state = menu.show();
                     //Mostra il menù principale / torna al menù principale
                     break;
-                case 2:
+                case 1:
+                    System.exit(0);
+
+                case 3:
                     state = menu.settings(getConfigs());
                     //Mostra il menù delle opzioni
                     break;
-                case 3:
+                case 4:
                     currentScenario = menu.selectScenario(this);
                     state = 1;
                     //Mostra il menù di scelta dello scenario
-                case 4:
+                case 5:
 
                     break;
                 default:
                     throw new UnsupportedOperationException();
             }
-        }while(state != 0);
+        }while(state != 2);
         currentState.startingPopulation = Rng.generatePopulation(currentState);
         currentState.startingPopulation[currentState.configs.populationNumber-1].setAsInfected();
         currentState.resources = currentState.configs.initialResources;

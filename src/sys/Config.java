@@ -14,14 +14,14 @@ public class Config {
     public int sintomaticity;
     public int letality;
     public int diseaseDuration;
-    public Pair<Integer,Integer> size;              // width, height
+    public Pair<Integer,Integer> size;                    // width, height
 
     // ----------------------------------------------------------------------------------------------
 
     // ----------------------------- SIMULATION PARAMETERS (OPTIONAL) -------------------------------
 
     public int dayDuration = 500;                         //Loop duration measured in milliseconds
-    public double velocity = 2;
+    public double velocity = 1;
     public int socialDistance;
     boolean masks = false;
     public int frameADay = 25;
@@ -29,6 +29,8 @@ public class Config {
     public int ageAverage = 50;
 
     // ----------------------------------------------------------------------------------------------
+
+    // --------------------------------------- WORK VARIABLES ---------------------------------------
 
     public static final double SWAB_SUCCESS_RATE = 99;
     public static final int DAILY_COST_IF_STATIONARY = 1;
@@ -39,6 +41,8 @@ public class Config {
     public int incubationToYellowDeadline;  //Deve essere impostato a currentState.configs.diseaseDuration*Config.INCUBATION_TO_YELLOW_DEADLINE (facendo casting ad intero)
     public int yellowToRedDeadline;         //Deve essere impostato a currentState.configs.diseaseDuration*Config.YELLOW_TO_RED_DEADLINE (facendo casting ad intero)
     private boolean configsChanged = false;
+
+    // ----------------------------------------------------------------------------------------------
 
     /**
      * Se una configurazione è pronta per l'esecuzione,

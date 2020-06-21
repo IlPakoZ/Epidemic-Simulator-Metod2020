@@ -118,8 +118,10 @@ public class State {
     }
     @Ready
     public int getAsymptomaticNumber(){ return yellowRed - incubationYellow; }
+
     @Ready
     public int getSymptomaticNumber(){ return redBlue - yellowRed; }
+
     @Ready
     public int getCuredNumber(){
         return blueBlack - redBlue;

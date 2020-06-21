@@ -1,4 +1,5 @@
 package sys.applications;
+import javafx.util.Pair;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
@@ -15,11 +16,17 @@ import sys.models.Scenario;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.Scanner;
 import java.lang.Math;
+import java.util.function.IntPredicate;
 
 public class CommandLineMenu implements IMenu {
     private Scanner input = new Scanner(System.in);
+    private DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.ITALIAN);
 
     public void createDataset(State currentState){
         double[] x1 = new double[currentState.total.get(0).size()];
@@ -58,6 +65,10 @@ public class CommandLineMenu implements IMenu {
 
     public void ScreenSH() {
         printPersonalizedTitle("Menù Principale");
+        System.out.println("1) Inizia la simulazione");
+        System.out.println("2) Menu' opzioni...");
+        System.out.println("3) Menu' scenari...");
+        System.out.println("\n0) Esci");
 
     }
 
@@ -68,16 +79,16 @@ public class CommandLineMenu implements IMenu {
     public void ScreenSET(Config config) {
         printPersonalizedTitle("Menù Parametri");
         System.out.println("Per modificare i parametri inziali digita: ");
-        System.out.println("1) Popolazione inziale: " + config.populationNumber + " valore attuale;");
-        System.out.println("2) Durata malattia: " + config.diseaseDuration + " valore attuale;");
-        System.out.println("3) Risorse inziali: " + config.initialResources + " valore attuale;");
-        System.out.println("4) Costo del tampone: " + config.swabsCost + " valore attuale;");
-        System.out.println("5) Infettivita': " + config.infectivity + " valore attuale;");
-        System.out.println("6) Sintomaticita': " + config.sintomaticity + " valore attuale;");
-        System.out.println("7) Letalita': " + config.letality + " valore attuale;");
-        System.out.println("8) Eta' massima: " + config.maxAge + " valore attuale;");
-        System.out.println("9) Eta' media: " + config.ageAverage + "valore attuale;");
-        System.out.println("10) Larghezza e Altezza dello spazio grafico della simulazione: (" + config.size.toString()+ ") valore attuale;");
+        System.out.println("1) Popolazione inziale:\t\t\t" + format(config.populationNumber) + " valore attuale;");
+        System.out.println("2) Durata malattia:\t\t\t\t" + format(config.diseaseDuration) + " valore attuale;");
+        System.out.println("3) Risorse inziali:\t\t\t\t" + format(config.initialResources) + " valore attuale;");
+        System.out.println("4) Costo del tampone:\t\t\t" + format(config.swabsCost) + " valore attuale;");
+        System.out.println("5) Infettivita':\t\t\t\t" + format(config.infectivity) + " valore attuale;");
+        System.out.println("6) Sintomaticita':\t\t\t\t" + format(config.sintomaticity) + " valore attuale;");
+        System.out.println("7) Letalita':\t\t\t\t\t" + format(config.letality) + " valore attuale;");
+        System.out.println("8) Eta' massima:\t\t\t\t" + format(config.maxAge) + " valore attuale;");
+        System.out.println("9) Eta' media:\t\t\t\t\t" + format(config.ageAverage) + " valore attuale;");
+        System.out.println("10) Spazio della simulazione:\t(" + config.size.toString().replace("="," , ")+ ") valore attuale;");
         System.out.println("\n0) Torna indietro...");
     }
 
@@ -93,33 +104,37 @@ public class CommandLineMenu implements IMenu {
         System.out.println("3 - In modo casuale, vengono fermate persone per un tempo limitato");
         System.out.println("4 - Tutta la popolazione, o una parte, usa le mascherine (maggior consumo di risorse)");
     }*/
-    
+
+   private String format(int value){
+       return formatter.format(value);
+   }
 
     @Override
-    public int show() { 
-
+    public int show() {
         clear();
         ScreenSH();
-        System.out.println("Per far partire la simulazione digitare 0. Per configurare le impostazioni inziali digitare 2:");
-        int action = getInput(Integer.class);
-        while(action != 0 && action != 2) {
-            clear();
-            ScreenSH();
-            System.out.println("Parametro non valido. Reinserirlo:");
+        int action = 0;
+        IntPredicate condition = (x -> x<0 | x>3);
+        System.out.print("\nInserire un valore: ");
+        do{
+            if (condition.test(action)){
+                System.out.print("Valore non valido. Reinserirlo: ");
+            }
             action = getInput(Integer.class);
-        }
-        return action; 
+        }while(condition.test(action));
+
+        return action+1;
     }
 
     @Override
     public void firstInput(Config config) {
-        System.out.println("");
+        System.out.println();
         ScreenFI();
         // Popolazione iniziale
-        System.out.print("Inserire il numero della popolazione iniziale (<= 100000): ");
+        System.out.print("Inserire il numero della popolazione iniziale (<= 100.000): ");
         int populationNumber = getInput(Integer.class);
         while(populationNumber > 100000) {
-            System.out.print("Numero non valido. Reinserirlo: ");
+            System.out.print("Numero non valido. Reinserirlo (<= 100.000): ");
             populationNumber = getInput(Integer.class);
         }
         config.populationNumber = populationNumber;
@@ -127,7 +142,7 @@ public class CommandLineMenu implements IMenu {
         System.out.print("Inserire la durata della malattia in giorni (<= 90): ");
         int diseaseDuration = getInput(Integer.class);
         while(diseaseDuration > 90) {
-            System.out.print("Numero non valido. Reinserirlo: ");
+            System.out.print("Numero non valido. Reinserirlo (<= 90): ");
             diseaseDuration = getInput(Integer.class);
         }
         config.diseaseDuration = diseaseDuration;
@@ -156,7 +171,7 @@ public class CommandLineMenu implements IMenu {
             System.out.print("Percentuale non valida. Reinserirla (0<=x<100): ");
             infectivity = getInput(Integer.class);
         }
-        //config.infectivity= infectivity;
+        config.infectivity = infectivity;
         // Sintomaticità
 
         System.out.print("Inserire la percentuale di sintomaticita' (0<=x<100): ");
@@ -165,18 +180,34 @@ public class CommandLineMenu implements IMenu {
             System.out.print("Percentuale non valida. Reinserirla (0<=x<100): ");
             sintomaticity = getInput(Integer.class);
         }
-        //config.sintomaticity = sintomaticity;
+        config.sintomaticity = sintomaticity;
         // Letalità
-        System.out.print("Inserire la percentuale di letalita' (0<=x<100):");
+        System.out.print("Inserire la percentuale di letalita' (0<=x<100): ");
         Integer letality = getInput(Integer.class);
         while(letality <= 0.0 || letality > 100.0) {
             System.out.print("Percentuale non valida. Reinserirla (0<=x<100): ");
             letality = getInput(Integer.class);
         }
         config.letality = letality;
+        System.out.println("\nInserire l'altezza e la larghezza dello spazio grafico dove avverrà la simulazione.");
+        System.out.println("Più lo spazio è grande, meno spesso avverranno i contatti tra le persone!\n");
+        System.out.print("Larghezza: (>2, valore consigliato "+(int)Math.sqrt(config.populationNumber)*2+"): ");
+        int width = getInput(Integer.class);
+        System.out.print("Altezza: ("+ Math.max(2, (config.populationNumber/10)/width) + "<x<" +((config.populationNumber*10)/width)+ ", valore consigliato "+ (4*populationNumber/width)+"): ");
+        int height = getInput(Integer.class);
 
+        while(width*height > config.populationNumber*4 | width<2 | height <2) {
+            System.out.println("Parametri non validi. Reinserirli.");
+            System.out.print("Larghezza: (>2, valore consigliato "+(int)Math.sqrt(config.populationNumber)*2+"): ");
+            width = getInput(Integer.class);
+
+            System.out.print("Altezza: ("+ Math.max(2, (config.populationNumber/10)/width) + "<x<" +((config.populationNumber*10)/width)+ ", valore consigliato "+ (4*populationNumber/width)+"): ");
+            height = getInput(Integer.class);
+        }
+        config.size = new Pair<>(width, height);
+        System.out.println();
         //TODO: DA QUI IN POI RENDERE OPZIONALI
-
+        /*
         // Età massima
         System.out.print("Inserire l'eta' massima (50<x<110): ");
         int maxAge = getInput(Integer.class);
@@ -195,12 +226,14 @@ public class CommandLineMenu implements IMenu {
             ageAverage = getInput(Integer.class);
         }
         config.ageAverage = ageAverage;
+        */
+
         /*
         // Altezza e Larghezza
         clear();
         ScreenFI();
         System.out.println("Inserire l'altezza e la larghezza dello spazio grafico dove verrà visualizzata la simulazione");
-        System.out.println("(Valore consigliati: "+(int)Math.sqrt(config.populationNumber*2)+")");
+        System.out.println("(Valore consigliato: "+(int)Math.sqrt(config.populationNumber*2)+")");
         System.out.println("Il prodotto devve essere compreso tra "+(config.populationNumber*10)+" e "+(config.populationNumber/10)+")");
         System.out.print("Larghezza: "); int width = Integer.parseInt(Input.nextLine());
         System.out.print("Altezza: "); int heigth = Integer.parseInt(Input.nextLine());
