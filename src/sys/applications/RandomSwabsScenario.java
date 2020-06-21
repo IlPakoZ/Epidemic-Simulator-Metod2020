@@ -30,8 +30,7 @@ public class RandomSwabsScenario extends Scenario{
     public void dailyAction() {
         Random r = new Random();
         for (int i = 0; i < swabsNumber; i++) {
-            Person x = currentState.startingPopulation[r.nextInt(currentState.blueBlack)];
-            while (currentState.swabs.contains(x)) x = currentState.startingPopulation[r.nextInt(currentState.blueBlack)];
+            Person x = currentState.startingPopulation[r.nextInt(currentState.blueBlack+1)];
             currentState.swabPersons.enqueue(x);
         }
     }

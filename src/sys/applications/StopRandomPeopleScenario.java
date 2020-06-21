@@ -30,8 +30,7 @@ public class StopRandomPeopleScenario extends Scenario{
     public void dailyAction() {
         Random r = new Random();
         for (int i = 0; i < peopleToStop; i++) {
-            Person x = currentState.startingPopulation[r.nextInt(currentState.blueBlack)];
-            while (currentState.swabs.contains(x)) x = currentState.startingPopulation[r.nextInt(currentState.blueBlack)];
+            Person x = currentState.startingPopulation[r.nextInt(currentState.blueBlack+1)];
             x.movement = MovementStatus.STATIONARY;
         }
     }
