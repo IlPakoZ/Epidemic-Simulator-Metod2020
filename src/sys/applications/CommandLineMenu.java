@@ -29,7 +29,7 @@ public class CommandLineMenu implements IMenu {
     private Scanner input = new Scanner(System.in);
     private DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.ITALIAN);
 
-    public void createDataset(State currentState){
+    public void createTotalDataset(State currentState){
         double[] x1 = new double[currentState.total.get(0).size()];
         double[] y1 = new double[currentState.total.get(0).size()];
         double[] y2 = new double[currentState.total.get(0).size()];
