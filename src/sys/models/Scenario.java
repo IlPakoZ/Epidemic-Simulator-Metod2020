@@ -1,7 +1,7 @@
 package sys.models;
 
 import sys.Simulation;
-import sys.State;
+import sys.applications.scenarios.ScenarioInfos;
 
 public abstract class Scenario {
 
@@ -14,28 +14,5 @@ public abstract class Scenario {
     public abstract void oneTimeAction();
     public abstract void dailyAction();
     public abstract void frameAction();
-
-    /**
-     * Restituisce l'ID univoco che identifica uno scenario.
-     * @return  ID dello scenario.
-     */
-    public abstract int getID();
-
-    /**
-     * Restituisce una breve descrizione dello scenario e dei parametri di cui necessita per essere eseguito.
-     * @return  breve descrizione dello scenario.
-     */
-    public abstract String getInfos();
-
-    /**
-     * Restituisce il nome dello scenario.
-     * @return  nome dello scenario.
-     */
-    public abstract String getName();
-
-    /**
-     * Restituisce la simulazione corrente
-     * @return  simulazione corrente.
-     */
-    public Simulation getCurrentSimulation(){ return currentSimulation; }
+    public abstract ScenarioInfos getInfos();
 }

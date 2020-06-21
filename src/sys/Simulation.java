@@ -4,7 +4,8 @@ import assets.Person;
 
 import javafx.util.Pair;
 import sys.Core.*;
-import sys.applications.*;
+import sys.applications.scenarios.CustomScenario;
+import sys.applications.scenarios.DefaultScenario;
 import sys.models.IMenu;
 import sys.models.Scenario;
 

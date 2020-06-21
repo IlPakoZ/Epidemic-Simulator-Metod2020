@@ -1,21 +1,27 @@
-package sys.applications;
+package sys.applications.scenarios;
 
 import assets.Person;
+import sys.Rng;
 import sys.Simulation;
-import sys.Core.*;
 import sys.State;
 import sys.models.Scenario;
-import java.util.Random;
 
 public class RandomSwabsScenario extends Scenario{
 
     private Simulation currentSimulation;
     private State currentState;
     private static final int ID = 1;
-    private static final Random R = new Random();
     private int swabsNumber;
+    private static final ScenarioInfos SCENARIO_INFOS = new ScenarioInfos(1);
 
-    public RandomSwabsScenario(Simulation currentSimulation, int swabs) {
+    static {
+        SCENARIO_INFOS.setInfos("In questo scenario, ogni giorno vengono testate un massimo numero preso in input di persone, scelte casualmente.\n" +
+                "Parametri:\n" +
+                "\t-numero massimo di persone da testare giornalmente (il numero non sarà fisso sempre).");
+        SCENARIO_INFOS.setName("Random Swabs Scenario");
+    }
+
+    RandomSwabsScenario(Simulation currentSimulation, int swabs) {
         super(currentSimulation);
         this.currentSimulation = currentSimulation;
         this.currentState = currentSimulation.getCurrentState();
@@ -32,7 +38,7 @@ public class RandomSwabsScenario extends Scenario{
     @Override
     public void dailyAction() {
         for (int i = 0; i < swabsNumber; i++) {
-            Person x = currentState.startingPopulation[R.nextInt(currentState.blueBlack+1)];
+            Person x = currentState.startingPopulation[Rng.R.nextInt(currentState.blueBlack+1)];
             if (!currentState.swabs.contains(x)) currentSimulation.doSwab(x);
         }
     }
@@ -42,31 +48,11 @@ public class RandomSwabsScenario extends Scenario{
     public void frameAction() { }
 
     /**
-     * Restituisce l'ID univoco che identifica uno scenario.
-     * @return  ID dello scenario.
-     */
-    @Override
-    public int getID() {
-        return ID;
-    }
-
-    /**
      * Restituisce una breve descrizione dello scenario e dei parametri di cui necessita per essere eseguito.
-     * @return  breve descrizione dello scenario.
+     * @return  oggetto ScenariosInfos contenente le informazioni dello scenario.
      */
     @Override
-    public String getInfos() {
-        return "In questo scenario, ogni giorno vengono testate un massimo numero preso in input di persone, scelte casualmente.\n" +
-                "Parametri:\n" +
-                "\t-numero massimo di persone da testare giornalmente (il numero non sarà fisso sempre).";
-    }
-
-    /**
-     * Restituisce il nome dello scenario.
-     * @return  nome dello scenario.
-     */
-    @Override
-    public String getName() {
-        return "Random Swabs Scenario\n";
+    public ScenarioInfos getInfos() {
+        return SCENARIO_INFOS;
     }
 }

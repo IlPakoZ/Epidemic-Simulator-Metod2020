@@ -15,7 +15,7 @@ public class Rng {
     private static final double MIDDLE_AGE_MODIFIER = 0;
     private static final double OLD_AGE_MODIFIER = +8;
     private static final double GAUSSIAN_AGE_MODIFIER = 20;
-    private static final Random R = new Random();
+    public static final Random R = new Random();
 
     /**
      * Restituisce un booleano che indica se l'evento casuale

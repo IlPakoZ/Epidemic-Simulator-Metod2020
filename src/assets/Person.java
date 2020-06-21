@@ -22,7 +22,6 @@ public class Person {
     private double severityModifier = 1;
     private double infectivityModifier = 1;
     private boolean isInfected = false;
-    private final static Random ran = new Random();
 
     /**
      * Costruttore di Person. Crea una nuova persona
@@ -40,8 +39,8 @@ public class Person {
         Pair<Double, Double> speed = getRandomSpeed();
         speedX = speed.getKey();
         speedY = speed.getValue();
-        this.x = ran.nextInt(currentState.configs.size.getKey());
-        this.y = ran.nextInt(currentState.configs.size.getValue());
+        this.x = Rng.R.nextInt(currentState.configs.size.getKey());
+        this.y = Rng.R.nextInt(currentState.configs.size.getValue());
     }
 
     /**
@@ -70,7 +69,7 @@ public class Person {
                     int toStop;
                     makeOfColor(ColorStatus.RED);
                     if (Rng.generateFortune(currentState.configs.letality, currentState.isPoorCountry() ? severityModifier*5 :severityModifier)) {
-                        dayOfDeath = ran.nextInt(currentState.configs.diseaseDuration - (daysFromInfection + 1) - 1) + daysFromInfection + 1;
+                        dayOfDeath = Rng.R.nextInt(currentState.configs.diseaseDuration - (daysFromInfection + 1) - 1) + daysFromInfection + 1;
                         toStop = -1;
                     } else {
                         toStop = currentState.configs.diseaseDuration - daysFromInfection;
@@ -330,9 +329,9 @@ public class Person {
      * @return  le velocità di movimento
      */
     private Pair<Double,Double> getRandomSpeed() {
-        double x = (ran.nextDouble()-0.5)*2;
+        double x = (Rng.R.nextDouble()-0.5)*2;
         double y = Math.sqrt(1-Math.abs(x));
-        if (ran.nextInt(2) == 0) {
+        if (Rng.R.nextInt(2) == 0) {
             return new Pair<>(x*currentState.configs.velocity, y*currentState.configs.velocity);
         }
         return new Pair<>(x*currentState.configs.velocity, -y*currentState.configs.velocity);

@@ -3,7 +3,6 @@ package sys.models;
 import sys.Simulation;
 import sys.State;
 import sys.Config;
-import sys.applications.CustomScenario;
 
 public interface IMenu {
 

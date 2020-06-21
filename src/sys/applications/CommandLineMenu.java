@@ -1,4 +1,5 @@
 package sys.applications;
+import javafx.application.Preloader;
 import javafx.util.Pair;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
@@ -11,19 +12,20 @@ import sys.Config;
 import sys.Core.*;
 import sys.Simulation;
 import sys.State;
+import sys.applications.scenarios.CustomScenario;
+import sys.applications.scenarios.DefaultScenario;
+import sys.applications.scenarios.PeopleMetGetsTestedScenario;
 import sys.models.IMenu;
 import sys.models.Scenario;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Scanner;
 import java.lang.Math;
 import java.util.function.IntPredicate;
-import java.util.function.IntSupplier;
 
 public class CommandLineMenu implements IMenu {
     private Scanner input = new Scanner(System.in);
@@ -606,8 +608,8 @@ public class CommandLineMenu implements IMenu {
     }
 
     @ToRevise
-    private void printScenarioIntro(Scenario scenario){
-        printPersonalizedTitle("Hai scelto " + scenario.getName());
+    private <E extends Scenario> void printScenarioIntro(Class<E> type){
+        printPersonalizedTitle("Hai scelto " + type.getInfos().getName());
         System.out.println(scenario.getInfos());
     }
 
@@ -619,10 +621,10 @@ public class CommandLineMenu implements IMenu {
             if (scenario instanceof DefaultScenario) {
                 System.out.println("Lo scenario di default non può essere disabilitato.");
             } else {
-                System.out.println("Lo scenario '" + scenario.getName() + "' è abilitato.");
-                response = askConfirmation("Sei sicuro di voler disabilitare '" + scenario.getName() + "'?");
+                System.out.println("Lo scenario '" + scenario.getInfos().getName() + "' è abilitato.");
+                response = askConfirmation("Sei sicuro di voler disabilitare '" + scenario.getInfos().getName() + "'?");
                 if (response) {
-                    System.out.println("Lo scenario '"+ scenario.getName()+"' è stato disattivato.");
+                    System.out.println("Lo scenario '"+ scenario.getInfos().getName()+"' è stato disattivato.");
                     if (simulation.getCurrentScenario() instanceof CustomScenario) {
                         ((CustomScenario) simulation.getCurrentScenario()).removeScenario(scenario);
                         scenario = simulation.getCurrentScenario();
@@ -644,7 +646,7 @@ public class CommandLineMenu implements IMenu {
                     System.out.println("Hai annullato la modifica.");
                 }
             } else {
-                response = askConfirmation("Sei sicuro di voler abilitare '" + scenario.getName() + "'?");
+                response = askConfirmation("Sei sicuro di voler abilitare '" + scenario.getInfos().getName() + "'?");
                 if (response) {
                     if (simulation.getCurrentScenario() instanceof CustomScenario) {
                         ((CustomScenario) simulation.getCurrentScenario()).addScenario(scenario);
@@ -675,7 +677,7 @@ public class CommandLineMenu implements IMenu {
 
             switch (action){
                 case 1:
-                    printScenarioIntro(defaultScenario);
+                    printScenarioIntro(DefaultScenario.class);
                     result = enableDisable(simulation, defaultScenario);
                     break;
                 case 2:
@@ -705,8 +707,8 @@ public class CommandLineMenu implements IMenu {
 
             switch(action) {
                 case 1:
-                    //PeopleMetGetsTestedScenario new_scen = new PeopleMetGetsTestedScenario();
-                    printScenarioIntro(new_scen);
+                    PeopleMetGetsTestedScenario new_scen = new PeopleMetGetsTestedScenario();
+                    printScenarioIntro(PeopleMetGetsTestedScenario.class);
                     break;
                 case 2:
 
