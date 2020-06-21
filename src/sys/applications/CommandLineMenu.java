@@ -162,7 +162,7 @@ public class CommandLineMenu implements IMenu {
         inputUntilValid(config::setPopulationNumber, Integer.class, "Numero non valido. Reinserirlo (<= "+Config.POPULATION_NUMBER_UPPER_BOUND+"): ");
 
         // Durata della malattia
-        System.out.print("Inserire la durata della malattia in giorni ("+ Config.DISEASE_DURATION_LOWER_BOUND+"< "+ Config.DISEASE_DURATION_UPPER_BOUND +"): ");
+        System.out.print("Inserire la durata della malattia in giorni ("+ Config.DISEASE_DURATION_LOWER_BOUND+"<x<"+ Config.DISEASE_DURATION_UPPER_BOUND +"): ");
         inputUntilValid(config::setDiseaseDuration, Integer.class, "Numero non valido. Reinserirlo (<= " + Config.DISEASE_DURATION_UPPER_BOUND + "): ");
 
         // Risorse iniziali
@@ -254,7 +254,7 @@ public class CommandLineMenu implements IMenu {
     }
 
     @Override
-    public int settings(Config config) { 
+    public int settings(Config config) {
         Scanner Input = new Scanner(System.in);
 
         clear();
@@ -542,10 +542,11 @@ public class CommandLineMenu implements IMenu {
 
 
                 case(0):
+
                 break;
             }
         }
-        return 1; 
+        return 0;
     }
 
     @Override
