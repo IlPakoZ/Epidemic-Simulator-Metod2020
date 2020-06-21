@@ -20,7 +20,6 @@ public class Person {
     private int dayToStop = -1;                     //Indica che la persona o è sempre ferma o è sempre in movimento
     private int daysFromInfection = -1;
     private double severityModifier = 1;
-    private double infectivityModifier = 1;
     private boolean isInfected = false;
 
     /**
@@ -225,18 +224,6 @@ public class Person {
 
     /**
      * Imposta il modificatore di infettività in base
-     * al parametro in input. Questo metodo è utilizzato
-     * dalla classe Rng.
-     *
-     * @param infectivityModifier   modificatore di infettività generato da Rng
-     */
-    @ToRevise
-    public void setInfectivityModifier(double infectivityModifier){
-        this.infectivityModifier = infectivityModifier;
-    }
-
-    /**
-     * Imposta il modificatore di infettività in base
      * al parametro in input. Questo metodo è utilizzato dalla
      * classe Rng durante la creazione della popolazione.
      *
@@ -255,16 +242,6 @@ public class Person {
     @Ready
     public double getSeverityModifier() {
         return severityModifier;
-    }
-
-    /**
-     * Restituisce l'attributo infectivityModifier.
-     *
-     * @return  restituisce l'attributo infectivityModifier
-     */
-    @Ready
-    public double getInfectivityModifier() {
-        return infectivityModifier;
     }
 
     /**

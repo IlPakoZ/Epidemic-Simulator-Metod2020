@@ -22,7 +22,6 @@ public class Config {
     public int dayDuration = 500;                         //Loop duration measured in milliseconds
     public double velocity = 1;
     public int socialDistance;
-    boolean masks = false;
     public int frameADay = 25;
     public int maxAge = 110;
     public int ageAverage = 50;
@@ -71,7 +70,6 @@ public class Config {
             this.letality = c.letality;
             this.diseaseDuration = c.diseaseDuration;
             this.dayDuration = c.dayDuration;
-            this.masks = c.masks;
             this.maxAge = c.maxAge;
         }
     }

@@ -2,8 +2,6 @@ package sys;
 
 import assets.Person;
 import sys.Core.*;
-import java.util.ArrayList;
-//import java.util.Math;
 import java.util.Random;
 
 public class Rng {
@@ -64,20 +62,6 @@ public class Rng {
     }
 
     /**
-     * Restituisce un double da utilizzare come modificatore nel metodo
-     * generateFortune che modifica la probabilità di contagiare qualcuno
-     * in base a se possiede la mascherina o no.
-     *
-     * @param mask  booleano che indica se possiede la mascherina o no
-     * @return      modificatore di probabilità di tipo double
-     */
-    @ToRevise
-    private static double generateInfectivityModifiers(boolean mask){
-        if (mask) return 2;
-        else return 1;
-    }
-
-    /**
      * Data una media di età e un'età massima per la popolazione,
      * restituisce un ArrayList di persone la cui età è distribuita
      * seguendo una distribuzione Gaussiana. La generazione della popolazione
@@ -96,11 +80,10 @@ public class Rng {
             do {
                 age = R.nextGaussian() * GAUSSIAN_AGE_MODIFIER + currentState.configs.ageAverage;
             }while(age<0 || age>currentState.configs.maxAge);
-            //people[i] = new Person(currentState.configs.ageAverage, i, currentState);
             people[i] = new Person((int) age, i, currentState);
             people[i].setSeverityModifier(generateSeverityModifiers((int)age));
-            people[i].setInfectivityModifier(generateInfectivityModifiers(false));
         }
+
         currentState.greenIncubation=currentState.configs.populationNumber-1;
         currentState.incubationYellow=currentState.configs.populationNumber-1;
         currentState.yellowRed=currentState.configs.populationNumber-1;

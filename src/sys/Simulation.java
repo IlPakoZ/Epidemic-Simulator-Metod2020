@@ -297,7 +297,7 @@ public class Simulation {
         p1.contact = true;
         p2.contact = true;
         if(!p2.isInfected()){
-            if(Rng.generateFortune(currentState.configs.infectivity, currentState.isPoorCountry() ? p2.getInfectivityModifier()*5 : p2.getInfectivityModifier())) {
+            if(Rng.generateFortune(currentState.configs.infectivity, currentState.isPoorCountry() ? 5 : 0)) {
                 p2.setAsInfected();
             }
         }
