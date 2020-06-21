@@ -130,7 +130,8 @@ public class Simulation {
      * eseguite in ripetizione. Restituisce true se il loop
      * deve continuare la sua esecuzione, altrimenti restituisce
      * false.
-     * @return      booleano che indica se il loop è ancora in esecuzione
+     *
+     * @return      booleano che indica se il loop deve essere ancora eseguito
      */
     @ToRevise
     private boolean loop() {
@@ -164,7 +165,7 @@ public class Simulation {
 
 
     /**
-     * Passa al giorno della simulazione successivo,
+     * Passa al giorno successivo della simulazione e
      * aggiorna i valori della simulazione. Contiene il
      * payload da eseguire ad ogni cambiamento di giorno.
      * Calcola anche il valore vd (vedere specifiche progetto).
@@ -199,7 +200,8 @@ public class Simulation {
     /**
      * Sostituisci le configurazioni correnti della simulazione
      * con le configurazioni passate in input.
-     * @param config    istanza di Config, contiene le configurazioni da cariare nella simulazione.
+     *
+     * @param config    istanza di Config, contiene le configurazioni da cariare nella simulazione
      */
     @ToRevise
     public void loadConfigs(Config config){
@@ -208,7 +210,8 @@ public class Simulation {
 
     /**
      * Restituisce le configurazioni della simulazione corrente.
-     * @return      configurazioni attuali.
+     *
+     * @return      configurazioni attuali
      */
     @ToRevise
     public Config getConfigs(){
@@ -217,13 +220,15 @@ public class Simulation {
 
     /**
      * Restituisce lo stato della simulazione corrente.
-     * @return      stato attuale.
+     *
+     * @return      stato attuale
      */
     @Ready
     public State getCurrentState() {return currentState;}
 
     /**
      * Restituisce lo scenario attualmente in uso.
+     *
      * @return      scenario attuale
      */
     @Ready
@@ -249,7 +254,7 @@ public class Simulation {
 
     /**
      * Fa il tampone alle persone scelte per quel determinato giorno e, se una di queste
-     * risulta positivo, aggiunge alla coda le persone con cui è entrata in contatto.
+     * risulta positiva, aggiunge alla coda le persone con cui è entrata in contatto.
      *
      * @param percent   percentuale di fare il tampone ad una persona.
      *
@@ -276,7 +281,7 @@ public class Simulation {
      * si occupa innanzitutto di richiamare i metodi della classe Rng per
      * calcolare se la persona sana deve risultare contagiata. Se il risultato
      * è positivo e se il paziente uno è stato trovato, bisogna memorizzare il
-     * contatto nel dizionario che conterrà i contatti di una certa persona.
+     * contatto nel dizionario che conterrà gli incontri di una certa persona.
      *
      * @param p1    persona sana che è venuta in contatto con un infetto
      * @param p2    persona infetta.
@@ -296,12 +301,13 @@ public class Simulation {
 
     /**
      * Toglie denaro dalle casse dello Stato per effettuare un tampone
-     * sulla persona. Effettuato il tempone, se la persona è nella
+     * sulla persona. Effettuato il tampone, se la persona è nella
      * lista dei contatti, si può decidere di eseguire un tampone
      * anche ai contatti (contact tracing). Il tampone ha una certa
      * probabilità di fallire. Usare il metodo "generateFortune" in Rng
      * per calcolare le probabilità di riuscita.
      * Il tampone verrà usato o meno in base allo scenario che si sceglie.
+     *
      * @param p1    persona a cui sottoporre il tampone.
      */
      @ToRevise

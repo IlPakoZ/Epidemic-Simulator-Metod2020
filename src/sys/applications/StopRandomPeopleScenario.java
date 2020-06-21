@@ -22,11 +22,16 @@ public class StopRandomPeopleScenario extends Scenario{
         peopleToStop = people;
     }
 
+    //Non fa nulla
     @Override
     public void oneTimeAction() {
 
     }
 
+    /**
+     * Ferma un numero preso in input di persone, scelte casualmente tra la
+     * popolazione, per un numero di giorni preso in input.
+     */
     @Override
     public void dailyAction()  {
         Random r = new Random();
@@ -40,21 +45,34 @@ public class StopRandomPeopleScenario extends Scenario{
         }
     }
 
+    //Non fa nulla
     @Override
     public void frameAction() {
 
     }
 
+    /**
+     * Restituisce l'ID univoco che identifica uno scenario.
+     * @return  ID dello scenario.
+     */
     @Override
     public int getID() {
         return ID;
     }
 
+    /**
+     * Restituisce una breve descrizione dello scenario.
+     * @return  breve descrizione dello scenario.
+     */
     @Override
     public String getInfos() {
         return "In questo scenario, ogni giorno vengono fermate un numero preso in input di persone.\n";
     }
 
+    /**
+     * Restituisce il nome dello scenario.
+     * @return  nome dello scenario.
+     */
     @Override
     public String getName() {
         return "Stop Random People Scenario\n";
