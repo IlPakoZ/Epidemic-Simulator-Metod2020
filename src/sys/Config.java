@@ -258,6 +258,85 @@ public class Config {
         return sintomaticity;
     }
 
+    /**
+     * Controlla se la percentuale di letalità
+     * è regolare ed entro i limiti del programma, se si,
+     * inserisce il dato e restituisce true, altrimenti
+     * restituisce false.
+     *
+     * @param number    input letality
+     * @return          true se il valore è nel formato corretto, false altrimenti.
+     */
+    public boolean setLetality(int number){
+        if (number <= 0.0 || number > 100.0){
+            return false;
+        }
+        letality = number;
+        configsChanged = true;
+        return true;
+    }
+
+    /**
+     *  Quando richiamata, restituisce l'attributo
+     *  della letality.
+     *
+     * @return  letalità
+     */
+    public int getLetality() { return letality; }
+
+    /**
+     * Controlla se l'età massima è regolare
+     * ed entro i limiti del programma, se si,
+     * inserisce il dato e restituisce true, altrimenti
+     * restituisce false.
+     *
+     * @param number    input maxAge
+     * @return          true se il valore è nel formato corretto, false altrimenti.
+     */
+    public boolean setMaxAge(int number){
+        if (number < 50 || number > 110){
+            return false;
+        }
+        maxAge = number;
+        configsChanged = true;
+        return true;
+    }
+
+    /**
+     *  Quando richiamata, restituisce l'attributo
+     *  dell'età massima.
+     *
+     * @return  età massima.
+     */
+    public int getMaxAge() { return maxAge; }
+
+    /**
+     * Controlla se l'età media è regolare
+     * ed entro i limiti del programma, se si,
+     * inserisce il dato e restituisce true, altrimenti
+     * restituisce false.
+     *
+     * @param number    input ageAverage
+     * @return          true se il valore è nel formato corretto, false altrimenti.
+     */
+    public boolean setAgeAverage(int number){
+        if (number < 20 || number > 80){
+            return false;
+        }
+        ageAverage = number;
+        configsChanged = true;
+        return true;
+    }
+
+    /**
+     *  Quando richiamata, restituisce l'attributo
+     *  dell'ageAverage.
+     *
+     * @return  età media
+     */
+    public int getAgeAverage() { return ageAverage; }
+
+
     boolean haveConfigsChanged() { return configsChanged; }
 
     void setConfigsChanged(boolean changed) {this.configsChanged = changed;}
