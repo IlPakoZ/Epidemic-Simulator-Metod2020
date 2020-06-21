@@ -131,6 +131,8 @@ public class Config {
             return false;
         }
         diseaseDuration = number;
+        incubationToYellowDeadline = (int) (diseaseDuration * Config.INCUBATION_TO_YELLOW_DEADLINE);
+        yellowToRedDeadline = (int) (diseaseDuration * Config.YELLOW_TO_RED_DEADLINE);
         return true;
     }
 
