@@ -9,13 +9,12 @@ import sys.models.Scenario;
 public class PeopleMetGetsTestedScenario extends Scenario{
 
     private Simulation currentSimulation;
-    private State currentState;
     private double percent;
     private static final int ID = 2;
 
     public PeopleMetGetsTestedScenario(Simulation currentSimulation, double percent) {
         super(currentSimulation);
-        currentState = currentSimulation.getCurrentState();
+        this.currentSimulation = currentSimulation;
         this.percent = percent;
     }
 
@@ -46,6 +45,6 @@ public class PeopleMetGetsTestedScenario extends Scenario{
 
     @Override
     public String getName() {
-        return "PeopleMetGetsTestedScenario\n";
+        return "People Met Gets Tested Scenario\n";
     }
 }

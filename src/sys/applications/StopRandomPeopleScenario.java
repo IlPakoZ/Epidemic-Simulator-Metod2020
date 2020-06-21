@@ -10,13 +10,14 @@ import java.util.Random;
 
 public class StopRandomPeopleScenario extends Scenario{
 
-    private Simulation currentSimulation;
     private State currentState;
     private int peopleToStop;
+    private int duration;
     private static final int ID = 3;
 
-    public StopRandomPeopleScenario(Simulation currentSimulation, int people) {
+    public StopRandomPeopleScenario(Simulation currentSimulation, int people, int duration) {
         super(currentSimulation);
+        this.duration = duration;
         currentState = currentSimulation.getCurrentState();
         peopleToStop = people;
     }
@@ -27,11 +28,15 @@ public class StopRandomPeopleScenario extends Scenario{
     }
 
     @Override
-    public void dailyAction() {
+    public void dailyAction()  {
         Random r = new Random();
         for (int i = 0; i < peopleToStop; i++) {
             Person x = currentState.startingPopulation[r.nextInt(currentState.blueBlack+1)];
-            x.movement = MovementStatus.STATIONARY;
+            if (x.getMovement() != MovementStatus.STATIONARY) {
+                try {
+                    x.setStationary(duration);
+                }catch (Person.UnsafeMovementStatusChangeException ignored) { ignored.printStackTrace(); }
+            }
         }
     }
 
@@ -52,6 +57,6 @@ public class StopRandomPeopleScenario extends Scenario{
 
     @Override
     public String getName() {
-        return "StopRandomPeopleScenario\n";
+        return "Stop Random People Scenario\n";
     }
 }

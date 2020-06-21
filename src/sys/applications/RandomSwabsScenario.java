@@ -16,7 +16,8 @@ public class RandomSwabsScenario extends Scenario{
 
     public RandomSwabsScenario(Simulation currentSimulation, int swabs) {
         super(currentSimulation);
-        currentState = currentSimulation.getCurrentState();
+        this.currentSimulation = currentSimulation;
+        this.currentState = currentSimulation.getCurrentState();
         swabsNumber = swabs;
     }
 
@@ -31,7 +32,7 @@ public class RandomSwabsScenario extends Scenario{
         Random r = new Random();
         for (int i = 0; i < swabsNumber; i++) {
             Person x = currentState.startingPopulation[r.nextInt(currentState.blueBlack+1)];
-            currentState.swabPersons.enqueue(x);
+            if (!currentState.swabs.contains(x)) currentSimulation.doSwab(x);
         }
     }
 
@@ -52,6 +53,6 @@ public class RandomSwabsScenario extends Scenario{
 
     @Override
     public String getName() {
-        return "RandomSwabsScenario\n";
+        return "Random Swabs Scenario\n";
     }
 }

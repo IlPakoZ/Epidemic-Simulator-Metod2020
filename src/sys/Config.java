@@ -16,7 +16,6 @@ public class Config {
     public int diseaseDuration;
     public Pair<Integer,Integer> size;                    // width, height
 
-    // ----------------------------------------------------------------------------------------------
 
     // ----------------------------- SIMULATION PARAMETERS (OPTIONAL) -------------------------------
 
@@ -28,14 +27,22 @@ public class Config {
     public int maxAge = 110;
     public int ageAverage = 50;
 
-    // ----------------------------------------------------------------------------------------------
 
-    // --------------------------------------- WORK VARIABLES ---------------------------------------
+    // ----------------------------------------- CONSTANTS ------------------------------------------
+
+    //DO NOT EDIT THOSE IF YOU DON'T KNOW WHAT YOU'RE DOING
 
     public static final double SWAB_SUCCESS_RATE = 99;
     public static final int DAILY_COST_IF_STATIONARY = 1;
     public static final double INCUBATION_TO_YELLOW_DEADLINE = 1/6.0;
     public static final double YELLOW_TO_RED_DEADLINE = 1/3.0;
+    public static final int POPULATION_NUMBER_UPPER_BOUND = 100000;
+    public static final int POPULATION_NUMBER_LOWER_BOUND = 2;
+    public static final int DISEASE_DURATION_UPPER_BOUND = 90;
+    public static final int DISEASE_DURATION_LOWER_BOUND = 6;
+    public static final int RESOURCES_LOWER_BOUND = 1;
+
+    // --------------------------------------- WORK VARIABLES ---------------------------------------
 
     private boolean isValid = true;
     public int incubationToYellowDeadline;  //Deve essere impostato a currentState.configs.diseaseDuration*Config.INCUBATION_TO_YELLOW_DEADLINE (facendo casting ad intero)
@@ -91,7 +98,7 @@ public class Config {
     @ToRevise
     public boolean setPopulationNumber(int number){
         configsChanged = true;
-        if (number > 100000 || number <= 1){
+        if (number > POPULATION_NUMBER_UPPER_BOUND || number < POPULATION_NUMBER_LOWER_BOUND){
             return false;
         }
         populationNumber = number;
@@ -120,7 +127,7 @@ public class Config {
     @ToRevise
     public boolean setDiseaseDuration(int number){
         configsChanged = true;
-        if (number > 90 || number <=0){
+        if (number > DISEASE_DURATION_UPPER_BOUND || number <= DISEASE_DURATION_LOWER_BOUND){
             return false;
         }
         diseaseDuration = number;
@@ -147,7 +154,7 @@ public class Config {
      */
     public boolean setInitialResources(int number){
         configsChanged = true;
-        if (number >= (populationNumber * diseaseDuration) || number <= 0){
+        if (number >= (populationNumber * diseaseDuration) || number <= RESOURCES_LOWER_BOUND){
             return false;
         }
         initialResources = number;

@@ -15,14 +15,13 @@ public class Person {
     private double speedX, speedY;            //horizontalSpeed, verticalSpeed
     public boolean contact = false;
     public ColorStatus color = ColorStatus.GREEN;
-    public MovementStatus movement = MovementStatus.MOVING;
+    private MovementStatus movement = MovementStatus.MOVING;
     private int dayOfDeath = -1;
     private int dayToStop = -1;                     //Indica che la persona o è sempre ferma o è sempre in movimento
     private int daysFromInfection = -1;
     private double severityModifier = 1;
     private double infectivityModifier = 1;
     private boolean isInfected = false;
-    private boolean wasRed = false;
     private final static Random ran = new Random();
 
     /**
@@ -133,6 +132,11 @@ public class Person {
         }
     }
 
+    @Ready
+    public MovementStatus getMovement() {
+        return movement;
+    }
+
     /**
      * Metodo di supporto interno utilizzato per settare
      * la persona di un determinato colore.
@@ -152,7 +156,6 @@ public class Person {
                 currentState.swabs.add(this);
                 if (index != currentState.yellowRed) switchPerson(currentState.yellowRed);
                 currentState.yellowRed-=1;
-                wasRed = true;
                 break;
             case BLUE:
                 if (this.color==ColorStatus.YELLOW){
@@ -312,19 +315,10 @@ public class Person {
         return new Pair<>(x*currentState.configs.velocity, -y*currentState.configs.velocity);
     }
 
-    static class UnsafeMovementStatusChangeException extends Exception{
+    public static class UnsafeMovementStatusChangeException extends Exception{
         UnsafeMovementStatusChangeException(){
             super("Unsafe movement status change from external class.");
         }
-    }
-
-    /**
-     * Restituisce il valore di wasRed
-     * @return  wasRed
-     */
-    @Ready
-    public boolean getWasRed(){
-        return wasRed;
     }
 
     // ------------------------- DEBUGGING ---------------------------
