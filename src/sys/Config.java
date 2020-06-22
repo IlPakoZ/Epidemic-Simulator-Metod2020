@@ -44,6 +44,10 @@ public class Config {
     public static final int DISEASE_DURATION_UPPER_BOUND = 90;
     public static final int DISEASE_DURATION_LOWER_BOUND = 6;
     public static final int RESOURCES_LOWER_BOUND = 1;
+    public static final int MAX_AGE_LOWER_BOUND = 50;
+    public static final int MAX_AGE_UPPER_BOUND = 110;
+    public static final int AGE_AVERAGE_LOWER_BOUND = 20;
+    public static final int AGE_AVERAGE_UPPER_BOUND = 80;
     public Function<Integer, Integer> SizeLowerBound = ((i)-> Math.max(2, (size[1-i] != 0 ? (populationNumber / 10) / size[1-i] : 2)));
     public Function<Integer, Integer> SizeUpperBound = ((i)-> (populationNumber * 10) / (size[1-i]==0?4:size[1-i]));
     public Function<Integer, Integer> PreferredSizeBound = ((i)-> ((int)(size[1-i]!=0 ? populationNumber*4/size[1-i]: Math.sqrt(populationNumber * 2))));

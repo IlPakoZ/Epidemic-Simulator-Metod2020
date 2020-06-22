@@ -1,14 +1,15 @@
 import assets.ColorStatus;
 import assets.Person;
 import sys.*;
+import sys.applications.CommandLineMenu;
 import sys.applications.PrototypeCommandMenu;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         Core x = new Core();
-        PrototypeCommandMenu c = new PrototypeCommandMenu();
-        x.newSimulation(new PrototypeCommandMenu());
-        //x.run();
+        CommandLineMenu c = new CommandLineMenu();
+        x.newSimulation(c);
+        x.run();
 
         //x.run();
         Simulation simulation = x.debug();

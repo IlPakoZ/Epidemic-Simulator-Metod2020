@@ -166,44 +166,37 @@ public class CommandLineMenu implements IMenu {
         config.letality = inputUntilValid(0, 100, "Percentuale non valida. Reinserirla (0 <= x < 100): ", "Inserire la percentuale di letalita' (0 <= x < 100): ", "FI", config);
 
         configurationScreen("FI", config);
+
         System.out.println("\nInserire l'altezza e la larghezza dello spazio grafico dove avverrà la simulazione.");
         System.out.println("Più lo spazio è grande, meno spesso avverranno i contatti tra le persone!\n");
-        System.out.print("Larghezza: (> 2, valore consigliato "+(int)Math.sqrt(config.populationNumber)*2+"): ");
-        int width = getInput(Integer.class);
-        System.out.print("Altezza: ("+ Math.max(2, (config.populationNumber/10)/width) + "< x <" +((config.populationNumber*10)/width)+ ", valore consigliato "+ (4*config.populationNumber/width)+"): ");
-        int height = getInput(Integer.class);
-        while(width*height > config.populationNumber*4 | width<2 | height <2) {
-            configurationScreen("FI", config);
-            System.out.println("Parametri non validi. Reinserirli.");
-            System.out.print("Larghezza: (> 2, valore consigliato "+(int)Math.sqrt(config.populationNumber)*2+"): ");
-            width = getInput(Integer.class);
-
-            System.out.print("Altezza: ("+ Math.max(2, (config.populationNumber/10)/width) + "< x <" +((config.populationNumber*10)/width)+ ", valore consigliato "+ (4*config.populationNumber/width)+"): ");
-            height = getInput(Integer.class);
+        System.out.print("Larghezza: (" + format(config.SizeLowerBound.apply(0)) + "<=x<=" + format(config.SizeUpperBound.apply(0)) + ", valore consigliato " + format(config.PreferredSizeBound.apply(0)) + "): ");
+        while (!config.setSizeX(getInput(Integer.class))) {
+            System.out.print("Parametri non validi, reinserirli: ");
+        }
+        System.out.print("Altezza: (" + format(config.SizeLowerBound.apply(1)) + "<=x<=" + format(config.SizeUpperBound.apply(1)) + ", valore consigliato " + format(config.PreferredSizeBound.apply(1)) + "): ");
+        while (!config.setSizeY(getInput(Integer.class))) {
+            System.out.print("Parametri non validi, reinserirli: ");
         }
         // config.size = new Pair<>(width, height);
         
         //TODO: DA QUI IN POI RENDERE OPZIONALI
         configurationScreen("FI", config);
-        System.out.print("Settare anche i valori ozpionali? (0/1) ");
+        boolean result = askConfirmation("Settare anche i valori ozpionali?");
+        /*
         Integer option = getInput(Integer.class);
         while(option != 0 && option != 1) {
             configurationScreen("FI", config);
             System.out.print("Settare anche i valori ozpionali? (0/1) ");
             option = getInput(Integer.class);
         }
-               
-        switch(option) {
-        case 0:
-        // Età massima
-        config.maxAge = inputUntilValid(50, 110, "Eta' non valida. Reinserirla (50 < x < 110): ", "Inserire l'eta' massima (50 < x < 110): ", "FI", config);
-        // Età media
-        config.ageAverage = inputUntilValid(20, 80, "Eta' non valida. Reinserirla (20 < x < 80): ", "Inserire l'eta' massima (20 < x < 80): ", "FI", config);
-        break;
-
-        case 1:
-        break;
+          */
+        if (result) {
+            // Età massima
+            config.maxAge = inputUntilValid(Config.MAX_AGE_LOWER_BOUND, Config.MAX_AGE_UPPER_BOUND, "Eta' non valida. Reinserirla "+ Config.MAX_AGE_LOWER_BOUND +"< x <"+ Config.MAX_AGE_UPPER_BOUND +": ", "Inserire l'eta' massima (" +Config.MAX_AGE_LOWER_BOUND+ "< x < " + Config.MAX_AGE_UPPER_BOUND +"): ", "FI", config);
+            // Età media
+            config.ageAverage = inputUntilValid(Config.AGE_AVERAGE_LOWER_BOUND, Config.AGE_AVERAGE_UPPER_BOUND, "Eta' non valida. Reinserirla ("+ Config.AGE_AVERAGE_LOWER_BOUND +"< x <"+ Config.AGE_AVERAGE_UPPER_BOUND +"): ", "Inserire l'eta' media (" +Config.AGE_AVERAGE_LOWER_BOUND+ "< x < " + Config.AGE_AVERAGE_UPPER_BOUND +"): ","FI", config);
         }
+
     }
 
     @Override
