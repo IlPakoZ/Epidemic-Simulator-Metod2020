@@ -745,6 +745,6 @@ public class PrototypeCommandMenu implements IMenu {
     }
 
     public interface Functional<T>{
-       public abstract boolean test(T parameter);
+       public boolean test(T parameter);
     }
 }
