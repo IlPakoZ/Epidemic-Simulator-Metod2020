@@ -547,6 +547,11 @@ public class PrototypeCommandMenu implements IMenu {
     }
 
     @Override
+    public int settings_op(Config config) {
+        return 0;
+    }
+
+    @Override
     public void feedback(State state){
         printPersonalizedTitle("GIORNO " + state.currentDay);
         System.out.println("Popolazione sana: " + state.getHealthyNumber());

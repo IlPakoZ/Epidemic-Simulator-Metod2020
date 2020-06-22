@@ -15,7 +15,6 @@ public class State {
     public Config backupConfigs;
     public Person[] startingPopulation;
     public int resources;
-    public HashSet<Person> dailyContacts;
     public HashMap<Person, HashSet<Person>> contacts;       // Infected person, {set of people met}
     public HashSet<Person> swabs;                           // If present, the person represented by the instance
                                                             // is positive to the swab
