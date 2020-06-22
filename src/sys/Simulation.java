@@ -100,7 +100,7 @@ public class Simulation {
         int frame = 0;
         Instant startTime = Instant.now();
         while(going){
-            going = loop();
+            loop();
             if (frame % getConfigs().frameADay == 0){
                 if (frame == 0){
                     for (ArrayList<Integer> arr: currentState.total){
@@ -112,9 +112,8 @@ public class Simulation {
                     menu.feedback(currentState);
                 }else{
                     boolean result = nextDay();
-                    if (!result) {
-                        going = false;
-                    }
+                    if (!result) going = false;
+
                     Instant endTime = Instant.now();
                     int duration = Duration.between(startTime, endTime).getNano()/1000000;
                     if (duration < getConfigs().dayDuration) Thread.sleep(getConfigs().dayDuration-duration);
@@ -137,7 +136,7 @@ public class Simulation {
      * @return      booleano che indica se il loop deve essere ancora eseguito
      */
     @ToRevise
-    private boolean loop() {
+    private void loop() {
 
         currentState.space = new PersonList[currentState.configs.size[0]][currentState.configs.size[0]];
         for (int i=currentState.incubationYellow+1;i<=currentState.redBlue;i++){
@@ -159,8 +158,6 @@ public class Simulation {
                 }
             }
         }
-
-        return true;
     }
     // NB: I blu sono invisibili, quindi come se fossero inesistenti
     // infatti, su di loro le collisioni non hanno effetto e non sono registrate.
