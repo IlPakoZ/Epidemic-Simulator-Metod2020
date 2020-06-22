@@ -6,6 +6,7 @@ import assets.Person;
 import sys.Core.*;
 import sys.applications.scenarios.CustomScenario;
 import sys.applications.scenarios.DefaultScenario;
+import sys.applications.scenarios.PeopleGetStoppedOnceScenario;
 import sys.models.IMenu;
 import sys.models.Scenario;
 
@@ -377,6 +378,10 @@ public class Simulation {
 
         currentState.startingPopulation = Rng.generatePopulation(currentState);
         currentState.resources = config.initialResources;
+        currentScenario = new PeopleGetStoppedOnceScenario(this, 5000, 20);
+
+        currentScenario.oneTimeAction();
+
         //System.out.println(currentState.getCurrentAgeAverage(0, currentState.getCurrentAgeAverage(0,configs.populationNumber)));
     }
 
