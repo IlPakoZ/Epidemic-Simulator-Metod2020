@@ -10,26 +10,26 @@ public class Config {
 
     // ----------------------------- SIMULATION PARAMETERS (COMPULSORY) -----------------------------
 
-    public int populationNumber;
-    public int initialResources;
-    public int swabsCost;
-    public int infectivity;
-    public int sintomaticity;
-    public int letality;
-    public int diseaseDuration;
-    public int[] size = new int[] {0,0};                  // width, height
+    private int populationNumber;
+    private int initialResources;
+    private int swabsCost;
+    private double infectivity;
+    private double sintomaticity;
+    private double letality;
+    private int diseaseDuration;
+    private int[] size = new int[] {0,0};                  // width, height
 
 
     // ----------------------------- SIMULATION PARAMETERS (OPTIONAL) -------------------------------
 
-    public int dayDuration = 500;                         //Loop duration measured in milliseconds
-    public double velocity = 1;
-    public int socialDistance;
-    public int frameADay = 25;
-    public int maxAge = 110;
-    public int ageAverage = 50;
-    public String outputTotalFile = "total.png";
-    public String outputDailyFile = "daily.png";
+    private int dayDuration = 500;                         //Loop duration measured in milliseconds
+    private double velocity = 1;
+    private int socialDistance;
+    private int frameADay = 25;
+    private int maxAge = 110;
+    private int ageAverage = 50;
+    private String outputTotalFile = "total.png";
+    private String outputDailyFile = "daily.png";
 
     // ------------------------------------- CONSTANTS & BOUNDS --------------------------------------
 
@@ -234,7 +234,7 @@ public class Config {
      *
      * @return  infettività
      */
-    public int getInfectivity(){
+    public double getInfectivity(){
         return infectivity;
     }
 
@@ -263,7 +263,7 @@ public class Config {
      *
      * @return  sintomaticità
      */
-    public int getSintomaticity(){
+    public double getSintomaticity(){
         return sintomaticity;
     }
 
@@ -291,7 +291,7 @@ public class Config {
      *
      * @return  letalità
      */
-    public int getLetality() { return letality; }
+    public double getLetality() { return letality; }
 
     /**
      * Controlla se l'età massima è regolare
@@ -395,6 +395,62 @@ public class Config {
      * @return
      */
     boolean haveConfigsChanged() { return configsChanged; }
+
+    /**
+     * Setta il valore della velocità
+     * @return
+     */
+    public boolean setVelocity(int number){
+        if (number < 1){
+            return false;
+        }
+        velocity = number;
+        configsChanged = true;
+        return true;
+    }
+
+    /**
+     * Restituisce l'attributo della velocità
+     * @return
+     */
+    public double getVelocity() {return velocity;}
+
+    /**
+     * Setta il numero dei frame per ogni giorno
+     * @return
+     */
+    public boolean setFrameADay(int number){
+        if (number < 1){
+            return false;
+        }
+        frameADay = number;
+        configsChanged = true;
+        return true;
+    }
+    /**
+     * Restituisce il numero di frame per ogni giorno
+     * @return
+     */
+    public int getFrameADay() {return frameADay;}
+
+     /**
+     * Setta il valore della distanza sociale
+     * @return
+     */
+    public boolean setSocialDistance(int number){
+        if (number < 1){
+            return false;
+        }
+        socialDistance = number;
+        configsChanged = true;
+        return true;
+    }
+
+     /**
+     * Restituisce la distanza sociale
+     * @return
+     */
+    public int getSocialDistance() {return socialDistance;}
 
     void setConfigsChanged(boolean changed) {this.configsChanged = changed;}
 }

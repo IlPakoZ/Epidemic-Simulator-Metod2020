@@ -72,11 +72,14 @@ public class Simulation {
                     state = menu.settings(getConfigs());
                     //Mostra il menù delle opzioni
                     break;
-                case 4:
+                case(4):
+                    state = menu.settings_op(getConfigs());
+                    //Mostra il menù opzionale
+                case 5:
                     currentScenario = menu.selectScenario(this);
                     state = 1;
                     //Mostra il menù di scelta dello scenario
-                case 5:
+                case 6:
 
                     break;
                 default:
