@@ -16,7 +16,8 @@ public class State {
     public Config backupConfigs;
     public Person[] startingPopulation;
     public int resources;
-    public HashMap<Person, ArrayList<Person>> contacts;     // Infected person, {set of people met}
+    public HashSet<Person> dailyContacts;
+    public HashMap<Person, HashSet<Person>> contacts;       // Infected person, {set of people met}
     public HashSet<Person> swabs;                           // If present, the person represented by the instance
                                                             // is positive to the swab
     public boolean unoPatientFound = false;
@@ -25,10 +26,10 @@ public class State {
     public ArrayList<ArrayList<Integer>> daily;
     public int totalSwabsNumber = 0;
     public int currentDay = 0;
-    public boolean defaultScenario = true;
     public PersonList[][] space;
     public int currentlyStationary = 0;
     public Queue<Person> swabPersons;
+    public double r0;
     private boolean poorCountry = false;
     private boolean bigBrother = false;
     // ---------------------------------------------------------------------------------

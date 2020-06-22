@@ -3,7 +3,6 @@ package sys;
 import assets.ColorStatus;
 import assets.Person;
 
-import javafx.util.Pair;
 import sys.Core.*;
 import sys.applications.scenarios.CustomScenario;
 import sys.applications.scenarios.DefaultScenario;
@@ -47,6 +46,7 @@ public class Simulation {
         currentState.daily.add(new ArrayList<>());
         currentState.contacts = new HashMap<>();
         currentState.swabs = new HashSet<>();
+        currentState.dailyContacts = new HashSet<>();
 
     }
 
@@ -109,7 +109,6 @@ public class Simulation {
                     for (ArrayList<Integer> arr: currentState.daily){
                         arr.add(0);
                     }
-                    menu.feedback(currentState);
                 }else{
                     boolean result = nextDay();
                     if (!result) going = false;
@@ -122,7 +121,6 @@ public class Simulation {
             }
             if (currentState.unoPatientFound) currentScenario.frameAction();
             frame++;
-            if (currentState.currentDay==150) going = false;
         }
         end();
     }
@@ -136,7 +134,27 @@ public class Simulation {
      */
     @ToRevise
     private void loop() {
+        /*
+        currentState.space = new PersonList[currentState.configs.size[0]][currentState.configs.size[0]];
+        for (int i = currentState.greenIncubation; i > -1; i--) {
+            int[] position = currentState.startingPopulation[i].nextPosition();
+            if (currentState.space[position[0]][position[1]] == null){
+                currentState.space[position[0]][position[1]] = new PersonList();
+            }
+            currentState.space[position[0]][position[1]].addElement(currentState.startingPopulation[i]);
+        }
 
+        for (int i=currentState.incubationYellow+1;i<=currentState.redBlue;i++){
+            Person person = currentState.startingPopulation[i];
+            int[] position = person.nextPosition();
+            if (currentState.space[position[0]][position[1]] != null) {
+                currentState.contattiGiornalieri++;
+                for (Person contatto : currentState.space[position[0]][position[1]]) {
+                    contact(person, contatto);
+                }
+            }
+        }
+        */
         currentState.space = new PersonList[currentState.configs.size[0]][currentState.configs.size[0]];
         for (int i=currentState.incubationYellow+1;i<=currentState.redBlue;i++){
             int[] position = currentState.startingPopulation[i].nextPosition();
@@ -146,17 +164,16 @@ public class Simulation {
             currentState.space[position[0]][position[1]].addElement(currentState.startingPopulation[i]);
         }
 
-        if (currentState.redBlue - currentState.incubationYellow != 0) {
-            for (int i = currentState.greenIncubation; i > -1; i--) {
-                Person person = currentState.startingPopulation[i];
-                int[] position = person.nextPosition();
-                if (currentState.space[position[0]][position[1]] != null) {
-                    for (Person contatto : currentState.space[position[0]][position[1]]) {
-                        contact(contatto, person);
-                    }
+        for (int i = currentState.greenIncubation; i > -1; i--) {
+            Person person = currentState.startingPopulation[i];
+            int[] position = person.nextPosition();
+            if (currentState.space[position[0]][position[1]] != null) {
+                for (Person contatto : currentState.space[position[0]][position[1]]) {
+                    contact(contatto, person);
                 }
             }
         }
+
     }
     // NB: I blu sono invisibili, quindi come se fossero inesistenti
     // infatti, su di loro le collisioni non hanno effetto e non sono registrate.
@@ -191,7 +208,11 @@ public class Simulation {
 
         boolean result = currentState.subtractResources(currentState.getSymptomaticNumber()*getConfigs().swabsCost*3 + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
         if (!result) currentState.status = SimulationStatus.NO_MORE_RESOURCES;
+        result = true;
+        currentState.r0 = currentState.dailyContacts.size()==0?0:currentState.daily.get(0).get(currentState.daily.get(0).size()-1)/(double)currentState.dailyContacts.size();
         menu.feedback(currentState);
+        currentState.dailyContacts = new HashSet<>();
+        currentState.r0 = 0;
         currentState.currentlyStationary = currentState.getDeathsNumber();
         if (currentState.unoPatientFound) currentScenario.dailyAction();
         currentState.currentDay+=1;
@@ -276,8 +297,7 @@ public class Simulation {
             if (Rng.generateFortune(percent, 1)) {
                 if (doSwab(x)) {
                     for (Person person : currentState.contacts.get(x)) {
-                        if (!currentState.swabs.contains(person))
-                            currentState.swabPersons.enqueue(person);
+                        if (!currentState.swabs.contains(person)) currentState.swabPersons.enqueue(person);
                     }
                 }
             }
@@ -301,11 +321,14 @@ public class Simulation {
         p2.contact = true;
         if(!p2.isInfected()){
             if(Rng.generateFortune(currentState.configs.infectivity, currentState.isPoorCountry() ? 5 : 0)) {
+                currentState.dailyContacts.add(p1);
                 p2.setAsInfected();
             }
         }
-        currentState.contacts.putIfAbsent(p1, new ArrayList<>());
+
+        currentState.contacts.putIfAbsent(p1, new HashSet<>());
         currentState.contacts.get(p1).add(p2);
+
     }
 
     /**
@@ -356,7 +379,7 @@ public class Simulation {
         Config config = getConfigs();
 
         config.populationNumber = 100000;
-        config.infectivity = 10;
+        config.infectivity = 100;
         config.letality = 20;
         config.sintomaticity = 20;
         config.swabsCost = 3;
