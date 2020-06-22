@@ -52,7 +52,7 @@ public class Config {
     public static final int FRAME_A_DAY_LOWER_BOUND = 1;
     public static final int FRAME_A_DAY_UPPER_BOUND = 120;
     public static final int VELOCITY_LOWER_BOUND = 1;
-    public function<Integer, Integer> VELOCITY_UPPER_BOUND = ((i)-> Math.min(Math.min(size[0],size[1])/10,VELOCITY_LOWER_BOUND));
+    public IntSupplier VELOCITY_UPPER_BOUND = (()-> Math.min(Math.min(size[0],size[1])/10,VELOCITY_LOWER_BOUND));
     public Function<Integer, Integer> SizeLowerBound = ((i)-> Math.max(2, (size[1-i] != 0 ? (populationNumber / 10) / size[1-i] : 2)));
     public Function<Integer, Integer> SizeUpperBound = ((i)-> (populationNumber * 10) / (size[1-i]==0?4:size[1-i]));
     public Function<Integer, Integer> PreferredSizeBound = ((i)-> ((int)(size[1-i]!=0 ? populationNumber*4/size[1-i]: Math.sqrt(populationNumber * 2))));
@@ -76,7 +76,6 @@ public class Config {
     void copy(Config c){
         if (isValid){
             this.ageAverage = c.ageAverage;
-            this.socialDistance = c.socialDistance;
             this.populationNumber = c.populationNumber;
             this.initialResources = c.initialResources;
             this.swabsCost = c.swabsCost;
@@ -421,7 +420,7 @@ public class Config {
      * @return          true se il valore è nel formato corretto, false altrimenti.
      */
     public boolean setVelocity(int number){
-        if (number < VELOCITY_LOWER_BOUND || number > VELOCITY_UPPER_BOUND){
+        if (number < VELOCITY_LOWER_BOUND || number > VELOCITY_UPPER_BOUND.getAsInt()){
             return false;
         }
         velocity = number;
@@ -466,7 +465,7 @@ public class Config {
     /**
      * Restituisce se i valori di configs sono cambiati dall'ultimo
      * backup
-     * @return
+     * @return  configsChanged
      */
     boolean haveConfigsChanged() { return configsChanged; }
 
