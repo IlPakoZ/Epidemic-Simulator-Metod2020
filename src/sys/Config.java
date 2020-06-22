@@ -24,7 +24,6 @@ public class Config {
 
     public int dayDuration = 500;                         //Loop duration measured in milliseconds
     public double velocity = 1;
-    public int socialDistance;
     public int frameADay = 25;
     public int maxAge = 110;
     public int ageAverage = 50;
@@ -48,6 +47,12 @@ public class Config {
     public static final int MAX_AGE_UPPER_BOUND = 110;
     public static final int AGE_AVERAGE_LOWER_BOUND = 20;
     public static final int AGE_AVERAGE_UPPER_BOUND = 80;
+    public static final int DAY_DURATION_LOWER_BOUND = 50;
+    public static final int DAY_DURATION_UPPER_BOUND = 1000;
+    public static final int FRAME_A_DAY_LOWER_BOUND = 1;
+    public static final int FRAME_A_DAY_UPPER_BOUND = 120;
+    public static final int VELOCITY_LOWER_BOUND = 1;
+    public function<Integer, Integer> VELOCITY_UPPER_BOUND = ((i)-> Math.min(Math.min(size[0],size[1])/10,VELOCITY_LOWER_BOUND));
     public Function<Integer, Integer> SizeLowerBound = ((i)-> Math.max(2, (size[1-i] != 0 ? (populationNumber / 10) / size[1-i] : 2)));
     public Function<Integer, Integer> SizeUpperBound = ((i)-> (populationNumber * 10) / (size[1-i]==0?4:size[1-i]));
     public Function<Integer, Integer> PreferredSizeBound = ((i)-> ((int)(size[1-i]!=0 ? populationNumber*4/size[1-i]: Math.sqrt(populationNumber * 2))));
@@ -388,6 +393,75 @@ public class Config {
      * @return  larghezza, altezza
      */
     public int[] getSize() { return size; }
+
+    public boolean setDayDuration(int number){
+        if (number < DAY_DURATION_LOWER_BOUND || number > DAY_DURATION_UPPER_BOUND){
+            return false;
+        }
+        dayDuration = number;
+        configsChanged = true;
+        return true;
+    }
+
+    /**
+     *  Quando richiamata, restituisce l'attributo
+     *  della durata del giorno.
+     *
+     * @return  dayDuration.
+     */
+    public int getDayDuration() { return dayDuration; }
+
+    /**
+     * Controlla se la velocità è regolare
+     * ed entro i limiti del programma, se si,
+     * inserisce il dato e restituisce true, altrimenti
+     * restituisce false.
+     *
+     * @param number    input velocity
+     * @return          true se il valore è nel formato corretto, false altrimenti.
+     */
+    public boolean setVelocity(int number){
+        if (number < VELOCITY_LOWER_BOUND || number > VELOCITY_UPPER_BOUND){
+            return false;
+        }
+        velocity = number;
+        configsChanged = true;
+        return true;
+    }
+
+    /**
+     *  Quando richiamata, restituisce l'attributo
+     *  della velocità.
+     *
+     * @return  Velocità.
+     */
+    public double getVelocity() { return velocity; }
+
+    /**
+     * Controlla se i frame giornalieri sono regolari
+     * ed entro i limiti del programma, se si,
+     * inserisce il dato e restituisce true, altrimenti
+     * restituisce false.
+     *
+     * @param number    input frameADay
+     * @return          true se il valore è nel formato corretto, false altrimenti.
+     */
+    public boolean setFrameADay(int number){
+        if (number < FRAME_A_DAY_LOWER_BOUND || number > FRAME_A_DAY_UPPER_BOUND){
+            return false;
+        }
+        frameADay = number;
+        configsChanged = true;
+        return true;
+    }
+
+    /**
+     *  Quando richiamata, restituisce l'attributo
+     *  dei frame giornalieri.
+     *
+     * @return  frameADay.
+     */
+    public int getFrameADay() { return frameADay; }
 
     /**
      * Restituisce se i valori di configs sono cambiati dall'ultimo
