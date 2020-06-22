@@ -32,7 +32,7 @@ public class PeopleMetGetsTestedScenario extends Scenario {
      */
     @Override
     public void dailyAction() {
-        currentSimulation.swabQueue(percent);
+        currentSimulation.getCurrentState().swabQueue(percent);
     }
 
     // Non fa nulla

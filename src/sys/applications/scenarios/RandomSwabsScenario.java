@@ -38,7 +38,7 @@ public class RandomSwabsScenario extends Scenario{
     public void dailyAction() {
         for (int i = 0; i < swabsNumber; i++) {
             Person x = currentState.startingPopulation[Rng.R.nextInt(currentState.blueBlack+1)];
-            if (!currentState.swabs.contains(x)) currentSimulation.doSwab(x);
+            if (!currentState.swabs.contains(x)) currentSimulation.getCurrentState().doSwab(x);
         }
     }
 

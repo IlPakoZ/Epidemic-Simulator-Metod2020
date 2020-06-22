@@ -1,5 +1,6 @@
 package sys;
 
+import assets.ColorStatus;
 import assets.Person;
 
 import java.security.InvalidParameterException;
@@ -192,4 +193,65 @@ public class State {
     public int getTotalSwabsNumber() {return totalSwabsNumber;}
 
 
+    /**
+     * Toglie denaro dalle casse dello Stato per effettuare un tampone
+     * sulla persona. Effettuato il tampone, se la persona è nella
+     * lista dei contatti, si può decidere di eseguire un tampone
+     * anche ai contatti (contact tracing). Il tampone ha una certa
+     * probabilità di fallire. Il metodo "generateFortune" in Rng
+     * calcola le probabilità di riuscita del tampone.
+     * Se il tampone è positivo, la persona viene fermata.
+     * Il tampone verrà usato o meno in base allo scenario che si sceglie.
+     *
+     * @param p1    persona a cui sottoporre il tampone.
+     * @return      true se la persona è positiva al tampone, false altrimenti.
+     */
+    @ToRevise
+    public boolean doSwab(Person p1){
+        boolean result = false;
+        if (p1.color == ColorStatus.RED) {
+            result = true;
+            swabPersons.enqueue(p1);
+        } else {
+            totalSwabsNumber++;
+            subtractResources(configs.swabsCost);
+            if (p1.color == ColorStatus.YELLOW) {
+                result = true;
+            }
+            if (!result) return false;
+            if (!Rng.generateFortune(Config.SWAB_SUCCESS_RATE, 1)) {
+                result = false;
+            }
+
+            if (result) {
+                if (!swabs.contains(p1)) p1.setStationary(configs.diseaseDuration - configs.incubationToYellowDeadline);
+                swabs.add(p1);
+                swabPersons.enqueue(p1);
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * Fa il tampone alle persone scelte per quel determinato giorno e, se una di queste
+     * risulta positiva, aggiunge alla coda le persone con cui è entrata in contatto.
+     *
+     * @param percent   percentuale di fare il tampone ad una persona.
+     *
+     */
+    @ToRevise
+    public void swabQueue(double percent){
+        int oldSize = swabPersons.getSize();
+        for (int i = 0; i < oldSize; i++) {
+            Person x = swabPersons.dequeue();
+            if (Rng.generateFortune(percent, 1)) {
+                if (doSwab(x)) {
+                    for (Person person : contacts.get(x)) {
+                        if (!swabs.contains(person)) swabPersons.enqueue(person);
+                    }
+                }
+            }
+        }
+    }
 }

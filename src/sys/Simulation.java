@@ -7,6 +7,7 @@ import sys.Core.*;
 import sys.applications.scenarios.CustomScenario;
 import sys.applications.scenarios.DefaultScenario;
 import sys.applications.scenarios.PeopleGetStoppedOnceScenario;
+import sys.applications.scenarios.PeopleMetGetsTestedScenario;
 import sys.models.IMenu;
 import sys.models.Scenario;
 
@@ -47,7 +48,7 @@ public class Simulation {
         currentState.daily.add(new ArrayList<>());
         currentState.contacts = new HashMap<>();
         currentState.swabs = new HashSet<>();
-
+        currentState.swabPersons = new Queue<>();
     }
 
     /**
@@ -269,28 +270,6 @@ public class Simulation {
     }
 
     /**
-     * Fa il tampone alle persone scelte per quel determinato giorno e, se una di queste
-     * risulta positiva, aggiunge alla coda le persone con cui è entrata in contatto.
-     *
-     * @param percent   percentuale di fare il tampone ad una persona.
-     *
-     */
-    @ToRevise
-    public void swabQueue(double percent){
-        int oldSize = currentState.swabPersons.getSize();
-        for (int i = 0; i < oldSize; i++) {
-            Person x = currentState.swabPersons.dequeue();
-            if (Rng.generateFortune(percent, 1)) {
-                if (doSwab(x)) {
-                    for (Person person : currentState.contacts.get(x)) {
-                        if (!currentState.swabs.contains(person)) currentState.swabPersons.enqueue(person);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Questo metodo prende in input due parametri: una prima persona
      * (quella sana) e una seconda persona (quella contagiata). Questo metodo
      * si occupa innanzitutto di richiamare i metodi della classe Rng per
@@ -310,43 +289,10 @@ public class Simulation {
                 p2.setAsInfected();
             }
         }
-
         currentState.contacts.putIfAbsent(p1, new HashSet<>());
         currentState.contacts.get(p1).add(p2);
-
     }
 
-    /**
-     * Toglie denaro dalle casse dello Stato per effettuare un tampone
-     * sulla persona. Effettuato il tampone, se la persona è nella
-     * lista dei contatti, si può decidere di eseguire un tampone
-     * anche ai contatti (contact tracing). Il tampone ha una certa
-     * probabilità di fallire. Il metodo "generateFortune" in Rng
-     * calcola le probabilità di riuscita del tampone.
-     * Se il tampone è positivo, la persona viene fermata.
-     * Il tampone verrà usato o meno in base allo scenario che si sceglie.
-     *
-     * @param p1    persona a cui sottoporre il tampone.
-     * @return      true se la persona è positiva al tampone, false altrimenti.
-     */
-     @ToRevise
-     public boolean doSwab(Person p1){
-         currentState.totalSwabsNumber++;
-         boolean result = false;
-         currentState.subtractResources(currentState.configs.swabsCost);
-         if (p1.color == ColorStatus.YELLOW) {
-             result = true;
-         }
-         if (!result) return false;
-         if (!Rng.generateFortune(Config.SWAB_SUCCESS_RATE,1)){
-             result = false;
-         }
-         if (result) {
-             currentState.swabs.add(p1);
-             if (!currentState.swabs.contains(p1)) p1.setStationary(currentState.configs.diseaseDuration - currentState.configs.incubationToYellowDeadline);
-         }
-         return result;
-     }
 
     /**
      * Termina la simulazione ed esegue le operazioni finali.
@@ -369,7 +315,7 @@ public class Simulation {
         config.sintomaticity = 10;
         config.swabsCost = 3;
         config.size = new int[]{500,500};
-        config.initialResources = 100000;
+        config.initialResources = 1000000;
         config.diseaseDuration = 40;
         config.ageAverage = 50;
         config.maxAge = 110;
@@ -378,7 +324,7 @@ public class Simulation {
 
         currentState.startingPopulation = Rng.generatePopulation(currentState);
         currentState.resources = config.initialResources;
-        currentScenario = new PeopleGetStoppedOnceScenario(this, 5000, 20);
+        currentScenario = new PeopleMetGetsTestedScenario(this, 100);
 
         currentScenario.oneTimeAction();
 

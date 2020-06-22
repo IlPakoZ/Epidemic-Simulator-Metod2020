@@ -149,7 +149,6 @@ public class Person {
                 break;
             case RED:
                 this.color = ColorStatus.RED;
-                currentState.swabs.add(this);
                 if (index != currentState.yellowRed) switchPerson(currentState.yellowRed);
                 currentState.yellowRed-=1;
                 break;
