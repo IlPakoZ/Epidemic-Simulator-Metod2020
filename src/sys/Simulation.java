@@ -84,8 +84,8 @@ public class Simulation {
             }
         }while(state != 2);
         currentState.startingPopulation = Rng.generatePopulation(currentState);
-        currentState.startingPopulation[currentState.configs.populationNumber-1].setAsInfected();
-        currentState.resources = currentState.configs.initialResources;
+        currentState.startingPopulation[getConfigs().populationNumber-1].setAsInfected();
+        currentState.resources = getConfigs().initialResources;
         currentScenario.oneTimeAction();
         start();
     }
@@ -101,7 +101,7 @@ public class Simulation {
         Instant startTime = Instant.now();
         while(going){
             going = loop();
-            if (frame % currentState.configs.frameADay == 0){
+            if (frame % getConfigs().frameADay == 0){
                 if (frame == 0){
                     for (ArrayList<Integer> arr: currentState.total){
                         arr.add(0);
@@ -118,7 +118,7 @@ public class Simulation {
                     }
                     Instant endTime = Instant.now();
                     int duration = Duration.between(startTime, endTime).getNano()/1000000;
-                    if (duration < currentState.configs.dayDuration) Thread.sleep(currentState.configs.dayDuration-duration);
+                    if (duration < getConfigs().dayDuration) Thread.sleep(getConfigs().dayDuration-duration);
                     startTime = Instant.now();
                 }
             }
@@ -140,7 +140,7 @@ public class Simulation {
     @ToRevise
     private boolean loop() {
 
-        currentState.space = new PersonList[currentState.configs.size.getKey()][currentState.configs.size.getValue()];
+        currentState.space = new PersonList[currentState.configs.size[0]][currentState.configs.size[0]];
         for (int i=currentState.incubationYellow+1;i<=currentState.redBlue;i++){
             int[] position = currentState.startingPopulation[i].nextPosition();
             if (currentState.space[position[0]][position[1]] == null){
@@ -179,13 +179,13 @@ public class Simulation {
      */
     @ToRevise
     private boolean nextDay(){
-        for (int i = currentState.redBlue; i > -1 ; i--)             //TODO: Controllare che gli indici siano giusti (voglio refreshare tutti tranne i verdi non incubati, blu e neri)
+        for (int i = currentState.blueBlack; i > -1 ; i--)             //TODO: Controllare che gli indici siano giusti (voglio refreshare tutti tranne i verdi non incubati, blu e neri)
         {
             currentState.startingPopulation[i].refresh();
         }
         if (currentState.redBlue-currentState.yellowRed!=0) currentState.unoPatientFound = true;
 
-        currentState.total.get(0).add(currentState.configs.populationNumber-currentState.greenIncubation-1);    //Tutti gli infetti (quelli in incubazione sono compresi)
+        currentState.total.get(0).add(getConfigs().populationNumber-currentState.greenIncubation-1);    //Tutti gli infetti (quelli in incubazione sono compresi)
         currentState.total.get(1).add(currentState.getSymptomaticNumber());                                     //Tutti i malati gravi
         currentState.total.get(2).add(currentState.getDeathsNumber());                                          //Tutti i morti
         currentState.total.get(3).add(currentState.getTotalSwabsNumber());
@@ -195,7 +195,7 @@ public class Simulation {
         currentState.daily.get(2).add(currentState.getDeathsNumber()-currentState.total.get(2).get(currentState.total.get(2).size()-1));                                        //I morti giornalieri
         currentState.daily.get(3).add(currentState.getTotalSwabsNumber()-currentState.total.get(3).get(currentState.total.get(3).size()-1));
 
-        boolean result = currentState.subtractResources(currentState.getSymptomaticNumber()*currentState.configs.swabsCost*3 + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
+        boolean result = currentState.subtractResources(currentState.getSymptomaticNumber()*getConfigs().swabsCost*3 + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
         menu.feedback(currentState);
         currentState.currentlyStationary = currentState.getDeathsNumber();
         if (currentState.unoPatientFound) currentScenario.dailyAction();
@@ -211,7 +211,7 @@ public class Simulation {
      */
     @ToRevise
     public void loadConfigs(Config config){
-        currentState.configs.copy(config);
+        getConfigs().copy(config);
     }
 
     /**
@@ -310,11 +310,13 @@ public class Simulation {
      * sulla persona. Effettuato il tampone, se la persona è nella
      * lista dei contatti, si può decidere di eseguire un tampone
      * anche ai contatti (contact tracing). Il tampone ha una certa
-     * probabilità di fallire. Usare il metodo "generateFortune" in Rng
-     * per calcolare le probabilità di riuscita.
+     * probabilità di fallire. Il metodo "generateFortune" in Rng
+     * calcola le probabilità di riuscita del tampone.
+     * Se il tampone è posiitvo, la persona viene fermata.
      * Il tampone verrà usato o meno in base allo scenario che si sceglie.
      *
      * @param p1    persona a cui sottoporre il tampone.
+     * @return      true se la persona è positiva al tampone, false altrimenti.
      */
      @ToRevise
      public boolean doSwab(Person p1){
@@ -330,6 +332,7 @@ public class Simulation {
          }
          if (result) {
              currentState.swabs.add(p1);
+             if (!currentState.swabs.contains(p1)) p1.setStationary(currentState.configs.diseaseDuration - currentState.configs.incubationToYellowDeadline);
          }
          return result;
      }
@@ -347,22 +350,24 @@ public class Simulation {
 
     @Debug
     public void debug() {
-        currentState.configs.populationNumber = 100000;
-        currentState.configs.infectivity = 10;
-        currentState.configs.letality = 20;
-        currentState.configs.sintomaticity = 20;
-        currentState.configs.swabsCost = 3;
-        currentState.configs.size = new Pair<>(500,500);
-        currentState.configs.initialResources = 100000;
-        currentState.configs.diseaseDuration = 50;
-        currentState.configs.ageAverage = 50;
-        currentState.configs.maxAge = 110;
-        currentState.configs.incubationToYellowDeadline = (int)(currentState.configs.diseaseDuration*Config.INCUBATION_TO_YELLOW_DEADLINE);
-        currentState.configs.yellowToRedDeadline = (int)(currentState.configs.diseaseDuration*Config.YELLOW_TO_RED_DEADLINE);
+        Config config = getConfigs();
+
+        config.populationNumber = 100000;
+        config.infectivity = 10;
+        config.letality = 20;
+        config.sintomaticity = 20;
+        config.swabsCost = 3;
+        config.size = new int[]{500,500};
+        config.initialResources = 100000;
+        config.diseaseDuration = 50;
+        config.ageAverage = 50;
+        config.maxAge = 110;
+        config.incubationToYellowDeadline = (int)(config.diseaseDuration*Config.INCUBATION_TO_YELLOW_DEADLINE);
+        config.yellowToRedDeadline = (int)(config.diseaseDuration*Config.YELLOW_TO_RED_DEADLINE);
 
         currentState.startingPopulation = Rng.generatePopulation(currentState);
-        currentState.resources = currentState.configs.initialResources;
-        //System.out.println(currentState.getCurrentAgeAverage(0, currentState.getCurrentAgeAverage(0,currentState.configs.populationNumber)));
+        currentState.resources = config.initialResources;
+        //System.out.println(currentState.getCurrentAgeAverage(0, currentState.getCurrentAgeAverage(0,configs.populationNumber)));
     }
 
     @Debug
@@ -372,7 +377,7 @@ public class Simulation {
 
     @Debug
     public void debugDisableInfections() {
-        currentState.configs.infectivity = 0;
+        getConfigs().infectivity = 0;
     }
 
 }

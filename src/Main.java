@@ -1,14 +1,11 @@
-import assets.ColorStatus;
 import sys.*;
-import sys.applications.CommandLineMenu;
-
-import java.awt.*;
+import sys.applications.PrototypeCommandMenu;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         Core x = new Core();
-        CommandLineMenu c = new CommandLineMenu();
-        x.newSimulation(new CommandLineMenu());
+        PrototypeCommandMenu c = new PrototypeCommandMenu();
+        x.newSimulation(new PrototypeCommandMenu());
         //x.run();
 
         x.run();

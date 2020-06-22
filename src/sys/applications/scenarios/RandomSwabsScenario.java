@@ -10,7 +10,6 @@ public class RandomSwabsScenario extends Scenario{
 
     private Simulation currentSimulation;
     private State currentState;
-    private static final int ID = 1;
     private int swabsNumber;
     public static final ScenarioInfos SCENARIO_INFOS = new ScenarioInfos(1);
 

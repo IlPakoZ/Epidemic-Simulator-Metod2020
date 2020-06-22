@@ -87,7 +87,7 @@ public class State {
             case "THEYSTEALOURMONEY":
                 configs.initialResources = 5000;
                 configs.populationNumber = 200000;
-                configs.size = new Pair<>(200, 200);
+                configs.size = new int[]{200, 200};
                 configs.velocity = 2;
                 configs.ageAverage = 30;
                 poorCountry = true;

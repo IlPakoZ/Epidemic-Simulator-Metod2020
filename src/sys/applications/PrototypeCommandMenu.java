@@ -28,7 +28,7 @@ import java.util.Scanner;
 import java.lang.Math;
 import java.util.function.IntPredicate;
 
-public class CommandLineMenu implements IMenu {
+public class PrototypeCommandMenu implements IMenu {
     private Scanner input = new Scanner(System.in);
     private DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.ITALIAN);
 
@@ -158,20 +158,20 @@ public class CommandLineMenu implements IMenu {
         ScreenFI();
 
         // Popolazione iniziale
-        System.out.print("Inserire il numero della popolazione iniziale (<= "+ Config.POPULATION_NUMBER_UPPER_BOUND +"): ");
-        inputUntilValid(config::setPopulationNumber, Integer.class, "Numero non valido. Reinserirlo (<= "+Config.POPULATION_NUMBER_UPPER_BOUND+"): ");
+        System.out.print("Inserire il numero della popolazione iniziale (<=" + format(Config.POPULATION_NUMBER_UPPER_BOUND) + "): ");
+        inputUntilValid(config::setPopulationNumber, Integer.class, "Numero non valido. Reinserirlo (<= " + format(Config.POPULATION_NUMBER_UPPER_BOUND) + "): ");
 
         // Durata della malattia
-        System.out.print("Inserire la durata della malattia in giorni ("+ Config.DISEASE_DURATION_LOWER_BOUND+"<x<"+ Config.DISEASE_DURATION_UPPER_BOUND +"): ");
-        inputUntilValid(config::setDiseaseDuration, Integer.class, "Numero non valido. Reinserirlo (<= " + Config.DISEASE_DURATION_UPPER_BOUND + "): ");
+        System.out.print("Inserire la durata della malattia in giorni (" + Config.DISEASE_DURATION_LOWER_BOUND + "<x<" + Config.DISEASE_DURATION_UPPER_BOUND + "): ");
+        inputUntilValid(config::setDiseaseDuration, Integer.class, "Numero non valido. Reinserirlo ("+Config.DISEASE_DURATION_LOWER_BOUND+"<" + Config.DISEASE_DURATION_UPPER_BOUND + "): ");
 
         // Risorse iniziali
-        System.out.print("Inserire il numero delle risorse iniziali (<" +(config.populationNumber*config.diseaseDuration)+ "): ");
-        inputUntilValid(config::setInitialResources, Integer.class, "Numero non valido. Reinserirlo ("+ Config.RESOURCES_LOWER_BOUND + "<x<" +(config.populationNumber*config.diseaseDuration)+ "): ");
+        System.out.print("Inserire il numero delle risorse iniziali (<" + (config.populationNumber * config.diseaseDuration) + "): ");
+        inputUntilValid(config::setInitialResources, Integer.class, "Numero non valido. Reinserirlo (" + Config.RESOURCES_LOWER_BOUND + "<x<" + (config.populationNumber * config.diseaseDuration) + "): ");
 
         // Costo del tampone
-        System.out.print("Inserire il costo del tampone (> "+ (config.initialResources/(config.populationNumber*10)) +"): ");
-        inputUntilValid(config::setSwabsCost, Integer.class, "Numero troppo piccolo. Reinserirlo (> " + (config.initialResources/(config.populationNumber*10)) +"): ");
+        System.out.print("Inserire il costo del tampone (> " + (config.initialResources / (config.populationNumber * 10)) + "): ");
+        inputUntilValid(config::setSwabsCost, Integer.class, "Numero troppo piccolo. Reinserirlo (> " + (config.initialResources / (config.populationNumber * 10)) + "): ");
 
         // Infettività
         System.out.print("Inserire la percentuale di infettivita' (0<=x<100): ");
@@ -184,28 +184,25 @@ public class CommandLineMenu implements IMenu {
         // Letalità
         System.out.print("Inserire la percentuale di letalita' (0<=x<100): ");
         Integer letality = getInput(Integer.class);
-        while(letality <= 0.0 || letality > 100.0) {
+        while (letality <= 0.0 || letality > 100.0) {
             System.out.print("Percentuale non valida. Reinserirla (0<=x<100): ");
             letality = getInput(Integer.class);
         }
         config.letality = letality;
 
+
         System.out.println("\nInserire l'altezza e la larghezza dello spazio grafico dove avverrà la simulazione.");
         System.out.println("Più lo spazio è grande, meno spesso avverranno i contatti tra le persone!\n");
-        System.out.print("Larghezza: (>2, valore consigliato "+(int)Math.sqrt(config.populationNumber)*2+"): ");
-        int width = getInput(Integer.class);
-        System.out.print("Altezza: ("+ Math.max(2, (config.populationNumber/10)/width) + "<x<" +((config.populationNumber*10)/width)+ ", valore consigliato "+ (4*config.populationNumber/width)+"): ");
-        int height = getInput(Integer.class);
-
-        while(width*height > config.populationNumber*4 | width<2 | height <2) {
-            System.out.println("Parametri non validi. Reinserirli.");
-            System.out.print("Larghezza: (>2, valore consigliato "+(int)Math.sqrt(config.populationNumber)*2+"): ");
-            width = getInput(Integer.class);
-
-            System.out.print("Altezza: ("+ Math.max(2, (config.populationNumber/10)/width) + "<x<" +((config.populationNumber*10)/width)+ ", valore consigliato "+ (4*config.populationNumber/width)+"): ");
-            height = getInput(Integer.class);
+        System.out.print("Larghezza: (" + config.SizeLowerBound.apply(0) + "<=x<=" + config.SizeUpperBound.apply(0) + ", valore consigliato " + config.PreferredSizeBound.apply(0) + "): ");
+        while (!config.setSizeX(getInput(Integer.class))) {
+            System.out.print("Parametri non validi, reinserirli: ");
         }
-        config.size = new Pair<>(width, height);
+        System.out.print("Altezza: (" + config.SizeLowerBound.apply(1) + "<=x<=" + config.SizeUpperBound.apply(1) + ", valore consigliato " + config.PreferredSizeBound.apply(1) + "): ");
+        while (!config.setSizeY(getInput(Integer.class))) {
+            System.out.print("Parametri non validi, reinserirli: ");
+        }
+
+
         System.out.println();
         //TODO: DA QUI IN POI RENDERE OPZIONALI
         /*

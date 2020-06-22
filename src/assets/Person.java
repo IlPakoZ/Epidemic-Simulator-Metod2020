@@ -4,8 +4,6 @@ import sys.Core.*;
 import sys.Rng;
 import sys.State;
 
-import java.util.Random;
-
 public class Person {
 
     private State currentState;
@@ -38,8 +36,8 @@ public class Person {
         Pair<Double, Double> speed = getRandomSpeed();
         speedX = speed.getKey();
         speedY = speed.getValue();
-        this.x = Rng.R.nextInt(currentState.configs.size.getKey());
-        this.y = Rng.R.nextInt(currentState.configs.size.getValue());
+        this.x = Rng.R.nextInt(currentState.configs.size[0]);
+        this.y = Rng.R.nextInt(currentState.configs.size[1]);
     }
 
     /**
@@ -62,7 +60,7 @@ public class Person {
             daysFromInfection = daysFromInfection + 1;
             if (daysFromInfection == currentState.configs.incubationToYellowDeadline) {
                 makeOfColor(ColorStatus.YELLOW);
-                if (currentState.isBigBrother()) try{ setStationary(currentState.configs.yellowToRedDeadline-daysFromInfection); } catch (UnsafeMovementStatusChangeException ignored ){ }
+                if (currentState.isBigBrother()) setStationary(currentState.configs.yellowToRedDeadline-daysFromInfection);
             } else if (daysFromInfection == currentState.configs.yellowToRedDeadline) {
                 if (Rng.generateFortune(currentState.configs.sintomaticity, currentState.isPoorCountry() ? severityModifier*5 :severityModifier)) {
                     int toStop;
@@ -73,10 +71,7 @@ public class Person {
                     } else {
                         toStop = currentState.configs.diseaseDuration - daysFromInfection;
                     }
-                    try {
-                        setStationary(toStop);
-                    } catch (UnsafeMovementStatusChangeException ignored) {}    //Se si entra nel catch, allora l'errore probabilmente è stato generato
-                                                                                //a causa di una modifica proveniente dall'esterno non strutturata correttamente.
+                    setStationary(toStop);
                 }
             } else if (daysFromInfection == dayOfDeath) {
                 makeOfColor(ColorStatus.BLACK);
@@ -94,17 +89,19 @@ public class Person {
 
     /**
      * Imposta l'attributo movement di Person a MovementStatus.STATIONARY per una certa
-     * durata "duration" espressa in giorni. Se la persona è già ferma, allora viene lanciata
-     * una eccezione, poiché il metodo non è stato usato correttamente.
+     * durata "duration" espressa in giorni. Se la persona è già ferma, la persona viene fermata
+     * per la durata massima tra i due parametri.
      * @param duration Indica il tempo (in giorni) per il quale la persona deve essere ferma.
      *                 Se vale -1, allora la persona sarà ferma fino a modifica manuale
      *                 del parametro.
      *
      */
     @Ready
-    public void setStationary(int duration) throws UnsafeMovementStatusChangeException {
+    public void setStationary(int duration) {
         if (duration < -1) duration = -1;
-        if (movement == MovementStatus.STATIONARY) throw new UnsafeMovementStatusChangeException();
+        if (movement == MovementStatus.STATIONARY) {
+            dayToStop = Math.max(duration, dayToStop);
+        }
         else {
             dayToStop = duration;
             movement = MovementStatus.STATIONARY;
@@ -198,6 +195,13 @@ public class Person {
     }
 
     /**
+     * Restituisce i giorni che sono passati dall'infezione iniziale.
+     * @return  giorni dall'infezione.
+     */
+    @Ready
+    public int getDaysFromInfection(){ return daysFromInfection; }
+
+    /**
      * Restituisce l'attributo isInfected.
      *
      * @return  isInfected
@@ -284,11 +288,11 @@ public class Person {
             double newSpeedY = speedY;
 
             boolean changed = false;
-            if ((x + newSpeedX <= 0) || (x + newSpeedX >= currentState.configs.size.getKey())) {
+            if ((x + newSpeedX <= 0) || (x + newSpeedX >= currentState.configs.size[0])) {
                 changed = true;
                 newSpeedX = -newSpeedX;
             }
-            if ((y + newSpeedY <= 0) || (y + newSpeedY >= currentState.configs.size.getValue())) {
+            if ((y + newSpeedY <= 0) || (y + newSpeedY >= currentState.configs.size[1])) {
                 changed = true;
                 newSpeedY = -newSpeedY;
             }
@@ -324,31 +328,29 @@ public class Person {
 
     @Debug
     public void debugForceColor(ColorStatus color){
-        try {
-            switch (color) {
-                case YELLOW:
-                    setAsInfected();
-                    makeOfColor(ColorStatus.YELLOW);
-                    daysFromInfection = currentState.configs.diseaseDuration/6;
-                    break;
-                case RED:
-                    debugForceColor(ColorStatus.YELLOW);
-                    makeOfColor(ColorStatus.RED);
-                    daysFromInfection = currentState.configs.diseaseDuration/3;
-                    setStationary(currentState.configs.diseaseDuration - daysFromInfection);
-                    break;
-                case BLUE:
-                    debugForceColor(ColorStatus.RED);
-                    makeOfColor(ColorStatus.BLUE);
-                case BLACK:
-                    debugForceColor(ColorStatus.RED);
-                    makeOfColor(ColorStatus.BLACK);
-                    setStationary(-1);
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + color);
-            }
-        }catch (UnsafeMovementStatusChangeException ignored) {}
+        switch (color) {
+            case YELLOW:
+                setAsInfected();
+                makeOfColor(ColorStatus.YELLOW);
+                daysFromInfection = currentState.configs.diseaseDuration/6;
+                break;
+            case RED:
+                debugForceColor(ColorStatus.YELLOW);
+                makeOfColor(ColorStatus.RED);
+                daysFromInfection = currentState.configs.diseaseDuration/3;
+                setStationary(currentState.configs.diseaseDuration - daysFromInfection);
+                break;
+            case BLUE:
+                debugForceColor(ColorStatus.RED);
+                makeOfColor(ColorStatus.BLUE);
+            case BLACK:
+                debugForceColor(ColorStatus.RED);
+                makeOfColor(ColorStatus.BLACK);
+                setStationary(-1);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + color);
+        }
     }
 
 

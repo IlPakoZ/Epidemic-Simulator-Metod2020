@@ -3,6 +3,9 @@ package sys;
 import javafx.util.Pair;
 import sys.Core.*;
 
+import java.util.function.Function;
+import java.util.function.IntSupplier;
+
 public class Config {
 
     // ----------------------------- SIMULATION PARAMETERS (COMPULSORY) -----------------------------
@@ -14,7 +17,7 @@ public class Config {
     public int sintomaticity;
     public int letality;
     public int diseaseDuration;
-    public Pair<Integer,Integer> size;                    // width, height
+    public int[] size = new int[] {0,0};                  // width, height
 
 
     // ----------------------------- SIMULATION PARAMETERS (OPTIONAL) -------------------------------
@@ -28,7 +31,7 @@ public class Config {
     public String outputTotalFile = "total.png";
     public String outputDailyFile = "daily.png";
 
-    // ----------------------------------------- CONSTANTS ------------------------------------------
+    // ------------------------------------- CONSTANTS & BOUNDS --------------------------------------
 
     //DO NOT EDIT THOSE IF YOU DON'T KNOW WHAT YOU'RE DOING
 
@@ -41,6 +44,9 @@ public class Config {
     public static final int DISEASE_DURATION_UPPER_BOUND = 90;
     public static final int DISEASE_DURATION_LOWER_BOUND = 6;
     public static final int RESOURCES_LOWER_BOUND = 1;
+    public Function<Integer, Integer> SizeLowerBound = ((i)-> Math.max(2, (size[1-i] != 0 ? (populationNumber / 10) / size[1-i] : 2)));
+    public Function<Integer, Integer> SizeUpperBound = ((i)-> (populationNumber * 10) / (size[1-i]==0?4:size[1-i]));
+    public Function<Integer, Integer> PreferredSizeBound = ((i)-> ((int)(size[1-i]!=0 ? populationNumber*4/size[1-i]: Math.sqrt(populationNumber * 2))));
 
     // --------------------------------------- WORK VARIABLES ---------------------------------------
 
@@ -336,22 +342,39 @@ public class Config {
     public int getAgeAverage() { return ageAverage; }
 
     /**
-     * Controlla se la larghezza e l'altezza
-     * sono regolari ed entro i limiti del programma,
-     * se si, inserisce il dato e resituisce true,
+     * Controlla se la larghezza è regolare
+     * ed entro i limiti del programma,
+     * se sì, inserisce il dato e resituisce true,
      * altrimenti false.
      *
      * @param number    input width
-     * @param number2   input heigth
-     * @return          true se i valori sono nel formato corretto, false altrimenti.
+     * @return          true se il valore è nel formato corretto, false altrimenti.
      */
-    public boolean setSize(int number, int number2){
-        /*if (number > (populationNumber*10) || number < (populationNumber/10) || number > (populationNumber*10) || number < (populationNumber/10) || number*number2 > (populationNumber*10) || number*number2 < (populationNumber/10)){
-            return false;
+    public boolean setSizeX(int number) {
+        if (number >= SizeLowerBound.apply(0) && number <= SizeUpperBound.apply(0)) {
+            size[0] = number;
+            configsChanged = true;
+            return true;
         }
-        size = number, number2;
-        configsChanged = true;*/
-        return true;
+        return false;
+    }
+
+    /**
+     * Controlla se l'altezza è regolare
+     * ed entro i limiti del programma,
+     * se sì, inserisce il dato e resituisce true,
+     * altrimenti false.
+     *
+     * @param number    input height
+     * @return          true se il valore è nel formato corretto, false altrimenti.
+     */
+    public boolean setSizeY(int number) {
+        if (number >= SizeLowerBound.apply(1) && number <= SizeUpperBound.apply(1)){
+            size[1] = number;
+            configsChanged = true;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -360,8 +383,13 @@ public class Config {
      *
      * @return  larghezza, altezza
      */
-    public Pair<Integer, Integer> getSize() { return size; }
+    public int[] getSize() { return size; }
 
+    /**
+     * Restituisce se i valori di configs sono cambiati dall'ultimo
+     * backup
+     * @return
+     */
     boolean haveConfigsChanged() { return configsChanged; }
 
     void setConfigsChanged(boolean changed) {this.configsChanged = changed;}

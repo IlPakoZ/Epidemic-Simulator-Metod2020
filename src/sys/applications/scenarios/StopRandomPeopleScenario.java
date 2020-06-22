@@ -56,11 +56,7 @@ public class StopRandomPeopleScenario extends Scenario{
             for (int i = 0; i < peopleToStop; i++) {
                 Person x = currentState.startingPopulation[Rng.R.nextInt(currentState.blueBlack + 1)];
                 if (x.getMovement() != MovementStatus.STATIONARY) {
-                    try {
-                        x.setStationary(duration);
-                    } catch (Person.UnsafeMovementStatusChangeException ignored) {
-                        ignored.printStackTrace();
-                    }
+                    x.setStationary(duration);
                 }
             }
         }
