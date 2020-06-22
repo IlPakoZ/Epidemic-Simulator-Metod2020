@@ -114,7 +114,6 @@ public class Simulation {
                     boolean result = nextDay();
                     if (!result) {
                         going = false;
-                        currentState.status = SimulationStatus.NO_MORE_RESOURCES;
                     }
                     Instant endTime = Instant.now();
                     int duration = Duration.between(startTime, endTime).getNano()/1000000;
@@ -161,7 +160,6 @@ public class Simulation {
             }
         }
 
-        //Mettere una condizione di uscita (se sono tutti guariti)
         return true;
     }
     // NB: I blu sono invisibili, quindi come se fossero inesistenti
@@ -196,10 +194,19 @@ public class Simulation {
         currentState.daily.get(3).add(currentState.getTotalSwabsNumber()-currentState.total.get(3).get(currentState.total.get(3).size()-1));
 
         boolean result = currentState.subtractResources(currentState.getSymptomaticNumber()*getConfigs().swabsCost*3 + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
+        if (!result) currentState.status = SimulationStatus.NO_MORE_RESOURCES;
         menu.feedback(currentState);
         currentState.currentlyStationary = currentState.getDeathsNumber();
         if (currentState.unoPatientFound) currentScenario.dailyAction();
         currentState.currentDay+=1;
+        if (currentState.greenIncubation == currentState.redBlue + 1) { //Sono tutti guariti.
+            currentState.status = SimulationStatus.ERADICATED_DISEASE;
+            return false;
+        }
+        if (currentState.blueBlack == 0) { //Sono tutti morti.
+            currentState.status = SimulationStatus.NONE_SURVIVED;
+            return false;
+        }
         return result;
     }
 
