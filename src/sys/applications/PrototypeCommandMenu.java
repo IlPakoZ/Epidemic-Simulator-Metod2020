@@ -162,16 +162,16 @@ public class PrototypeCommandMenu implements IMenu {
         inputUntilValid(config::setPopulationNumber, Integer.class, "Numero non valido. Reinserirlo (<= " + format(Config.POPULATION_NUMBER_UPPER_BOUND) + "): ");
 
         // Durata della malattia
-        System.out.print("Inserire la durata della malattia in giorni (" + Config.DISEASE_DURATION_LOWER_BOUND + "<x<" + Config.DISEASE_DURATION_UPPER_BOUND + "): ");
-        inputUntilValid(config::setDiseaseDuration, Integer.class, "Numero non valido. Reinserirlo ("+Config.DISEASE_DURATION_LOWER_BOUND+"<" + Config.DISEASE_DURATION_UPPER_BOUND + "): ");
+        System.out.print("Inserire la durata della malattia in giorni (" + format(Config.DISEASE_DURATION_LOWER_BOUND) + "<x<" + format(Config.DISEASE_DURATION_UPPER_BOUND) + "): ");
+        inputUntilValid(config::setDiseaseDuration, Integer.class, "Numero non valido. Reinserirlo ("+format(Config.DISEASE_DURATION_LOWER_BOUND)+"<" + format(Config.DISEASE_DURATION_UPPER_BOUND) + "): ");
 
         // Risorse iniziali
-        System.out.print("Inserire il numero delle risorse iniziali (<" + (config.populationNumber * config.diseaseDuration) + "): ");
-        inputUntilValid(config::setInitialResources, Integer.class, "Numero non valido. Reinserirlo (" + Config.RESOURCES_LOWER_BOUND + "<x<" + (config.populationNumber * config.diseaseDuration) + "): ");
+        System.out.print("Inserire il numero delle risorse iniziali ("+format(Config.RESOURCES_LOWER_BOUND)+"<x<" + format((config.populationNumber * config.diseaseDuration)) + "): ");
+        inputUntilValid(config::setInitialResources, Integer.class, "Numero non valido. Reinserirlo (" + format(Config.RESOURCES_LOWER_BOUND) + "<x<" + format(config.populationNumber * config.diseaseDuration) + "): ");
 
         // Costo del tampone
-        System.out.print("Inserire il costo del tampone (> " + (config.initialResources / (config.populationNumber * 10)) + "): ");
-        inputUntilValid(config::setSwabsCost, Integer.class, "Numero troppo piccolo. Reinserirlo (> " + (config.initialResources / (config.populationNumber * 10)) + "): ");
+        System.out.print("Inserire il costo del tampone (> " + format(config.initialResources / (config.populationNumber * 10)) + "): ");
+        inputUntilValid(config::setSwabsCost, Integer.class, "Numero troppo piccolo. Reinserirlo (> " + format(config.initialResources / (config.populationNumber * 10)) + "): ");
 
         // Infettività
         System.out.print("Inserire la percentuale di infettivita' (0<=x<100): ");
@@ -193,11 +193,11 @@ public class PrototypeCommandMenu implements IMenu {
 
         System.out.println("\nInserire l'altezza e la larghezza dello spazio grafico dove avverrà la simulazione.");
         System.out.println("Più lo spazio è grande, meno spesso avverranno i contatti tra le persone!\n");
-        System.out.print("Larghezza: (" + config.SizeLowerBound.apply(0) + "<=x<=" + config.SizeUpperBound.apply(0) + ", valore consigliato " + config.PreferredSizeBound.apply(0) + "): ");
+        System.out.print("Larghezza: (" + format(config.SizeLowerBound.apply(0)) + "<=x<=" + format(config.SizeUpperBound.apply(0)) + ", valore consigliato " + format(config.PreferredSizeBound.apply(0)) + "): ");
         while (!config.setSizeX(getInput(Integer.class))) {
             System.out.print("Parametri non validi, reinserirli: ");
         }
-        System.out.print("Altezza: (" + config.SizeLowerBound.apply(1) + "<=x<=" + config.SizeUpperBound.apply(1) + ", valore consigliato " + config.PreferredSizeBound.apply(1) + "): ");
+        System.out.print("Altezza: (" + format(config.SizeLowerBound.apply(1)) + "<=x<=" + format(config.SizeUpperBound.apply(1)) + ", valore consigliato " + format(config.PreferredSizeBound.apply(1)) + "): ");
         while (!config.setSizeY(getInput(Integer.class))) {
             System.out.print("Parametri non validi, reinserirli: ");
         }
