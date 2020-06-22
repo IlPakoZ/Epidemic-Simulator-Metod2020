@@ -41,6 +41,16 @@ public interface IMenu {
     int settings(Config config);
 
     /**
+     * Apre il menù opzionale
+     * 
+     * @param config configurazione corrente della simulazione
+     * @return       restituisce un valore che verrà interpretato dal
+     *               metodo run di Simulation per decidere che operazione
+     *               eseguire
+     */
+    int settings_op(Config config);
+
+    /**
      * Ogni giorno che passa, mostra un feedback all'utente
      * dei cambiamenti che ci sono stati dal giorno precedente
      * o altri tipi di feedback.
