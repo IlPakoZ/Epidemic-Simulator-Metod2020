@@ -137,13 +137,28 @@ public class Simulation {
      */
     @ToRevise
     private void loop() {
-
-        currentState.space = new PersonList[currentState.configs.size[0]+1][currentState.configs.size[0]+1];
-
-        for (int i=currentState.greenIncubation+1; i<=currentState.incubationYellow; i++){
-            currentState.startingPopulation[i].nextPosition();
+        /*
+        currentState.space = new PersonList[currentState.configs.size[0]][currentState.configs.size[0]];
+        for (int i = currentState.greenIncubation; i > -1; i--) {
+            int[] position = currentState.startingPopulation[i].nextPosition();
+            if (currentState.space[position[0]][position[1]] == null){
+                currentState.space[position[0]][position[1]] = new PersonList();
+            }
+            currentState.space[position[0]][position[1]].addElement(currentState.startingPopulation[i]);
         }
 
+        for (int i=currentState.incubationYellow+1;i<=currentState.redBlue;i++){
+            Person person = currentState.startingPopulation[i];
+            int[] position = person.nextPosition();
+            if (currentState.space[position[0]][position[1]] != null) {
+                currentState.contattiGiornalieri++;
+                for (Person contatto : currentState.space[position[0]][position[1]]) {
+                    contact(person, contatto);
+                }
+            }
+        }
+        */
+        currentState.space = new PersonList[currentState.configs.size[0]][currentState.configs.size[0]];
         for (int i=currentState.incubationYellow+1;i<=currentState.redBlue;i++){
             int[] position = currentState.startingPopulation[i].nextPosition();
             if (currentState.space[position[0]][position[1]] == null){
@@ -159,10 +174,8 @@ public class Simulation {
                 for (Person contatto : currentState.space[position[0]][position[1]]) {
                     contact(contatto, person);
                 }
-
             }
         }
-
 
     }
     // NB: I blu sono invisibili, quindi come se fossero inesistenti
@@ -173,7 +186,7 @@ public class Simulation {
      * Passa al giorno successivo della simulazione e
      * aggiorna i valori della simulazione. Contiene il
      * payload da eseguire ad ogni cambiamento di giorno.
-     * Calcola anche il valore r0 (vedere specifiche progetto).
+     * Calcola anche il valore vd (vedere specifiche progetto).
      * Vengono considerati nel numero di infetti tutte le
      * persone tranne quelle verdi (anche quelle in incubazione
      * sono considerate infette).
@@ -198,11 +211,15 @@ public class Simulation {
 
         boolean result = currentState.subtractResources(currentState.getSymptomaticNumber()*getConfigs().swabsCost*3 + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
         if (!result) currentState.status = SimulationStatus.NO_MORE_RESOURCES;
+        result = true;
+        currentState.r0 = currentState.dailyContacts.size()==0?0:currentState.daily.get(0).get(currentState.daily.get(0).size()-1)/(double)currentState.dailyContacts.size();
         menu.feedback(currentState);
+        currentState.dailyContacts = new HashSet<>();
+        currentState.r0 = 0;
         currentState.currentlyStationary = currentState.getDeathsNumber();
         if (currentState.unoPatientFound) currentScenario.dailyAction();
         currentState.currentDay+=1;
-        if (currentState.getSymptomaticNumber()+currentState.getAsymptomaticNumber()+currentState.getIncubationNumber()==0) { //Sono tutti guariti.
+        if (currentState.greenIncubation == currentState.redBlue + 1) { //Sono tutti guariti.
             currentState.status = SimulationStatus.ERADICATED_DISEASE;
             return false;
         }
@@ -306,9 +323,8 @@ public class Simulation {
         p1.contact = true;
         p2.contact = true;
         if(!p2.isInfected()){
-            currentState.dailyContacts.add(p1);
-
             if(Rng.generateFortune(currentState.configs.infectivity, currentState.isPoorCountry() ? 5 : 0)) {
+                currentState.dailyContacts.add(p1);
                 p2.setAsInfected();
             }
         }
@@ -325,7 +341,7 @@ public class Simulation {
      * anche ai contatti (contact tracing). Il tampone ha una certa
      * probabilità di fallire. Il metodo "generateFortune" in Rng
      * calcola le probabilità di riuscita del tampone.
-     * Se il tampone è positivo, la persona viene fermata.
+     * Se il tampone è posiitvo, la persona viene fermata.
      * Il tampone verrà usato o meno in base allo scenario che si sceglie.
      *
      * @param p1    persona a cui sottoporre il tampone.
@@ -366,13 +382,13 @@ public class Simulation {
         Config config = getConfigs();
 
         config.populationNumber = 100000;
-        config.infectivity = 10;
-        config.letality = 10;
-        config.sintomaticity = 10;
+        config.infectivity = 100;
+        config.letality = 20;
+        config.sintomaticity = 20;
         config.swabsCost = 3;
         config.size = new int[]{500,500};
         config.initialResources = 100000;
-        config.diseaseDuration = 40;
+        config.diseaseDuration = 50;
         config.ageAverage = 50;
         config.maxAge = 110;
         config.incubationToYellowDeadline = (int)(config.diseaseDuration*Config.INCUBATION_TO_YELLOW_DEADLINE);
