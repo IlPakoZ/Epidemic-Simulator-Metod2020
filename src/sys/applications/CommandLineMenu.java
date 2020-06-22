@@ -31,7 +31,49 @@ import java.util.function.IntPredicate;
 public class CommandLineMenu implements IMenu {
     private Scanner input = new Scanner(System.in);
     private DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.ITALIAN);
+    public void createDataset(State currentState, int value) {
+        ArrayList<ArrayList<Integer>> timeRange;
+        File file;
+        if (value == 0) {// total
+            timeRange = currentState.total;
+            file = new File(currentState.configs.outputTotalFile);
+        } else {//daily
+            timeRange = currentState.daily;
+            file = new File(currentState.configs.outputDailyFile);
+        }
+        double[] x1 = new double[timeRange.get(0).size()];
+        double[] y1 = new double[timeRange.get(0).size()];
+        double[] y2 = new double[timeRange.get(0).size()];
+        double[] y3 = new double[timeRange.get(0).size()];
+        double[] y4 = new double[timeRange.get(0).size()];
 
+        for (int i=0; i<y1.length; i++) {
+            y1[i] = timeRange.get(0).get(i);
+            y2[i] = timeRange.get(1).get(i);
+            y3[i] = timeRange.get(2).get(i);
+            y4[i] = timeRange.get(3).get(i);
+            x1[i] = i;
+        }
+
+        DefaultXYDataset dataset = new DefaultXYDataset();
+        dataset.addSeries("Total infected", new double[][]{x1,y1});
+        dataset.addSeries("Total symptomatics", new double[][]{x1,y2});
+        dataset.addSeries("Total deaths", new double[][]{x1,y3});
+        dataset.addSeries("Total swabs", new double[][]{x1,y4});
+
+        JFreeChart chart = ChartFactory.createXYLineChart("People", "Day passed", "Number of people", dataset);
+
+        XYPlot plot = chart.getXYPlot();
+
+        NumberAxis nAxis = (NumberAxis) plot.getDomainAxis();
+        NumberTickUnit unit = new NumberTickUnit(10);
+        nAxis.setTickUnit(unit);
+
+        try {
+            ChartUtils.saveChartAsPNG(file, chart, 1000, 700);
+        }catch (IOException ignored) {}
+
+    }
     public void clear() {
         for(int i=0; i<50; i++) System.out.println();
     }
@@ -334,9 +376,9 @@ public class CommandLineMenu implements IMenu {
         System.out.println(" (" + state.daily.get(0).get(state.daily.get(0).size()-1) +" in più rispetto a ieri)");
         System.out.println("Morti: " + state.getDeathsNumber());
         System.out.println("Risorse disponibili: " + state.resources);
+        System.out.println("R0: " + state.r0);
         System.out.println("\n\n");
     }
-
     @Override
     public void finalFeedback(State state) {
         printPersonalizedTitle("SIMULAZIONE TERMINATA");
@@ -348,6 +390,8 @@ public class CommandLineMenu implements IMenu {
         System.out.println("Morti: " + state.getDeathsNumber());
         System.out.println("Risorse rimaste: " + state.resources);
         System.out.println("Motivo termine simulazione: " + state.status);
+        createDataset(state, 0);
+        createDataset(state, 1);
     }
 
     @Ready

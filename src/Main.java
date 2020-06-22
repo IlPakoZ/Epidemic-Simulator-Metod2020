@@ -9,7 +9,7 @@ public class Main {
         Core x = new Core();
         CommandLineMenu c = new CommandLineMenu();
         x.newSimulation(c);
-        x.run();
+        //x.run();
 
         //x.run();
         Simulation simulation = x.debug();

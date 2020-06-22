@@ -32,7 +32,6 @@ public class Rng {
      */
     @ToRevise
     public static boolean generateFortune(double percent, double modifier){
-        if (modifier == 0) return true;
         double newPercent;
         newPercent = percent + (percent*modifier/100);
         if (newPercent>100) newPercent = percent;
