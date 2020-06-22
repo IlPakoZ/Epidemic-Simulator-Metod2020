@@ -133,7 +133,6 @@ public class Simulation {
      * deve continuare la sua esecuzione, altrimenti restituisce
      * false.
      *
-     * @return      booleano che indica se il loop deve essere ancora eseguito
      */
     @ToRevise
     private void loop() {
