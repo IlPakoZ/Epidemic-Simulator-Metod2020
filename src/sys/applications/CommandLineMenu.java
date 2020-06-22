@@ -376,7 +376,6 @@ public class CommandLineMenu implements IMenu {
         System.out.println(" (" + state.daily.get(0).get(state.daily.get(0).size()-1) +" in più rispetto a ieri)");
         System.out.println("Morti: " + state.getDeathsNumber());
         System.out.println("Risorse disponibili: " + state.resources);
-        System.out.println("R0: " + state.r0);
         System.out.println("\n\n");
     }
     @Override

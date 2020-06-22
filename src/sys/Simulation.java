@@ -134,28 +134,13 @@ public class Simulation {
      */
     @ToRevise
     private void loop() {
-        /*
-        currentState.space = new PersonList[currentState.configs.size[0]][currentState.configs.size[0]];
-        for (int i = currentState.greenIncubation; i > -1; i--) {
-            int[] position = currentState.startingPopulation[i].nextPosition();
-            if (currentState.space[position[0]][position[1]] == null){
-                currentState.space[position[0]][position[1]] = new PersonList();
-            }
-            currentState.space[position[0]][position[1]].addElement(currentState.startingPopulation[i]);
+
+        currentState.space = new PersonList[currentState.configs.size[0]+1][currentState.configs.size[0]+1];
+
+        for (int i=currentState.greenIncubation+1; i<=currentState.incubationYellow; i++){
+            currentState.startingPopulation[i].nextPosition();
         }
 
-        for (int i=currentState.incubationYellow+1;i<=currentState.redBlue;i++){
-            Person person = currentState.startingPopulation[i];
-            int[] position = person.nextPosition();
-            if (currentState.space[position[0]][position[1]] != null) {
-                currentState.contattiGiornalieri++;
-                for (Person contatto : currentState.space[position[0]][position[1]]) {
-                    contact(person, contatto);
-                }
-            }
-        }
-        */
-        currentState.space = new PersonList[currentState.configs.size[0]][currentState.configs.size[0]];
         for (int i=currentState.incubationYellow+1;i<=currentState.redBlue;i++){
             int[] position = currentState.startingPopulation[i].nextPosition();
             if (currentState.space[position[0]][position[1]] == null){
@@ -171,8 +156,10 @@ public class Simulation {
                 for (Person contatto : currentState.space[position[0]][position[1]]) {
                     contact(contatto, person);
                 }
+
             }
         }
+
 
     }
     // NB: I blu sono invisibili, quindi come se fossero inesistenti
@@ -208,15 +195,11 @@ public class Simulation {
 
         boolean result = currentState.subtractResources(currentState.getSymptomaticNumber()*getConfigs().swabsCost*3 + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
         if (!result) currentState.status = SimulationStatus.NO_MORE_RESOURCES;
-        result = true;
-        currentState.r0 = 1/((double)currentState.configs.infectivity)*currentState.configs.diseaseDuration*currentState.dailyContacts.size()==0?0:currentState.daily.get(0).get(currentState.daily.get(0).size()-1)/(double)currentState.dailyContacts.size();
         menu.feedback(currentState);
-        currentState.dailyContacts = new HashSet<>();
-        currentState.r0 = 0;
         currentState.currentlyStationary = currentState.getDeathsNumber();
         if (currentState.unoPatientFound) currentScenario.dailyAction();
         currentState.currentDay+=1;
-        if (currentState.greenIncubation == currentState.redBlue + 1) { //Sono tutti guariti.
+        if (currentState.getSymptomaticNumber()+currentState.getAsymptomaticNumber()+currentState.getIncubationNumber()==0) { //Sono tutti guariti.
             currentState.status = SimulationStatus.ERADICATED_DISEASE;
             return false;
         }
@@ -381,12 +364,12 @@ public class Simulation {
 
         config.populationNumber = 100000;
         config.infectivity = 10;
-        config.letality = 20;
-        config.sintomaticity = 20;
+        config.letality = 10;
+        config.sintomaticity = 10;
         config.swabsCost = 3;
         config.size = new int[]{500,500};
         config.initialResources = 100000;
-        config.diseaseDuration = 50;
+        config.diseaseDuration = 40;
         config.ageAverage = 50;
         config.maxAge = 110;
         config.incubationToYellowDeadline = (int)(config.diseaseDuration*Config.INCUBATION_TO_YELLOW_DEADLINE);

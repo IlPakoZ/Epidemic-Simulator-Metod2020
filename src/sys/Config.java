@@ -53,9 +53,9 @@ public class Config {
     public static final int FRAME_A_DAY_UPPER_BOUND = 120;
     public static final int VELOCITY_LOWER_BOUND = 1;
     public IntSupplier VELOCITY_UPPER_BOUND = (()-> Math.min(Math.min(size[0],size[1])/10,VELOCITY_LOWER_BOUND));
-    public Function<Integer, Integer> SizeLowerBound = ((i)-> Math.max(2, (size[1-i] != 0 ? (populationNumber / 10) / size[1-i] : 2)));
-    public Function<Integer, Integer> SizeUpperBound = ((i)-> (populationNumber * 10) / (size[1-i]==0?4:size[1-i]));
-    public Function<Integer, Integer> PreferredSizeBound = ((i)-> ((int)(size[1-i]!=0 ? populationNumber*4/size[1-i]: Math.sqrt(populationNumber * 2))));
+    public Function<Integer, Integer> SizeLowerBound = ((i)-> Math.max(2, (size[1-i] != 0 ? (populationNumber / 4) / size[1-i] : 2)));
+    public Function<Integer, Integer> SizeUpperBound = ((i)-> (populationNumber * 4) / (size[1-i]==0?16:size[1-i]));
+    public Function<Integer, Integer> PreferredSizeBound = ((i)-> ((int)(size[1-i]!=0 ? populationNumber*4/size[1-i]: Math.sqrt(populationNumber) * 2)));
 
     // --------------------------------------- WORK VARIABLES ---------------------------------------
 

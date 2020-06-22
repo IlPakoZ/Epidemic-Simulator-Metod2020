@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import javafx.util.Pair;
 import sys.Core.*;
 
 public class State {
@@ -29,7 +28,8 @@ public class State {
     public PersonList[][] space;
     public int currentlyStationary = 0;
     public Queue<Person> swabPersons;
-    public double r0;
+
+
     private boolean poorCountry = false;
     private boolean bigBrother = false;
     // ---------------------------------------------------------------------------------
@@ -40,6 +40,7 @@ public class State {
     public int yellowRed;
     public int redBlue;
     public int blueBlack;
+
     // ---------------------------------------------------------------------------------
 
     /**
