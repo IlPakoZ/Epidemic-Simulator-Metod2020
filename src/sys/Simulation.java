@@ -186,7 +186,7 @@ public class Simulation {
      * Passa al giorno successivo della simulazione e
      * aggiorna i valori della simulazione. Contiene il
      * payload da eseguire ad ogni cambiamento di giorno.
-     * Calcola anche il valore r0 (vedere specifiche progetto).
+     * Calcola anche il valore vd (vedere specifiche progetto).
      * Vengono considerati nel numero di infetti tutte le
      * persone tranne quelle verdi (anche quelle in incubazione
      * sono considerate infette).
@@ -212,7 +212,7 @@ public class Simulation {
         boolean result = currentState.subtractResources(currentState.getSymptomaticNumber()*getConfigs().swabsCost*3 + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
         if (!result) currentState.status = SimulationStatus.NO_MORE_RESOURCES;
         result = true;
-        currentState.r0 = 1/((double)currentState.configs.infectivity)*currentState.configs.diseaseDuration*currentState.dailyContacts.size()==0?0:currentState.daily.get(0).get(currentState.daily.get(0).size()-1)/(double)currentState.dailyContacts.size();
+        currentState.r0 = currentState.dailyContacts.size()==0?0:currentState.daily.get(0).get(currentState.daily.get(0).size()-1)/(double)currentState.dailyContacts.size();
         menu.feedback(currentState);
         currentState.dailyContacts = new HashSet<>();
         currentState.r0 = 0;
@@ -323,9 +323,8 @@ public class Simulation {
         p1.contact = true;
         p2.contact = true;
         if(!p2.isInfected()){
-            currentState.dailyContacts.add(p1);
-
             if(Rng.generateFortune(currentState.configs.infectivity, currentState.isPoorCountry() ? 5 : 0)) {
+                currentState.dailyContacts.add(p1);
                 p2.setAsInfected();
             }
         }
@@ -342,7 +341,7 @@ public class Simulation {
      * anche ai contatti (contact tracing). Il tampone ha una certa
      * probabilità di fallire. Il metodo "generateFortune" in Rng
      * calcola le probabilità di riuscita del tampone.
-     * Se il tampone è positivo, la persona viene fermata.
+     * Se il tampone è posiitvo, la persona viene fermata.
      * Il tampone verrà usato o meno in base allo scenario che si sceglie.
      *
      * @param p1    persona a cui sottoporre il tampone.
@@ -383,7 +382,7 @@ public class Simulation {
         Config config = getConfigs();
 
         config.populationNumber = 100000;
-        config.infectivity = 10;
+        config.infectivity = 100;
         config.letality = 20;
         config.sintomaticity = 20;
         config.swabsCost = 3;
