@@ -9,24 +9,23 @@ import java.lang.annotation.Target;
 
 public class Core {
 
-    @Retention(RetentionPolicy.RUNTIME)
+    @Retention(RetentionPolicy.SOURCE)
     @Target({ElementType.METHOD,ElementType.CONSTRUCTOR})
     public @interface Debug{ boolean value() default true;}
 
-    @Retention(RetentionPolicy.RUNTIME)
+    @Retention(RetentionPolicy.SOURCE)
     @Target({ElementType.METHOD,ElementType.CONSTRUCTOR})
     public @interface NotImplemented{ boolean value() default true;}
 
-    @Retention(RetentionPolicy.RUNTIME)
+    @Retention(RetentionPolicy.SOURCE)
     @Target({ElementType.METHOD,ElementType.CONSTRUCTOR})
     public @interface ToRevise{ boolean value() default true;}
 
-    @Retention(RetentionPolicy.RUNTIME)
+    @Retention(RetentionPolicy.SOURCE)
     @Target({ElementType.METHOD,ElementType.CONSTRUCTOR})
     public @interface Ready{ boolean value() default true;}
 
     private Simulation sim;
-    //private Config startingConfigs;     //TODO: trovare un'utilità a questa cosa.
 
     /**
      * Crea un'istanza di una nuova simulazione
@@ -42,7 +41,6 @@ public class Core {
     @ToRevise
     public void run() {
         try {
-            //startingConfigs = sim.getConfigs();
             sim.run();
         } catch (UnsupportedOperationException usopex){
             System.out.println("Operazione non supportata. La simulazione verrà interrotta.");
