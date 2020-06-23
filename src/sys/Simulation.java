@@ -174,7 +174,6 @@ public class Simulation {
      * Passa al giorno successivo della simulazione e
      * aggiorna i valori della simulazione. Contiene il
      * payload da eseguire ad ogni cambiamento di giorno.
-     * Calcola anche il valore r0 (vedere specifiche progetto).
      * Vengono considerati nel numero di infetti tutte le
      * persone tranne quelle verdi (anche quelle in incubazione
      * sono considerate infette).
@@ -185,9 +184,11 @@ public class Simulation {
         {
             currentState.startingPopulation[i].refresh();
         }
+        currentState.currentlyStationary = currentState.getDeathsNumber();
+
         if (currentState.redBlue-currentState.yellowRed!=0) currentState.unoPatientFound = true;
 
-        currentState.total.get(0).add(getConfigs().populationNumber-currentState.greenIncubation-1);    //Tutti gli infetti (quelli in incubazione sono compresi)
+        currentState.total.get(0).add(getConfigs().populationNumber-currentState.greenIncubation-1);            //Tutti gli infetti (quelli in incubazione sono compresi)
         currentState.total.get(1).add(currentState.getSymptomaticNumber());                                     //Tutti i malati gravi
         currentState.total.get(2).add(currentState.getDeathsNumber());                                          //Tutti i morti
         currentState.total.get(3).add(currentState.getTotalSwabsNumber());
@@ -200,7 +201,7 @@ public class Simulation {
         boolean result = currentState.subtractResources(currentState.getSymptomaticNumber()*getConfigs().swabsCost*3 + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
         if (!result) currentState.status = SimulationStatus.NO_MORE_RESOURCES;
         menu.feedback(currentState);
-        currentState.currentlyStationary = currentState.getDeathsNumber();
+        currentState.currentlyStationary = 0;
         if (currentState.unoPatientFound) currentScenario.dailyAction();
         currentState.currentDay+=1;
         if (currentState.getSymptomaticNumber()+currentState.getAsymptomaticNumber()+currentState.getIncubationNumber()==0) { //Sono tutti guariti.
