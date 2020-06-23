@@ -10,25 +10,26 @@ public class Config {
 
     // ----------------------------- SIMULATION PARAMETERS (COMPULSORY) -----------------------------
 
-    public int populationNumber;
-    public int initialResources;
-    public int swabsCost;
-    public int infectivity;
-    public int sintomaticity;
-    public int letality;
-    public int diseaseDuration;
-    public int[] size = new int[] {0,0};                  // width, height
+    private int populationNumber;
+    private int initialResources;
+    private int swabsCost;
+    private double infectivity;
+    private double sintomaticity;
+    private double letality;
+    private int diseaseDuration;
+    private int[] size = new int[] {0,0};                  // width, height
 
 
     // ----------------------------- SIMULATION PARAMETERS (OPTIONAL) -------------------------------
 
-    public int dayDuration = 500;                         //Loop duration measured in milliseconds
-    public double velocity = 1;
-    public int frameADay = 25;
-    public int maxAge = 110;
-    public int ageAverage = 50;
-    public String outputTotalFile = "total.png";
-    public String outputDailyFile = "daily.png";
+    private int dayDuration = 500;                         //Loop duration measured in milliseconds
+    private double velocity = 1;
+    private int socialDistance;
+    private int frameADay = 25;
+    private int maxAge = 110;
+    private int ageAverage = 50;
+    private String outputTotalFile = "total.png";
+    private String outputDailyFile = "daily.png";
 
     // ------------------------------------- CONSTANTS & BOUNDS --------------------------------------
 
@@ -47,15 +48,9 @@ public class Config {
     public static final int MAX_AGE_UPPER_BOUND = 110;
     public static final int AGE_AVERAGE_LOWER_BOUND = 20;
     public static final int AGE_AVERAGE_UPPER_BOUND = 80;
-    public static final int DAY_DURATION_LOWER_BOUND = 50;
-    public static final int DAY_DURATION_UPPER_BOUND = 1000;
-    public static final int FRAME_A_DAY_LOWER_BOUND = 1;
-    public static final int FRAME_A_DAY_UPPER_BOUND = 120;
-    public static final int VELOCITY_LOWER_BOUND = 1;
-    public IntSupplier VELOCITY_UPPER_BOUND = (()-> Math.min(Math.min(size[0],size[1])/10,VELOCITY_LOWER_BOUND));
-    public Function<Integer, Integer> SizeLowerBound = ((i)-> Math.max(2, (size[1-i] != 0 ? (populationNumber / 4) / size[1-i] : 2)));
-    public Function<Integer, Integer> SizeUpperBound = ((i)-> (populationNumber * 4) / (size[1-i]==0?16:size[1-i]));
-    public Function<Integer, Integer> PreferredSizeBound = ((i)-> ((int)(size[1-i]!=0 ? populationNumber*4/size[1-i]: Math.sqrt(populationNumber) * 2)));
+    public Function<Integer, Integer> SizeLowerBound = ((i)-> Math.max(2, (size[1-i] != 0 ? (populationNumber / 10) / size[1-i] : 2)));
+    public Function<Integer, Integer> SizeUpperBound = ((i)-> (populationNumber * 10) / (size[1-i]==0?4:size[1-i]));
+    public Function<Integer, Integer> PreferredSizeBound = ((i)-> ((int)(size[1-i]!=0 ? populationNumber*4/size[1-i]: Math.sqrt(populationNumber * 2))));
 
     // --------------------------------------- WORK VARIABLES ---------------------------------------
 
@@ -76,6 +71,7 @@ public class Config {
     void copy(Config c){
         if (isValid){
             this.ageAverage = c.ageAverage;
+            this.socialDistance = c.socialDistance;
             this.populationNumber = c.populationNumber;
             this.initialResources = c.initialResources;
             this.swabsCost = c.swabsCost;
@@ -238,7 +234,7 @@ public class Config {
      *
      * @return  infettività
      */
-    public int getInfectivity(){
+    public double getInfectivity(){
         return infectivity;
     }
 
@@ -267,7 +263,7 @@ public class Config {
      *
      * @return  sintomaticità
      */
-    public int getSintomaticity(){
+    public double getSintomaticity(){
         return sintomaticity;
     }
 
@@ -295,7 +291,7 @@ public class Config {
      *
      * @return  letalità
      */
-    public int getLetality() { return letality; }
+    public double getLetality() { return letality; }
 
     /**
      * Controlla se l'età massima è regolare
@@ -393,34 +389,19 @@ public class Config {
      */
     public int[] getSize() { return size; }
 
-    public boolean setDayDuration(int number){
-        if (number < DAY_DURATION_LOWER_BOUND || number > DAY_DURATION_UPPER_BOUND){
-            return false;
-        }
-        dayDuration = number;
-        configsChanged = true;
-        return true;
-    }
-
     /**
-     *  Quando richiamata, restituisce l'attributo
-     *  della durata del giorno.
-     *
-     * @return  dayDuration.
+     * Restituisce se i valori di configs sono cambiati dall'ultimo
+     * backup
+     * @return
      */
-    public int getDayDuration() { return dayDuration; }
+    boolean haveConfigsChanged() { return configsChanged; }
 
     /**
-     * Controlla se la velocità è regolare
-     * ed entro i limiti del programma, se si,
-     * inserisce il dato e restituisce true, altrimenti
-     * restituisce false.
-     *
-     * @param number    input velocity
-     * @return          true se il valore è nel formato corretto, false altrimenti.
+     * Setta il valore della velocità
+     * @return
      */
     public boolean setVelocity(int number){
-        if (number < VELOCITY_LOWER_BOUND || number > VELOCITY_UPPER_BOUND.getAsInt()){
+        if (number < 1){
             return false;
         }
         velocity = number;
@@ -429,45 +410,47 @@ public class Config {
     }
 
     /**
-     *  Quando richiamata, restituisce l'attributo
-     *  della velocità.
-     *
-     * @return  Velocità.
+     * Restituisce l'attributo della velocità
+     * @return
      */
-    public double getVelocity() { return velocity; }
+    public double getVelocity() {return velocity;}
 
     /**
-     * Controlla se i frame giornalieri sono regolari
-     * ed entro i limiti del programma, se si,
-     * inserisce il dato e restituisce true, altrimenti
-     * restituisce false.
-     *
-     * @param number    input frameADay
-     * @return          true se il valore è nel formato corretto, false altrimenti.
+     * Setta il numero dei frame per ogni giorno
+     * @return
      */
     public boolean setFrameADay(int number){
-        if (number < FRAME_A_DAY_LOWER_BOUND || number > FRAME_A_DAY_UPPER_BOUND){
+        if (number < 1){
             return false;
         }
         frameADay = number;
         configsChanged = true;
         return true;
     }
-
     /**
-     *  Quando richiamata, restituisce l'attributo
-     *  dei frame giornalieri.
-     *
-     * @return  frameADay.
+     * Restituisce il numero di frame per ogni giorno
+     * @return
      */
-    public int getFrameADay() { return frameADay; }
+    public int getFrameADay() {return frameADay;}
 
-    /**
-     * Restituisce se i valori di configs sono cambiati dall'ultimo
-     * backup
-     * @return  configsChanged
+     /**
+     * Setta il valore della distanza sociale
+     * @return
      */
-    boolean haveConfigsChanged() { return configsChanged; }
+    public boolean setSocialDistance(int number){
+        if (number < 1){
+            return false;
+        }
+        socialDistance = number;
+        configsChanged = true;
+        return true;
+    }
+
+     /**
+     * Restituisce la distanza sociale
+     * @return
+     */
+    public int getSocialDistance() {return socialDistance;}
 
     void setConfigsChanged(boolean changed) {this.configsChanged = changed;}
 }
