@@ -12,32 +12,39 @@ import java.util.Random;
 public class StopRandomPeopleScenario extends Scenario{
 
     private State currentState;
+    private double percentageToStop;
     private int peopleToStop;
     private int duration;
     private int ratio;
     private Integer firstTime;
     public static final ScenarioInfos SCENARIO_INFOS = new ScenarioInfos(3);
+    public static final Integer DURATION_LOWER_BOUND = 0;
+    public static final Integer DURATION_UPPER_BOUND = 200;
+    public static final Integer RATIO_LOWER_BOUND = 0;
+    public static final Integer RATIO_UPPER_BOUND = 50;
 
     static {
         SCENARIO_INFOS.setInfos("In questo scenario, ogni giorno vengono fermate un numero preso in input di persone per un numero di giorni presi in input.\n" +
-                "Parametri:\n" +
-                "\t- numero massimo di persone da testare giornalmente (il numero non sarà fisso sempre);" +
-                "\t- per quanto tempo queste persone dovranno essere fermate;" +
-                "\t- ogni quanti giorni verranno fermate persone casualmente.");
+                "\nParametri:\n" +
+                "\t1) percentuale massima di persone da testare giornalmente (il numero non sarà fisso ogni giorno);" +
+                "\t2) per quanto tempo queste persone dovranno essere fermate;" +
+                "\t3) ogni quanti giorni verranno fermate persone casualmente.");
         SCENARIO_INFOS.setName("Stop Random People Scenario");
     }
 
-    public StopRandomPeopleScenario(Simulation currentSimulation, int people, int duration, int ratio) {
+    public StopRandomPeopleScenario(Simulation currentSimulation, double percentage, int duration, int ratio) {
         super(currentSimulation);
         this.duration = duration;
         this.ratio = ratio;
         currentState = currentSimulation.getCurrentState();
-        peopleToStop = people;
+        percentageToStop = percentage;
     }
 
     //Non fa nulla
     @Override
-    public void oneTimeAction() { }
+    public void oneTimeAction() {
+        peopleToStop = (int)percentageToStop*currentState.configs.getPopulationNumber()/100;
+    }
 
 
     /**

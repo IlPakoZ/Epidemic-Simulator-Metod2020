@@ -73,21 +73,21 @@ public class Rng {
      */
     @ToRevise
     public static Person[] generatePopulation(State currentState){
-        Person[] people = new Person[currentState.configs.populationNumber];
-        for (int i=0;i<currentState.configs.populationNumber;i++){
+        Person[] people = new Person[currentState.configs.getPopulationNumber()];
+        for (int i=0;i<currentState.configs.getPopulationNumber();i++){
             double age;
             do {
-                age = R.nextGaussian() * GAUSSIAN_AGE_MODIFIER + currentState.configs.ageAverage;
-            }while(age<0 || age>currentState.configs.maxAge);
+                age = R.nextGaussian() * GAUSSIAN_AGE_MODIFIER + currentState.configs.getAgeAverage();
+            }while(age<0 || age>currentState.configs.getMaxAge());
             people[i] = new Person((int) age, i, currentState);
             people[i].setSeverityModifier(generateSeverityModifiers((int)age));
         }
 
-        currentState.greenIncubation=currentState.configs.populationNumber-1;
-        currentState.incubationYellow=currentState.configs.populationNumber-1;
-        currentState.yellowRed=currentState.configs.populationNumber-1;
-        currentState.redBlue=currentState.configs.populationNumber-1;
-        currentState.blueBlack=currentState.configs.populationNumber-1;
+        currentState.greenIncubation=currentState.configs.getPopulationNumber()-1;
+        currentState.incubationYellow=currentState.configs.getPopulationNumber()-1;
+        currentState.yellowRed=currentState.configs.getPopulationNumber()-1;
+        currentState.redBlue=currentState.configs.getPopulationNumber()-1;
+        currentState.blueBlack=currentState.configs.getPopulationNumber()-1;
         return people;
     }
 

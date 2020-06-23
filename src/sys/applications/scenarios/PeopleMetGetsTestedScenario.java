@@ -11,8 +11,8 @@ public class PeopleMetGetsTestedScenario extends Scenario {
 
     static {
         SCENARIO_INFOS.setInfos("In questo scenario, quando viene fatto il tampone ad una persona infetta e risulta positiva, si testano le persone che ha incontrato.\n" +
-                "Parametri:\n" +
-                "\t-probabilità in percentuale di fare il tampone ad una persona (0<x<100).");
+                "\nParametri:\n" +
+                "\t1) probabilità in percentuale di fare il tampone ad una persona (0<x<=100).");
         SCENARIO_INFOS.setName("People Met Gets Tested Scenario");
     }
 

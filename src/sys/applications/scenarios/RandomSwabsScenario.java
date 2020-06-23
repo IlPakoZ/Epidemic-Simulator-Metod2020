@@ -15,21 +15,21 @@ public class RandomSwabsScenario extends Scenario{
 
     static {
         SCENARIO_INFOS.setInfos("In questo scenario, ogni giorno vengono testate un massimo numero preso in input di persone, scelte casualmente.\n" +
-                "Parametri:\n" +
-                "\t-numero massimo di persone da testare giornalmente (il numero non sarà fisso sempre).");
+                "\nParametri:\n" +
+                "\t1) numero massimo di persone da testare giornalmente (il numero non sarà fisso ogni giorno).");
         SCENARIO_INFOS.setName("Random Swabs Scenario");
     }
 
-    RandomSwabsScenario(Simulation currentSimulation, int swabs) {
+    public RandomSwabsScenario(Simulation currentSimulation, int swabs) {
         super(currentSimulation);
         this.currentSimulation = currentSimulation;
         this.currentState = currentSimulation.getCurrentState();
-        swabsNumber = swabs;
+        this.swabsNumber = swabs;
     }
 
     // Non fa nulla
     @Override
-    public void oneTimeAction() { }
+    public void oneTimeAction() { if (swabsNumber>currentState.configs.getPopulationNumber()) swabsNumber = currentState.configs.getPopulationNumber(); }
 
     /**
      * Fa il tampone ad un numero preso in input di persone, scelte casualmente tra la popolazione.

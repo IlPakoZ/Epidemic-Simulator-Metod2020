@@ -6,29 +6,35 @@ import sys.Rng;
 import sys.Simulation;
 import sys.Core.*;
 import sys.State;
+import sys.applications.Functional;
 import sys.models.Scenario;
+
+import javax.swing.plaf.IconUIResource;
 import java.util.Random;
 
 public class PeopleGetStoppedOnceScenario extends Scenario{
 
     private State currentState;
-    private int peopleToStop;
+    private double percentToStop;
     private int duration;
+    public static final Integer DURATION_LOWER_BOUND = 0;
+    public static final Integer DURATION_UPPER_BOUND = 200;
+
     public static final ScenarioInfos SCENARIO_INFOS = new ScenarioInfos(4);
 
     static {
         SCENARIO_INFOS.setInfos("In questo scenario, vengono fermate una sola volta un numero preso in input di persone per un numero di giorni presi in input.\n" +
-                "Parametri:\n" +
-                "\t- numero massimo di persone da testare;" +
-                "\t- per quanto tempo queste persone dovranno essere fermate;");
+                "\nParametri:\n" +
+                "\t1) percentuale delle persone da testare;" +
+                "\t2) per quanto tempo queste persone dovranno essere fermate;");
         SCENARIO_INFOS.setName("People Get Stopped Once Scenario");
     }
 
-    public PeopleGetStoppedOnceScenario(Simulation currentSimulation, int people, int duration) {
+    public PeopleGetStoppedOnceScenario(Simulation currentSimulation, double percent, int duration) {
         super(currentSimulation);
         this.duration = duration;
         currentState = currentSimulation.getCurrentState();
-        peopleToStop = people;
+        percentToStop = percent;
     }
 
     /**
@@ -38,7 +44,8 @@ public class PeopleGetStoppedOnceScenario extends Scenario{
      */
     @Override
     public void oneTimeAction() {
-        for (int i = 0; i < peopleToStop; i++) {
+        int limit = (int)percentToStop*currentState.configs.getPopulationNumber()/100;
+        for (int i = 0; i < limit; i++) {
             Person x = currentState.startingPopulation[Rng.R.nextInt(currentState.blueBlack + 1)];
             if (x.getMovement() != MovementStatus.STATIONARY) {
                 x.setStationary(duration);

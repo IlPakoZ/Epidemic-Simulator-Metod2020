@@ -36,8 +36,8 @@ public class Person {
         Pair<Double, Double> speed = getRandomSpeed();
         speedX = speed.getKey();
         speedY = speed.getValue();
-        this.x = Rng.R.nextInt(currentState.configs.size[0]);
-        this.y = Rng.R.nextInt(currentState.configs.size[1]);
+        this.x = Rng.R.nextInt(currentState.configs.getSize()[0]);
+        this.y = Rng.R.nextInt(currentState.configs.getSize()[1]);
     }
 
     /**
@@ -62,20 +62,20 @@ public class Person {
                 makeOfColor(ColorStatus.YELLOW);
                 if (currentState.isBigBrother()) setStationary(currentState.configs.yellowToRedDeadline-daysFromInfection);
             } else if (daysFromInfection == currentState.configs.yellowToRedDeadline) {
-                if (Rng.generateFortune(currentState.configs.sintomaticity, currentState.isPoorCountry() ? severityModifier*5 :severityModifier)) {
+                if (Rng.generateFortune(currentState.configs.getSintomaticity(), currentState.isPoorCountry() ? severityModifier*5 :severityModifier)) {
                     int toStop;
                     makeOfColor(ColorStatus.RED);
-                    if (Rng.generateFortune(currentState.configs.letality, currentState.isPoorCountry() ? severityModifier*5 :severityModifier)) {
-                        dayOfDeath = Rng.R.nextInt(currentState.configs.diseaseDuration - (daysFromInfection + 1) - 1) + daysFromInfection + 1;
+                    if (Rng.generateFortune(currentState.configs.getLetality(), currentState.isPoorCountry() ? severityModifier*5 :severityModifier)) {
+                        dayOfDeath = Rng.R.nextInt(currentState.configs.getDiseaseDuration() - (daysFromInfection + 1) - 1) + daysFromInfection + 1;
                         toStop = -1;
                     } else {
-                        toStop = currentState.configs.diseaseDuration - daysFromInfection;
+                        toStop = currentState.configs.getDiseaseDuration() - daysFromInfection;
                     }
                     setStationary(toStop);
                 }
             } else if (daysFromInfection == dayOfDeath) {
                 makeOfColor(ColorStatus.BLACK);
-            } else if (daysFromInfection == currentState.configs.diseaseDuration) {
+            } else if (daysFromInfection == currentState.configs.getDiseaseDuration()) {
                 makeOfColor(ColorStatus.BLUE);
             }
         }
@@ -287,11 +287,11 @@ public class Person {
             double newSpeedY = speedY;
 
             boolean changed = false;
-            if ((x + newSpeedX <= 0) || (x + newSpeedX >= currentState.configs.size[0])) {
+            if ((x + newSpeedX <= 0) || (x + newSpeedX >= currentState.configs.getSize()[0])) {
                 changed = true;
                 newSpeedX = -newSpeedX;
             }
-            if ((y + newSpeedY <= 0) || (y + newSpeedY >= currentState.configs.size[1])) {
+            if ((y + newSpeedY <= 0) || (y + newSpeedY >= currentState.configs.getSize()[1])) {
                 changed = true;
                 newSpeedY = -newSpeedY;
             }
@@ -312,9 +312,9 @@ public class Person {
         double x = (Rng.R.nextDouble()-0.5)*2;
         double y = Math.sqrt(1-Math.abs(x));
         if (Rng.R.nextInt(2) == 0) {
-            return new Pair<>(x*currentState.configs.velocity, y*currentState.configs.velocity);
+            return new Pair<>(x*currentState.configs.getVelocity(), y*currentState.configs.getVelocity());
         }
-        return new Pair<>(x*currentState.configs.velocity, -y*currentState.configs.velocity);
+        return new Pair<>(x*currentState.configs.getVelocity(), -y*currentState.configs.getVelocity());
     }
 
     public static class UnsafeMovementStatusChangeException extends Exception{
@@ -331,13 +331,13 @@ public class Person {
             case YELLOW:
                 setAsInfected();
                 makeOfColor(ColorStatus.YELLOW);
-                daysFromInfection = currentState.configs.diseaseDuration/6;
+                daysFromInfection = currentState.configs.getDiseaseDuration()/6;
                 break;
             case RED:
                 debugForceColor(ColorStatus.YELLOW);
                 makeOfColor(ColorStatus.RED);
-                daysFromInfection = currentState.configs.diseaseDuration/3;
-                setStationary(currentState.configs.diseaseDuration - daysFromInfection);
+                daysFromInfection = currentState.configs.getDiseaseDuration()/3;
+                setStationary(currentState.configs.getDiseaseDuration() - daysFromInfection);
                 break;
             case BLUE:
                 debugForceColor(ColorStatus.RED);

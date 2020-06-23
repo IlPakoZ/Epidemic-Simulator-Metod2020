@@ -80,6 +80,6 @@ public interface IMenu {
      * @return un oggetto di una classe che implementa IScenario in base
      *         alla scelta dell'utente.
      */
-    Scenario selectScenario(Simulation simulation);
+    void selectScenario(Simulation simulation);
 
 }

@@ -84,14 +84,14 @@ public class State {
 
         switch (el) {
             case "WEAREEUROPEAN":
-                configs.initialResources = 2147483647;
+                configs.forceInitialResources(2147483647);
                 return 1;
             case "THEYSTEALOURMONEY":
-                configs.initialResources = 5000;
-                configs.populationNumber = 200000;
-                configs.size = new int[]{200, 200};
-                configs.velocity = 2;
-                configs.ageAverage = 30;
+                configs.forceInitialResources(50000);
+                configs.forcePopulationNumber(20000);
+                configs.forceSize(200, 200);
+                configs.forceSwabsCost(10);
+                configs.forceAge(30, 1);
                 poorCountry = true;
                 return 2;
             case "BIGBROTHERISWATCHINGYOU":
@@ -166,7 +166,7 @@ public class State {
      */
     @Ready
     public int getDeathsNumber(){
-        return configs.populationNumber-blueBlack-1;
+        return configs.getPopulationNumber()-blueBlack-1;
     }
 
     /**
@@ -180,7 +180,7 @@ public class State {
     @Ready
     public int getCurrentAgeAverage(int startIndex, int endIndex) {
         int totalAge = 0;
-        if ((endIndex > configs.populationNumber) || (startIndex < 0)) throw new InvalidParameterException("Illegal parameter.");
+        if ((endIndex > configs.getPopulationNumber()) || (startIndex < 0)) throw new InvalidParameterException("Illegal parameter.");
         for (int i=startIndex; i< endIndex; i++) totalAge+= startingPopulation[i].getAge();
         return totalAge/ (endIndex-startIndex);
     }
@@ -214,7 +214,7 @@ public class State {
             swabPersons.enqueue(p1);
         } else {
             totalSwabsNumber++;
-            subtractResources(configs.swabsCost);
+            subtractResources(configs.getSwabsCost());
             if (p1.color == ColorStatus.YELLOW) {
                 result = true;
             }
@@ -224,7 +224,7 @@ public class State {
             }
 
             if (result) {
-                if (!swabs.contains(p1)) p1.setStationary(configs.diseaseDuration - configs.incubationToYellowDeadline);
+                if (!swabs.contains(p1)) p1.setStationary(configs.getDiseaseDuration() - configs.incubationToYellowDeadline);
                 swabs.add(p1);
                 swabPersons.enqueue(p1);
             }

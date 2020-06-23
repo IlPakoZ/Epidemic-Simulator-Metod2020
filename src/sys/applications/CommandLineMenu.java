@@ -11,10 +11,7 @@ import sys.Config;
 import sys.Core.*;
 import sys.Simulation;
 import sys.State;
-import sys.applications.scenarios.CustomScenario;
-import sys.applications.scenarios.DefaultScenario;
-import sys.applications.scenarios.PeopleMetGetsTestedScenario;
-import sys.applications.scenarios.ScenarioInfos;
+import sys.applications.scenarios.*;
 import sys.models.IMenu;
 import sys.models.Scenario;
 
@@ -25,14 +22,55 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
-import java.lang.Math;
-import java.lang.reflect.Method;
-import java.util.function.IntPredicate;
+
 
 public class CommandLineMenu implements IMenu {
     private Scanner input = new Scanner(System.in);
     private DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.ITALIAN);
-    
+
+    public void createDataset(State currentState, int value) {
+        ArrayList<ArrayList<Integer>> timeRange;
+        File file;
+        if (value == 0) {// total
+            timeRange = currentState.total;
+            file = new File(Config.OUTPUT_TOTAL_FILE);
+        } else {//daily
+            timeRange = currentState.daily;
+            file = new File(Config.OUTPUT_DAILY_FILE);
+        }
+        double[] x1 = new double[timeRange.get(0).size()];
+        double[] y1 = new double[timeRange.get(0).size()];
+        double[] y2 = new double[timeRange.get(0).size()];
+        double[] y3 = new double[timeRange.get(0).size()];
+        double[] y4 = new double[timeRange.get(0).size()];
+
+        for (int i=0; i<y1.length; i++) {
+            y1[i] = timeRange.get(0).get(i);
+            y2[i] = timeRange.get(1).get(i);
+            y3[i] = timeRange.get(2).get(i);
+            y4[i] = timeRange.get(3).get(i);
+            x1[i] = i;
+        }
+
+        DefaultXYDataset dataset = new DefaultXYDataset();
+        dataset.addSeries("Total infected", new double[][]{x1,y1});
+        dataset.addSeries("Total symptomatics", new double[][]{x1,y2});
+        dataset.addSeries("Total deaths", new double[][]{x1,y3});
+        dataset.addSeries("Total swabs", new double[][]{x1,y4});
+
+        JFreeChart chart = ChartFactory.createXYLineChart("People", "Day passed", "Number of people", dataset);
+
+        XYPlot plot = chart.getXYPlot();
+
+        NumberAxis nAxis = (NumberAxis) plot.getDomainAxis();
+        NumberTickUnit unit = new NumberTickUnit(10);
+        nAxis.setTickUnit(unit);
+
+        try {
+            ChartUtils.saveChartAsPNG(file, chart, 1000, 700);
+        }catch (IOException ignored) {}
+
+    }
 
     public void clear() {
         for(int i=0; i<50; i++) System.out.println();
@@ -44,7 +82,7 @@ public class CommandLineMenu implements IMenu {
         System.out.println("1) Inizia la simulazione");
         System.out.println("2) Menu' parametri principali...");
         System.out.println("3) Menu' parametri opzionali...");
-        System.out.println("3) Menu' scenari...");
+        System.out.println("4) Menu' scenari...");
         System.out.println("\n0) Esci");
 
     }
@@ -62,11 +100,11 @@ public class CommandLineMenu implements IMenu {
         System.out.println("2) Durata malattia:\t\t\t\t" + format(config.getDiseaseDuration()) + " valore attuale;");
         System.out.println("3) Risorse inziali:\t\t\t\t" + format(config.getInitialResources()) + " valore attuale;");
         System.out.println("4) Costo del tampone:\t\t\t" + format(config.getSwabsCost()) + " valore attuale;");
-        System.out.println("5) Infettivita':\t\t\t\t" + format(config.getInfectivity()) + " valore attuale;");
-        System.out.println("6) Sintomaticita':\t\t\t\t" + format(config.getSintomaticity()) + " valore attuale;");
-        System.out.println("7) Letalita':\t\t\t\t\t" + format(config.getLetality()) + " valore attuale;");
-        // System.out.println("8) Spazio della simulazione:\t(" + config.size.toString().replace("="," , ")+ ") valore attuale;");
-        System.out.println("9) Per settare i paramteri opzionali;");
+        System.out.println("5) Infettivita':\t\t\t\t" + config.getInfectivity() + " valore attuale;");
+        System.out.println("6) Sintomaticita':\t\t\t\t" + config.getSintomaticity() + " valore attuale;");
+        System.out.println("7) Letalita':\t\t\t\t\t" + config.getLetality() + " valore attuale;");
+        System.out.println("8) Spazio della simulazione:\t(" + config.getSize()[0] +"," + config.getSize()[1]+ ") valore attuale;");
+        System.out.println("9) Per settare i paramteri opzionali ...");
         System.out.println("\n0) Torna al menù principale...");
     }
 
@@ -76,24 +114,18 @@ public class CommandLineMenu implements IMenu {
         System.out.println("1) Eta' massima:\t\t\t\t" + format(config.getMaxAge()) + " valore attuale;");
         System.out.println("2) Eta' media:\t\t\t\t\t" + format(config.getAgeAverage()) + " valore attuale;");
         System.out.println("3) Velocità:\t\t\t\t\t" + config.getVelocity() + " valore attuale;");
-        System.out.println("4) Frame per ogni giorno:\t\t\t\t\t" + format(config.getFrameADay()) + " valore attuale;");
-        System.out.println("5) Distanza sociale:\t\t\t\t\t" + format(config.getSocialDistance()) + " valore attuale;");
-        System.out.println("9) Per settare i parametri principali;");
+        System.out.println("4) Frame per ogni giorno:\t\t" + format(config.getFrameADay()) + " valore attuale;");
+        System.out.println("9) Per settare i parametri principali ...");
         System.out.println("\n0) Torna al menù principale...");
     }
 
     
-    /*public void ScreenSEN() {
-        System.out.println("MENU' SCENARIO");
-        System.out.println("#");
-        System.out.println("#");
-        System.out.println("Scegli una strategia per contrastare il virus:");
-        System.out.println("0 - Strategia di default");
-        System.out.println("1 - Tamponi casuali sulle persone ogni giorno");
-        System.out.println("2 - Tamponi sui contatti delle persone risultate positive al tampone");
-        System.out.println("3 - In modo casuale, vengono fermate persone per un tempo limitato");
-        System.out.println("4 - Tutta la popolazione, o una parte, usa le mascherine (maggior consumo di risorse)");
-    }*/
+    public void ScreenSEN(Simulation currentSimulation) {
+        printPersonalizedTitle("Selezione Scenario");
+        System.out.println("1) Scenario di default: " + getEnabledStatus(currentSimulation, DefaultScenario.SCENARIO_INFOS.getID()));
+        System.out.println("2) Scenario personalizzato...");
+        System.out.println("\n0) Torna indietro...");
+    }
  
     @Ready
     private void configurationScreen(String key,Config config) {
@@ -110,11 +142,6 @@ public class CommandLineMenu implements IMenu {
            config = null;
            ScreenFI();
            break;
-
-           /*
-           case "SEN":    //Non dovrebbe servire.
-           ScreenSEN();
-           break; */
        }
     }  
 
@@ -127,16 +154,15 @@ public class CommandLineMenu implements IMenu {
        System.out.println("######### " + title + " #########\n");
     }
 
-    public interface Functional<T>{
-       public boolean test(T parameter);
-    } 
 
     @Override
     public int show() {
         ScreenSH();
+        System.out.print("\nInserisci un valore: ");
         int action = getInput(Integer.class);
-        while(action < 0 || action > 3) {
+        while(action < 0 || action > 4) {
             ScreenSH();
+            System.out.print("Inserisci un valore: ");
             action = getInput(Integer.class);
         }
         return action+1;
@@ -148,10 +174,30 @@ public class CommandLineMenu implements IMenu {
         System.out.print(request);
         boolean verify = method.test(getInput(type));
         while(!(verify)) {
-            configurationScreen(keyOS, config);  
+            configurationScreen(keyOS, config);
             System.out.print(errorMessage);
             verify = method.test(getInput(type));
         }
+    }
+
+    private <E extends Number> E inputUntilValid(E lowerBound, E upperBound, Class<E> type, String infos){
+        String formattedLowerBound;
+        String formattedUpperBound;
+        if (lowerBound instanceof Integer) {
+            formattedLowerBound = format(lowerBound.intValue());
+            formattedUpperBound = format(upperBound.intValue());
+        } else {
+            formattedLowerBound = lowerBound.toString();
+            formattedUpperBound = upperBound.toString();
+        }
+
+        System.out.print(infos + " ("+formattedLowerBound+"<x<=" + formattedUpperBound + "): ");
+        E value = getInput(type);
+        while(value.doubleValue()<=lowerBound.doubleValue() || value.doubleValue()>upperBound.doubleValue()) {
+            System.out.print("\nNumero non valido. Reinserirlo ("+ formattedLowerBound +"<x=<"+formattedUpperBound+ "): ");
+            value = getInput(type);
+        }
+        return value;
     }
 
     @Override
@@ -191,7 +237,7 @@ public class CommandLineMenu implements IMenu {
         
         //TODO: DA QUI IN POI RENDERE OPZIONALI
         configurationScreen("FI", config);
-        boolean result = askConfirmation("Settare anche i valori ozpionali?");
+        boolean result = askConfirmation("Settare anche i valori opzionali?");
        
         if (result) {
             // Età massima
@@ -285,7 +331,7 @@ public class CommandLineMenu implements IMenu {
                 break;
             }
         }
-        if(action==9) return 4;
+        if(action==9) return 3;
         return action;
     }
 
@@ -317,11 +363,7 @@ public class CommandLineMenu implements IMenu {
                 inputUntilValid(config::setFrameADay, Integer.class, "Numero non valido. Reinserirlo(> 0)", "Inserire il numero di frame per ogni giorno(> 0): ", "SET_OP", config);
                 break;
 
-                case(5):
-                // Distanza sociale
-                inputUntilValid(config::setSocialDistance, Integer.class, "Numero non valido. Reinserirlo(> 0)", "Inserire la distanza(> 0): ", "SET_OP", config);
-                break;
-
+                case(5): break;
                 case(6): break;
                 case(0): break;
             }
@@ -355,13 +397,6 @@ public class CommandLineMenu implements IMenu {
         System.out.println("Motivo termine simulazione: " + state.status);
     }
 
-    @Ready
-    private void showScenarioSelectionMenu(Simulation currentSimulation){
-        printPersonalizedTitle("Selezione Scenario");
-        System.out.println("1) Scenario di default: " + getEnabledStatus(currentSimulation, null));
-        System.out.println("2) Scenario personalizzato...\n");
-        System.out.println("0) Torna indietro...");
-    }
 
     @Ready
     private <E> E getInput(Class<E> eClass){
@@ -377,16 +412,20 @@ public class CommandLineMenu implements IMenu {
     }
 
     @NotImplemented
-    private void customScenarioMenu(){
+    private void customScenarioMenu(Simulation currentSimulation){
        printPersonalizedTitle("Custom Scenario");
-
+       System.out.println("1) Scenario 'Tampone alle persone incontrate da chi risulta positivo': \t\t" + getEnabledStatus(currentSimulation, PeopleMetGetsTestedScenario.SCENARIO_INFOS.getID()));
+       System.out.println("2) Scenario 'Persone fermate a caso all'inizio': \t\t\t\t\t\t\t" + getEnabledStatus(currentSimulation, PeopleGetStoppedOnceScenario.SCENARIO_INFOS.getID()));
+       System.out.println("3) Scenario 'Persone fermate a caso periodicamente': \t\t\t\t\t\t" + getEnabledStatus(currentSimulation, StopRandomPeopleScenario.SCENARIO_INFOS.getID()));
+       System.out.println("4) Scenario 'Tamponi a persone a caso': \t\t\t\t\t\t\t\t\t" + getEnabledStatus(currentSimulation, RandomSwabsScenario.SCENARIO_INFOS.getID()));
+       System.out.println("\n0) Torna indietro...");
     }
 
     @ToRevise
-    private String getEnabledStatus(Simulation currentSimulation, Scenario scenario){
+    private String getEnabledStatus(Simulation currentSimulation, Integer ID){
         final String positiveFeedback = "abilitato.";
         final String negativeFeedback = "disabilitato.";
-        return currentSimulation.isScenarioEnabled(scenario) ? positiveFeedback : negativeFeedback;
+        return currentSimulation.isScenarioEnabled(ID) ? positiveFeedback : negativeFeedback;
     }
 
     @ToRevise
@@ -399,15 +438,17 @@ public class CommandLineMenu implements IMenu {
 
     @ToRevise
     private void printScenarioIntro(ScenarioInfos infos){
-        //printPersonalizedTitle("Hai scelto " + type.getInfos().getName());
-        //System.out.println(scenario.getInfos());
+        System.out.println();
+        printPersonalizedTitle("Hai scelto " + infos.getName());
+        System.out.println(infos.getInfos());
+        System.out.println();
     }
 
     @ToRevise
     private Scenario enableDisable(Simulation simulation, Scenario scenario){
         boolean response;
 
-        if (simulation.isScenarioEnabled(scenario)) {
+        if (simulation.isScenarioEnabled(scenario.getInfos().getID())) {
             if (scenario instanceof DefaultScenario) {
                 System.out.println("Lo scenario di default non può essere disabilitato.");
             } else {
@@ -455,10 +496,10 @@ public class CommandLineMenu implements IMenu {
 
     @ToRevise
     @Override
-    public Scenario selectScenario(Simulation simulation) {   // BOZZA. DA MIGLIORARE
-        showScenarioSelectionMenu(simulation);
+    public void selectScenario(Simulation simulation) {
+        clear();
+        ScreenSEN(simulation);
         DefaultScenario defaultScenario = new DefaultScenario(simulation);
-        Scenario result = simulation.getCurrentScenario();
 
         int action = -1;
         while(action != 0){
@@ -467,11 +508,14 @@ public class CommandLineMenu implements IMenu {
 
             switch (action){
                 case 1:
+                    clear();
                     printScenarioIntro(DefaultScenario.SCENARIO_INFOS);
-                    result = enableDisable(simulation, defaultScenario);
+                    simulation.loadScenario(enableDisable(simulation, defaultScenario));
                     break;
                 case 2:
-                    result = makeCustomScenario(simulation);
+                    makeCustomScenario(simulation);
+                    clear();
+                    ScreenSEN(simulation);
                     break;
                 case 0:
                     break;
@@ -479,35 +523,63 @@ public class CommandLineMenu implements IMenu {
                     System.out.println("Valore non valido!");
             }
         }
-        return result;
     }
 
 
 
     @ToRevise
     private CustomScenario makeCustomScenario(Simulation simulation){
-        CustomScenario customScenario = new CustomScenario(simulation);
+        CustomScenario customScenario;
+        if (simulation.getCurrentScenario() instanceof CustomScenario) customScenario = (CustomScenario) simulation.getCurrentScenario();
+        else customScenario = new CustomScenario(simulation);
+
+
+        Integer percentage;
+        Integer duration;
+        String confirmMessage = "Vuoi confermare le modifiche?";
         int action = -1;
 
         while(action != 0){
             clear();
-            customScenarioMenu();
+            customScenarioMenu(simulation);
             System.out.print("Digita il numero dello scenario da attivare: ");
             action = getInput(Integer.class);
 
             switch(action) {
                 case 1:
                     printScenarioIntro(PeopleMetGetsTestedScenario.SCENARIO_INFOS);
-                    //PeopleMetGetsTestedScenario new_scen = new PeopleMetGetsTestedScenario();
+                    percentage = inputUntilValid(0,100, Integer.class, "Inserisci la percentuale persone (circa) da testare");
+                    if (askConfirmation(confirmMessage)) {
+                        customScenario.addScenario(new PeopleMetGetsTestedScenario(simulation, percentage));
+                        simulation.loadScenario(customScenario);
+                    }
                     break;
                 case 2:
-
-                    // Scenario2 new_scen = new Scenario2()
-                    // return new_scen
+                    printScenarioIntro(PeopleGetStoppedOnceScenario.SCENARIO_INFOS);
+                    percentage = inputUntilValid(0,  100, Integer.class, "Inserisci la percentuale persone (circa) da fermare");
+                    duration = inputUntilValid(PeopleGetStoppedOnceScenario.DURATION_LOWER_BOUND,  PeopleGetStoppedOnceScenario.DURATION_UPPER_BOUND, Integer.class, "Inserisci per quanti giorni queste persone dovranno essere fermate");
+                    if (askConfirmation(confirmMessage)) {
+                        customScenario.addScenario(new PeopleGetStoppedOnceScenario(simulation, percentage, duration));
+                        simulation.loadScenario(customScenario);
+                    }
                     break;
                 case 3:
-                    // Scenario2 new_scen = new Scenario2()
-                    // return new_scen
+                    printScenarioIntro(StopRandomPeopleScenario.SCENARIO_INFOS);
+                    percentage = inputUntilValid(0, 100, Integer.class, "Inserisci la percentuale persone (circa) da fermare");
+                    duration = inputUntilValid(StopRandomPeopleScenario.DURATION_LOWER_BOUND, StopRandomPeopleScenario.DURATION_UPPER_BOUND, Integer.class, "Inserisci per quanti giorni queste persone dovranno essere fermate");
+                    Integer ratio = inputUntilValid(StopRandomPeopleScenario.RATIO_LOWER_BOUND, StopRandomPeopleScenario.RATIO_UPPER_BOUND, Integer.class, "Inserisci ogni quanti giorni verranno fermate persone casualmente");
+                    if (askConfirmation(confirmMessage)) {
+                        customScenario.addScenario(new StopRandomPeopleScenario(simulation, percentage, duration, ratio));
+                        simulation.loadScenario(customScenario);
+                    }
+                    break;
+                case 4:
+                    printScenarioIntro(RandomSwabsScenario.SCENARIO_INFOS);
+                    Integer swabs = inputUntilValid(0, simulation.getConfigs().getPopulationNumber(), Integer.class, "Inserisci quanti tamponi effettuare al giorno");
+                    if (askConfirmation(confirmMessage)) {
+                        customScenario.addScenario(new RandomSwabsScenario(simulation, swabs));
+                        simulation.loadScenario(customScenario);
+                    }
                     break;
                 case 0:
                     action = 0;

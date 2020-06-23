@@ -10,7 +10,7 @@ public class DefaultScenario extends Scenario {
 
     static {
         SCENARIO_INFOS.setInfos("In questo scenario, non viene fatto nessun tampone.\n"+
-                "Non viene utilizzata nessuna trategia particolare per\nil contenimento della malattia.");
+                "Non viene utilizzata nessuna strategia particolare per il contenimento della malattia.");
         SCENARIO_INFOS.setInfos("Scenario di default");
     }
 
