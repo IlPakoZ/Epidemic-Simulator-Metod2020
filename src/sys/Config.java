@@ -53,8 +53,8 @@ public class Config {
     public static final int FRAME_A_DAY_UPPER_BOUND = 120;
     public static final int VELOCITY_LOWER_BOUND = 1;
     public IntSupplier VELOCITY_UPPER_BOUND = (()-> Math.min(Math.min(size[0],size[1])/10,VELOCITY_LOWER_BOUND));
-    public Function<Integer, Integer> SizeLowerBound = ((i)-> Math.max(2, (size[1-i] != 0 ? (populationNumber / 4) / size[1-i] : 2)));
-    public Function<Integer, Integer> SizeUpperBound = ((i)-> Math.min((populationNumber * 4) / (size[1-i]==0?16:size[1-i]), 2000));
+    public Function<Integer, Integer> SizeLowerBound = ((i)-> Math.max(2, (size[1-i] != 0 ? (populationNumber / 20) / size[1-i] : 2)));
+    public Function<Integer, Integer> SizeUpperBound = ((i)-> Math.min((populationNumber * 20) / (size[1-i]==0?16:size[1-i]), 2000));
     public Function<Integer, Integer> PreferredSizeBound = ((i)-> ((int)(size[1-i]!=0 ? populationNumber*4/size[1-i]: Math.sqrt(populationNumber) * 2)));
 
     // --------------------------------------- WORK VARIABLES ---------------------------------------
@@ -536,6 +536,15 @@ public class Config {
                 break;
         }
     }
+
+    /**
+     * Questo metodo forza la durata della malattia ad essere pari
+     * al parametro. Questo metodo non è sicuro (non effettua
+     * alcun controllo sulla correttezza dei dati) e non dovrebbe
+     * essere usato per prendere in input dati dall'esterno.
+     * @param value  input value
+     */
+    public void forceDiseaseDuration(int value) { this.diseaseDuration = value; }
 
     /**
      * Questo metodo forza l'attributo segnalato da index ad essere

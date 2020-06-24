@@ -10,21 +10,21 @@ public class Main {
         Core x = new Core();
         CommandLineMenu c = new CommandLineMenu();
         x.newSimulation(c);
-        x.run();
+        //x.run();
 
         //x.run();
-        //Simulation simulation = x.debug();
-        //State state = simulation.getCurrentState();
+        Simulation simulation = x.debug();
+        State state = simulation.getCurrentState();
         //state.startingPopulation[0].debugForceColor(ColorStatus.BLACK);
         //state.startingPopulation[0].debugForceColor(ColorStatus.BLACK);
         //state.startingPopulation[0].debugForceColor(ColorStatus.BLACK);
         //state.startingPopulation[0].debugForceColor(ColorStatus.RED);
-        //state.startingPopulation[0].debugForceColor(ColorStatus.YELLOW);
+        state.startingPopulation[0].setAsInfected();
         //System.out.println(state.blueBlack);
         //simulation.debugDisableInfections();
         //simulation.doSwab(state.startingPopulation[0]);
         //simulation.doSwab(state.startingPopulation[state.startingPopulation.length-1]);
-        //simulation.debugRun();
+        simulation.debugRun();
     /*
         State state = new State();
         state.configs = new Config();

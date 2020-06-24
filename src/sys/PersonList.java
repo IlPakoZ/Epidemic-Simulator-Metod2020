@@ -4,11 +4,12 @@ import assets.Person;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class PersonList implements Iterable<Person> {
 
 
-    private ArrayList<Person> arrayList = new ArrayList<>();
+    private List<Person> arrayList = new ArrayList<>();
 
     void addElement(Person person){
         arrayList.add(person);

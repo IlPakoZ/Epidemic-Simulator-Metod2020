@@ -7,6 +7,7 @@ import sys.Core.*;
 import sys.applications.scenarios.CustomScenario;
 import sys.applications.scenarios.DefaultScenario;
 import sys.applications.scenarios.PeopleMetGetsTestedScenario;
+import sys.applications.scenarios.StopRandomPeopleScenario;
 import sys.models.IMenu;
 import sys.models.Scenario;
 
@@ -179,14 +180,15 @@ public class Simulation {
      */
     @ToRevise
     private boolean nextDay(){
+        currentState.currentlyStationary = currentState.getDeathsNumber();
+
         for (int i = currentState.blueBlack; i > -1 ; i--)             //TODO: Controllare che gli indici siano giusti (voglio refreshare tutti tranne i verdi non incubati, blu e neri)
         {
             currentState.startingPopulation[i].refresh();
         }
-        currentState.currentlyStationary = currentState.getDeathsNumber();
 
         if (currentState.redBlue-currentState.yellowRed!=0) currentState.unoPatientFound = true;
-
+        if (currentState.unoPatientFound) currentScenario.dailyAction();
         currentState.total.get(0).add(getConfigs().getPopulationNumber()-currentState.greenIncubation-1);       //Tutti gli infetti (quelli in incubazione sono compresi)
         currentState.total.get(1).add(currentState.getSymptomaticNumber());                                     //Tutti i malati gravi
         currentState.total.get(2).add(currentState.getDeathsNumber());                                          //Tutti i morti
@@ -198,10 +200,10 @@ public class Simulation {
         currentState.daily.get(3).add(currentState.getTotalSwabsNumber()-currentState.total.get(3).get(currentState.total.get(3).size()-1));
 
         boolean result = currentState.subtractResources(currentState.getSymptomaticNumber()*getConfigs().getSwabsCost()*3 + currentState.currentlyStationary*Config.DAILY_COST_IF_STATIONARY);
+        currentState.currentlyStationary = 0;
         if (!result) currentState.status = SimulationStatus.NO_MORE_RESOURCES;
         menu.feedback(currentState);
-        currentState.currentlyStationary = 0;
-        if (currentState.unoPatientFound) currentScenario.dailyAction();
+
         currentState.currentDay+=1;
         if (currentState.getSymptomaticNumber()+currentState.getAsymptomaticNumber()+currentState.getIncubationNumber()==0) { //Sono tutti guariti.
             currentState.status = SimulationStatus.ERADICATED_DISEASE;
@@ -324,12 +326,13 @@ public class Simulation {
         config.forceSwabsCost(3);
         config.forceSize(1000,1000);
         config.forceInitialResources(1000000);
-        config.setDiseaseDuration(50);
+        config.forceDiseaseDuration(50);
         config.forceAge(50, 1);
         config.forceAge(110, 0);
         config.incubationToYellowDeadline = (int)(config.getDiseaseDuration()*Config.INCUBATION_TO_YELLOW_DEADLINE);
         config.yellowToRedDeadline = (int)(config.getDiseaseDuration()*Config.YELLOW_TO_RED_DEADLINE);
 
+        currentScenario = new StopRandomPeopleScenario(this, 50, 20, 20);
         currentScenario.oneTimeAction();
         currentState.startingPopulation = Rng.generatePopulation(currentState);
         currentState.resources = config.getInitialResources();

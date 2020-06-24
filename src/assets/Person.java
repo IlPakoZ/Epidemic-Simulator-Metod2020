@@ -194,6 +194,21 @@ public class Person {
     }
 
     /**
+     * Metodo utilizzato per scambiare la posizione nell'array della
+     * persona corrente con la persona ad indice "newIndex"
+     *
+     * @param newIndex  indice di destinazione
+     */
+    @Ready
+    private void switchPerson(int newIndex){
+        Person temp = currentState.startingPopulation[newIndex];
+        temp.index = index;
+        currentState.startingPopulation[newIndex] = this;
+        currentState.startingPopulation[index] = temp;
+        index = newIndex;
+    }
+
+    /**
      * Restituisce i giorni che sono passati dall'infezione iniziale.
      * @return  giorni dall'infezione.
      */
@@ -205,24 +220,9 @@ public class Person {
      *
      * @return  isInfected
      */
-    @ToRevise
+    @Ready
     public boolean isInfected(){
         return isInfected;
-    }
-
-    /**
-     * Metodo utilizzato per scambiare la posizione nell'array della
-     * persona corrente con la persona ad indice "newIndex"
-     *
-     * @param newIndex  indice di destinazione
-     */
-    @NotImplemented
-    private void switchPerson(int newIndex){
-        Person temp = currentState.startingPopulation[newIndex];
-        temp.index = index;
-        currentState.startingPopulation[newIndex] = this;
-        currentState.startingPopulation[index] = temp;
-        index = newIndex;
     }
 
     /**

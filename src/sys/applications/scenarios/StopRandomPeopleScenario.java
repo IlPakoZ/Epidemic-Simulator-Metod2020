@@ -7,12 +7,10 @@ import sys.Simulation;
 import sys.Core.*;
 import sys.State;
 import sys.models.Scenario;
-import java.util.Random;
 
 public class StopRandomPeopleScenario extends Scenario{
 
     private State currentState;
-    private double percentageToStop;
     private int peopleToStop;
     private int duration;
     private int ratio;
@@ -26,25 +24,24 @@ public class StopRandomPeopleScenario extends Scenario{
     static {
         SCENARIO_INFOS.setInfos("In questo scenario, ogni giorno vengono fermate un numero preso in input di persone per un numero di giorni presi in input.\n" +
                 "\nParametri:\n" +
-                "\t1) percentuale massima di persone da testare giornalmente (il numero non sarà fisso ogni giorno);" +
+                "\t1) numero di persone da testare giornalmente;" +
                 "\t2) per quanto tempo queste persone dovranno essere fermate;" +
                 "\t3) ogni quanti giorni verranno fermate persone casualmente.");
         SCENARIO_INFOS.setName("Stop Random People Scenario");
     }
 
-    public StopRandomPeopleScenario(Simulation currentSimulation, double percentage, int duration, int ratio) {
+    public StopRandomPeopleScenario(Simulation currentSimulation, int peopleToStop, int duration, int ratio) {
         super(currentSimulation);
         this.duration = duration;
         this.ratio = ratio;
         currentState = currentSimulation.getCurrentState();
-        percentageToStop = percentage;
+        this.peopleToStop = peopleToStop;
     }
 
     //Non fa nulla
+    @Ready
     @Override
-    public void oneTimeAction() {
-        peopleToStop = (int)percentageToStop*currentState.configs.getPopulationNumber()/100;
-    }
+    public void oneTimeAction() { if (peopleToStop>currentState.configs.getPopulationNumber()) peopleToStop = currentState.configs.getPopulationNumber(); }
 
 
     /**
@@ -52,6 +49,7 @@ public class StopRandomPeopleScenario extends Scenario{
      * popolazione, per un numero di giorni preso in input e con un intervallo
      * di tempo preso in input.
      */
+    @Ready
     @Override
     public void dailyAction()  {
         if (firstTime == null) {
@@ -60,17 +58,22 @@ public class StopRandomPeopleScenario extends Scenario{
             firstTime++;
         }
         if (firstTime % ratio == 0) {
-            for (int i = 0; i < peopleToStop; i++) {
-                Person x = currentState.startingPopulation[Rng.R.nextInt(currentState.blueBlack + 1)];
-                if (x.getMovement() != MovementStatus.STATIONARY) {
+            int[] indexes = Rng.getPersonShuffledIndex(currentState);
+            int indexPerson = 0;
+            for (int i=0; i<peopleToStop; i++) {
+                Person x = currentState.startingPopulation[indexes[indexPerson]];
+                if (x.getMovement() == MovementStatus.MOVING) {
                     x.setStationary(duration);
                 }
+                else i--;
+                indexPerson++;
             }
         }
 
     }
 
     //Non fa nulla
+    @Ready
     @Override
     public void frameAction() { }
 
@@ -78,6 +81,7 @@ public class StopRandomPeopleScenario extends Scenario{
      * Restituisce una breve descrizione dello scenario e dei parametri di cui necessita per essere eseguito.
      * @return  breve descrizione dello scenario.
      */
+    @Ready
     @Override
     public ScenarioInfos getInfos() {
         return SCENARIO_INFOS;

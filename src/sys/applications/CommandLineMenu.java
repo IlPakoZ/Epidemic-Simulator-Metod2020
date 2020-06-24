@@ -375,6 +375,7 @@ public class CommandLineMenu implements IMenu {
     @Override
     public void feedback(State state){
         printPersonalizedTitle("GIORNO " + state.currentDay);
+        System.out.println("Paziente zero "+ (!state.unoPatientFound?"NON ANCORA ":"") +"trovato!");
         System.out.println("Popolazione sana: " + state.getHealthyNumber());
         System.out.println("Popolazione guarita: " + state.getCuredNumber());
         System.out.print("Popolazione infettata: " + state.total.get(0).get(state.total.get(0).size()-1));
@@ -444,6 +445,17 @@ public class CommandLineMenu implements IMenu {
         System.out.println();
     }
 
+    /**
+     * Questo metodo era stato inizialmente pensato per consentire di abilitare
+     * o disabilitare gli scenari. Per una serie di motivi, questo metodo viene
+     * utilizzato soltanto per consentire l'abilitazione o la disabilitazione
+     * dello scenario di default. Nonostante ciò, abbiamo preferito lasciarlo
+     * nel codice nella sua completezza come reliquia dell'evoluzione di questa classe.
+     *
+     * @param simulation    la simulazione attiva
+     * @param scenario      lo scenario attivo
+     * @return              lo scenario attivato
+     */
     @ToRevise
     private Scenario enableDisable(Simulation simulation, Scenario scenario){
         boolean response;
@@ -548,7 +560,7 @@ public class CommandLineMenu implements IMenu {
             switch(action) {
                 case 1:
                     printScenarioIntro(PeopleMetGetsTestedScenario.SCENARIO_INFOS);
-                    percentage = inputUntilValid(0,100, Integer.class, "Inserisci la percentuale persone (circa) da testare");
+                    percentage = inputUntilValid(0,100, Integer.class, "Inserisci la possibilità che una persona incontrata da un positivo venga testata");
                     if (askConfirmation(confirmMessage)) {
                         customScenario.addScenario(new PeopleMetGetsTestedScenario(simulation, percentage));
                         simulation.loadScenario(customScenario);
@@ -556,7 +568,7 @@ public class CommandLineMenu implements IMenu {
                     break;
                 case 2:
                     printScenarioIntro(PeopleGetStoppedOnceScenario.SCENARIO_INFOS);
-                    percentage = inputUntilValid(0,  100, Integer.class, "Inserisci la percentuale persone (circa) da fermare");
+                    percentage = inputUntilValid(0,  simulation.getConfigs().getPopulationNumber(), Integer.class, "Inserisci le persone da fermare");
                     duration = inputUntilValid(PeopleGetStoppedOnceScenario.DURATION_LOWER_BOUND,  PeopleGetStoppedOnceScenario.DURATION_UPPER_BOUND, Integer.class, "Inserisci per quanti giorni queste persone dovranno essere fermate");
                     if (askConfirmation(confirmMessage)) {
                         customScenario.addScenario(new PeopleGetStoppedOnceScenario(simulation, percentage, duration));
@@ -565,7 +577,7 @@ public class CommandLineMenu implements IMenu {
                     break;
                 case 3:
                     printScenarioIntro(StopRandomPeopleScenario.SCENARIO_INFOS);
-                    percentage = inputUntilValid(0, 100, Integer.class, "Inserisci la percentuale persone (circa) da fermare");
+                    percentage = inputUntilValid(0, simulation.getConfigs().getPopulationNumber(), Integer.class, "Inserisci le persone da fermare");
                     duration = inputUntilValid(StopRandomPeopleScenario.DURATION_LOWER_BOUND, StopRandomPeopleScenario.DURATION_UPPER_BOUND, Integer.class, "Inserisci per quanti giorni queste persone dovranno essere fermate");
                     Integer ratio = inputUntilValid(StopRandomPeopleScenario.RATIO_LOWER_BOUND, StopRandomPeopleScenario.RATIO_UPPER_BOUND, Integer.class, "Inserisci ogni quanti giorni verranno fermate persone casualmente");
                     if (askConfirmation(confirmMessage)) {

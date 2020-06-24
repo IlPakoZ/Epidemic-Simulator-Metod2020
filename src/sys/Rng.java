@@ -91,4 +91,28 @@ public class Rng {
         return people;
     }
 
+    /**
+     * Questo metodo è a disposizione degli scenari e si occupa di fare uno shuffle
+     * con gli indici delle persone per generare ad ogni chiamata delle persone casuali
+     * a cui applicare una certa strategia dello scenario. Ogni scenario esegue una chiamata
+     * diversa di questo metodo, in modo da garantire che le persone estratte non siano sempre
+     * le stesse da scenario a scenario.
+     *
+     * @return  nuovi indici da utilizzare.
+     */
+    @Ready
+    public static int[] getPersonShuffledIndex(State currentState) {
+        int len = currentState.startingPopulation.length;
+        int[] indexes = new int[len];
+        int temp;
+        for (int i = 0; i < len; i++) {
+            indexes[i] = i;
+            int index2 = R.nextInt(i + 1);
+            temp = i;
+            indexes[i] = indexes[index2];
+            indexes[index2] = temp;
+        }
+        return indexes;
+    }
+
 }

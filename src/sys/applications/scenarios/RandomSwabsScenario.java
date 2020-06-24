@@ -1,6 +1,7 @@
 package sys.applications.scenarios;
 
 import assets.Person;
+import sys.Core.*;
 import sys.Rng;
 import sys.Simulation;
 import sys.State;
@@ -28,22 +29,29 @@ public class RandomSwabsScenario extends Scenario{
     }
 
     // Non fa nulla
+    @Ready
     @Override
     public void oneTimeAction() { if (swabsNumber>currentState.configs.getPopulationNumber()) swabsNumber = currentState.configs.getPopulationNumber(); }
 
     /**
      * Fa il tampone ad un numero preso in input di persone, scelte casualmente tra la popolazione.
      */
+    @Ready
     @Override
     public void dailyAction() {
-        for (int i = 0; i < swabsNumber; i++) {
-            Person x = currentState.startingPopulation[Rng.R.nextInt(currentState.blueBlack+1)];
+        int[] indexes = Rng.getPersonShuffledIndex(currentState);
+        int indexPerson = 0;
+        for (int i=0; i<swabsNumber; i++) {
+            Person x = currentState.startingPopulation[indexes[indexPerson]];
             if (!currentState.swabs.contains(x)) currentSimulation.getCurrentState().doSwab(x);
+            else i--;
+            indexPerson++;
         }
     }
 
     // Non fa nulla
     @Override
+    @Ready
     public void frameAction() { }
 
     /**
@@ -51,6 +59,7 @@ public class RandomSwabsScenario extends Scenario{
      * @return  oggetto ScenariosInfos contenente le informazioni dello scenario.
      */
     @Override
+    @Ready
     public ScenarioInfos getInfos() {
         return SCENARIO_INFOS;
     }
