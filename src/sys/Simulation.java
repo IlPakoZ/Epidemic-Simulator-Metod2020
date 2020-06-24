@@ -299,9 +299,10 @@ public class Simulation {
                 p2.setAsInfected();
             }
         }
-        currentState.contacts.putIfAbsent(p1, new HashSet<>());
-        currentState.contacts.get(p1).add(p2);
-
+        if (currentState.unoPatientFound) {
+            currentState.contacts.putIfAbsent(p1, new HashSet<>());
+            currentState.contacts.get(p1).add(p2);
+        }
     }
 
     /**

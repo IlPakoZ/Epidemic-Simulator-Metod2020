@@ -1,5 +1,4 @@
 package sys.applications;
-import javafx.util.Pair;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
@@ -28,6 +27,16 @@ public class CommandLineMenu implements IMenu {
     private Scanner input = new Scanner(System.in);
     private DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.ITALIAN);
 
+    /**
+     * Crea dei grafici che mostrano la quantità di persone infette,
+     * sintomatiche, morte e la quantità di tamponi. In base al valore
+     * value passato come parametro, si può decidere se stampare i dati
+     * che rappresentano i valori totali o le differenze tra i giorni prima
+     * e quelli successivi (essenzialmente le derivate).
+     *
+     * @param currentState  stato corrente della simulazione
+     * @param value         indice per la scelta del grafico da stampare
+     */
     public void createDataset(State currentState, int value) {
         ArrayList<ArrayList<Integer>> timeRange;
         File file;
@@ -395,6 +404,8 @@ public class CommandLineMenu implements IMenu {
         System.out.println("Morti: " + state.getDeathsNumber());
         System.out.println("Risorse rimaste: " + state.resources);
         System.out.println("Motivo termine simulazione: " + state.status);
+        createDataset(state, 0);
+        createDataset(state,1 );
     }
 
 
@@ -539,7 +550,7 @@ public class CommandLineMenu implements IMenu {
 
 
     @ToRevise
-    private CustomScenario makeCustomScenario(Simulation simulation){
+    private void makeCustomScenario(Simulation simulation){
         CustomScenario customScenario;
         if (simulation.getCurrentScenario() instanceof CustomScenario) customScenario = (CustomScenario) simulation.getCurrentScenario();
         else customScenario = new CustomScenario(simulation);
@@ -600,7 +611,6 @@ public class CommandLineMenu implements IMenu {
                     break;
             }
         }
-        return customScenario;
     }
 
     /*
