@@ -42,6 +42,7 @@ public class RandomSwabsScenario extends Scenario{
         int[] indexes = Rng.getPersonShuffledIndex(currentState);
         int indexPerson = 0;
         for (int i=0; i<swabsNumber; i++) {
+            if (indexPerson == currentState.configs.getPopulationNumber()) break;
             Person x = currentState.startingPopulation[indexes[indexPerson]];
             if (!currentState.swabs.contains(x)) currentSimulation.getCurrentState().doSwab(x);
             else i--;

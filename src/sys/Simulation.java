@@ -1,6 +1,5 @@
 package sys;
 
-import assets.ColorStatus;
 import assets.Person;
 
 import sys.Core.*;
@@ -13,7 +12,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.function.IntSupplier;
 
 public class Simulation {
 
@@ -135,7 +133,7 @@ public class Simulation {
      */
     @ToRevise
     private void loop() {
-        currentState.space = new PersonList[currentState.configs.getSize()[0]+1][currentState.configs.getSize()[0]+1];
+        currentState.space = new PeopleIndexList[currentState.configs.getSize()[0]+1][currentState.configs.getSize()[1]+1];
 
         for (int i=currentState.greenIncubation+1; i<=currentState.incubationYellow; i++){
             currentState.startingPopulation[i].nextPosition();
@@ -144,17 +142,17 @@ public class Simulation {
         for (int i=currentState.incubationYellow+1;i<=currentState.redBlue;i++){
             int[] position = currentState.startingPopulation[i].nextPosition();
             if (currentState.space[position[0]][position[1]] == null){
-                currentState.space[position[0]][position[1]] = new PersonList();
+                currentState.space[position[0]][position[1]] = new PeopleIndexList();
             }
-            currentState.space[position[0]][position[1]].addElement(currentState.startingPopulation[i]);
+            currentState.space[position[0]][position[1]].addElement(i);
         }
 
         for (int i = currentState.greenIncubation; i > -1; i--) {
             Person person = currentState.startingPopulation[i];
             int[] position = person.nextPosition();
             if (currentState.space[position[0]][position[1]] != null) {
-                for (Person contatto : currentState.space[position[0]][position[1]]) {
-                    contact(contatto, person);
+                for (Integer contatto : currentState.space[position[0]][position[1]]) {
+                    contact(currentState.startingPopulation[contatto], person);
                 }
             }
         }
@@ -326,7 +324,7 @@ public class Simulation {
         config.forceHealthParameters(20, 1);
         config.forceHealthParameters(20, 2);
         config.forceSwabsCost(3);
-        config.forceSize(1000,1000);
+        config.forceSize(2000,2000);
         config.forceInitialResources(1000000);
         config.forceDiseaseDuration(50);
         config.forceAge(50, 1);
@@ -334,7 +332,7 @@ public class Simulation {
         config.incubationToYellowDeadline = (int)(config.getDiseaseDuration()*Config.INCUBATION_TO_YELLOW_DEADLINE);
         config.yellowToRedDeadline = (int)(config.getDiseaseDuration()*Config.YELLOW_TO_RED_DEADLINE);
 
-        currentScenario = new PeopleGetStoppedOnceScenario(this, 100000, 50);
+        currentScenario = new StopRandomPeopleScenario(this, 100000, 20, 1);
         currentState.startingPopulation = Rng.generatePopulation(currentState);
         currentState.resources = config.getInitialResources();
 

@@ -22,7 +22,7 @@ public class Config {
 
     // ----------------------------- SIMULATION PARAMETERS (OPTIONAL) -------------------------------
 
-    private int dayDuration = 500;                         //Loop duration measured in milliseconds
+    private int dayDuration = 400;                         //Loop duration measured in milliseconds
     private double velocity = 1;
     private int frameADay = 25;
     private int maxAge = 110;
@@ -38,7 +38,7 @@ public class Config {
     public static final int DAILY_COST_IF_STATIONARY = 1;
     public static final double INCUBATION_TO_YELLOW_DEADLINE = 1/6.0;
     public static final double YELLOW_TO_RED_DEADLINE = 1/3.0;
-    public static final int POPULATION_NUMBER_UPPER_BOUND = 100000;
+    public static final int POPULATION_NUMBER_UPPER_BOUND = 200000;
     public static final int POPULATION_NUMBER_LOWER_BOUND = 2;
     public static final int DISEASE_DURATION_UPPER_BOUND = 90;
     public static final int DISEASE_DURATION_LOWER_BOUND = 6;
@@ -53,9 +53,9 @@ public class Config {
     public static final int FRAME_A_DAY_UPPER_BOUND = 120;
     public static final int VELOCITY_LOWER_BOUND = 1;
     public IntSupplier VELOCITY_UPPER_BOUND = (()-> Math.min(Math.min(size[0],size[1])/10,VELOCITY_LOWER_BOUND));
-    public Function<Integer, Integer> SizeLowerBound = ((i)-> Math.max(2, (size[1-i] != 0 ? (populationNumber / 20) / size[1-i] : 2)));
-    public Function<Integer, Integer> SizeUpperBound = ((i)-> Math.min((populationNumber * 20) / (size[1-i]==0?16:size[1-i]), 2000));
-    public Function<Integer, Integer> PreferredSizeBound = ((i)-> ((int)(size[1-i]!=0 ? populationNumber*4/size[1-i]: Math.sqrt(populationNumber) * 2)));
+    public Function<Integer, Integer> SizeLowerBound = ((i)-> Math.max(2, (size[1-i] != 0 ? (populationNumber / 16) / size[1-i] : 2)));
+    public Function<Integer, Integer> SizeUpperBound = ((i)-> (size[1-i]==0?2000:4000000/size[1-i]));
+    public Function<Integer, Integer> PreferredSizeBound = ((i)-> ((int)Math.min((size[1-i]!=0 ? populationNumber*16/size[1-i]: Math.sqrt(populationNumber) * 4), 2000)));
 
     // --------------------------------------- WORK VARIABLES ---------------------------------------
 

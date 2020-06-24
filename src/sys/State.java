@@ -25,7 +25,7 @@ public class State {
     public ArrayList<ArrayList<Integer>> daily;
     public int totalSwabsNumber = 0;
     public int currentDay = 0;
-    public PersonList[][] space;
+    public PeopleIndexList[][] space;
     public int currentlyStationary = 0;
     public Queue<Person> swabPersons;
 

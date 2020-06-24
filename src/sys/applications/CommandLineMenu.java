@@ -203,13 +203,13 @@ public class CommandLineMenu implements IMenu {
     @Override
     public void firstInput(Config config) {
         // Popolazione iniziale
-        inputUntilValid(config::setPopulationNumber, Integer.class, "Numero non valido. Reinserirlo (<= "+Config.POPULATION_NUMBER_UPPER_BOUND+"): ", "Inserire il numero della popolazione iniziale (<= "+ Config.POPULATION_NUMBER_UPPER_BOUND +"): ", "FI", config);
+        inputUntilValid(config::setPopulationNumber, Integer.class, "Numero non valido. Reinserirlo (<= "+format(Config.POPULATION_NUMBER_UPPER_BOUND)+"): ", "Inserire il numero della popolazione iniziale (<= "+ format(Config.POPULATION_NUMBER_UPPER_BOUND) +"): ", "FI", config);
 
         // Durata della malattia
-        inputUntilValid(config::setDiseaseDuration, Integer.class, "Numero non valido. Reinserirlo (<= " + Config.DISEASE_DURATION_UPPER_BOUND + "): ", "Inserire la durata della malattia in giorni ("+ Config.DISEASE_DURATION_LOWER_BOUND+" < x < "+ Config.DISEASE_DURATION_UPPER_BOUND +"): ", "FI", config);
+        inputUntilValid(config::setDiseaseDuration, Integer.class, "Numero non valido. Reinserirlo (<= " + format(Config.DISEASE_DURATION_UPPER_BOUND) + "): ", "Inserire la durata della malattia in giorni ("+ format(Config.DISEASE_DURATION_LOWER_BOUND) +" < x < "+ format(Config.DISEASE_DURATION_UPPER_BOUND) +"): ", "FI", config);
 
         // Risorse iniziali
-        inputUntilValid(config::setInitialResources, Integer.class, "Numero non valido. Reinserirlo ("+ Config.RESOURCES_LOWER_BOUND + " < x < " +(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "Inserire il numero delle risorse iniziali (< " +(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "FI", config);
+        inputUntilValid(config::setInitialResources, Integer.class, "Numero non valido. Reinserirlo ("+ format(Config.RESOURCES_LOWER_BOUND) + " < x < " +format(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "Inserire il numero delle risorse iniziali (< " +format(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "FI", config);
 
         // Costo del tampone
         inputUntilValid(config::setSwabsCost, Integer.class, "Numero troppo piccolo. Reinserirlo (> " + (config.getInitialResources()/(config.getPopulationNumber()*10)) +"): ", "Inserire il costo del tampone (> "+ (config.getInitialResources()/(config.getPopulationNumber()*10)) +"): ", "FI", config);
@@ -234,8 +234,7 @@ public class CommandLineMenu implements IMenu {
         while (!config.setSizeY(getInput(Integer.class))) {
             System.out.print("Parametri non validi, reinserirli: ");
         }
-        
-        //TODO: DA QUI IN POI RENDERE OPZIONALI
+
         configurationScreen("FI", config);
         boolean result = askConfirmation("Settare anche i valori opzionali?");
        
@@ -258,15 +257,15 @@ public class CommandLineMenu implements IMenu {
             switch(action) {
                 case(1):
                 // Popolazione iniziale
-                inputUntilValid(config::setPopulationNumber, Integer.class, "Numero non valido. Reinserirlo (<= "+Config.POPULATION_NUMBER_UPPER_BOUND+"): ", "Inserire il numero della popolazione iniziale (<= "+ Config.POPULATION_NUMBER_UPPER_BOUND +"): ", "SET", config);
+                inputUntilValid(config::setPopulationNumber, Integer.class, "Numero non valido. Reinserirlo (<= "+format(Config.POPULATION_NUMBER_UPPER_BOUND)+"): ", "Inserire il numero della popolazione iniziale (<= "+ format(Config.POPULATION_NUMBER_UPPER_BOUND) +"): ", "SET", config);
                 // settando un nuovo valore per la popolazione iniziale controllo se 
                 // il valore delle risorse inziali sia ancora buono
                 if(!(config.setInitialResources(config.getInitialResources()))){
-                    inputUntilValid(config::setInitialResources, Integer.class, "Numero non valido. Reinserirlo ("+ Config.RESOURCES_LOWER_BOUND + " < x < " +(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "Inserire il numero delle risorse iniziali (< " +(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "SET", config);
+                    inputUntilValid(config::setInitialResources, Integer.class, "Numero non valido. Reinserirlo ("+ format(Config.RESOURCES_LOWER_BOUND) + " < x < " +format(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "Inserire il numero delle risorse iniziali (< " +format(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "SET", config);
                 }
                 // controllo se il valore del costo del tampone sia ancora buono
                 if(!(config.setSwabsCost(config.getSwabsCost()))){
-                    inputUntilValid(config::setSwabsCost, Integer.class, "Numero troppo piccolo. Reinserirlo (> " + (config.getInitialResources()/(config.getPopulationNumber()*10)) +"): ", "Inserire il costo del tampone (> "+ (config.getInitialResources()/(config.getPopulationNumber()*10)) +"): ", "SET", config);
+                    inputUntilValid(config::setSwabsCost, Integer.class, "Numero troppo piccolo. Reinserirlo (> " + format(config.getInitialResources()/(config.getPopulationNumber()*10)) +"): ", "Inserire il costo del tampone (> "+ format(config.getInitialResources()/(config.getPopulationNumber()*10)) +"): ", "SET", config);
                 }
                 break;
             
@@ -276,13 +275,13 @@ public class CommandLineMenu implements IMenu {
                 // cambiando la durata della malattia controllo se il numero delle risorse iniziali
                 // sia ancora buono
                 if(!(config.setInitialResources(config.getInitialResources()))){
-                    inputUntilValid(config::setInitialResources, Integer.class, "Numero non valido. Reinserirlo ("+ Config.RESOURCES_LOWER_BOUND + " < x < " +(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "Inserire il numero delle risorse iniziali (< " +(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "SET", config);
+                    inputUntilValid(config::setInitialResources, Integer.class, "Numero non valido. Reinserirlo ("+ format(Config.RESOURCES_LOWER_BOUND) + " < x < " +format(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "Inserire il numero delle risorse iniziali (< " +format(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "SET", config);
                 }
                 break;
 
                 case(3):
                 // Risorse iniziali
-                inputUntilValid(config::setInitialResources, Integer.class, "Numero non valido. Reinserirlo ("+ Config.RESOURCES_LOWER_BOUND + " < x < " +(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "Inserire il numero delle risorse iniziali (< " +(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "SET", config);
+                inputUntilValid(config::setInitialResources, Integer.class, "Numero non valido. Reinserirlo ("+ format(Config.RESOURCES_LOWER_BOUND) + " < x < " + format(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "Inserire il numero delle risorse iniziali (< " + format(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "SET", config);
                 // cambiando il numero delle risorse iniziali controllo se il costo del tampone sia ancora buono
                 if(!(config.setSwabsCost(config.getSwabsCost()))){
                     inputUntilValid(config::setSwabsCost, Integer.class, "Numero troppo piccolo. Reinserirlo (> " + (config.getInitialResources()/(config.getPopulationNumber()*10)) +"): ", "Inserire il costo del tampone (> "+ (config.getInitialResources()/(config.getPopulationNumber()*10)) +"): ", "SET", config);

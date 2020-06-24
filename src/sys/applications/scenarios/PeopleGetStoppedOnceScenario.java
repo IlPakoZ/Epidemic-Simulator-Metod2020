@@ -49,6 +49,7 @@ public class PeopleGetStoppedOnceScenario extends Scenario{
         int[] indexes = Rng.getPersonShuffledIndex(currentState);
         int indexPerson = 0;
         for (int i=0; i<peopleToStop; i++) {
+            if (indexPerson == currentState.configs.getPopulationNumber()) break;
             Person x = currentState.startingPopulation[indexes[indexPerson]];
             if (x.getMovement() == MovementStatus.MOVING) {
                 x.setStationary(duration);
