@@ -25,8 +25,7 @@ public class PeopleMetGetsTestedScenario extends Scenario {
     // Non fa nulla
     @Ready
     @Override
-    public void oneTimeAction() {
-    }
+    public void oneTimeAction() { }
 
     /**
      * Ogni giorno fa i tamponi alle persone che sono entrate in contatto con chi risulta positivo al tampone.

@@ -88,7 +88,6 @@ public class Simulation {
         currentState.startingPopulation = Rng.generatePopulation(currentState);
         currentState.startingPopulation[getConfigs().getPopulationNumber()-1].setAsInfected();
         currentState.resources = getConfigs().getInitialResources();
-        currentScenario.oneTimeAction();
         start();
     }
 
@@ -185,7 +184,13 @@ public class Simulation {
         }
 
         if (currentState.redBlue-currentState.yellowRed!=0) currentState.unoPatientFound = true;
-        if (currentState.unoPatientFound) currentScenario.dailyAction();
+        if (currentState.unoPatientFound) {
+            if (!currentScenario.isConsumed()){
+                currentScenario.setConsumed();
+                currentScenario.oneTimeAction();
+            }
+            currentScenario.dailyAction();
+        }
         currentState.total.get(0).add(getConfigs().getPopulationNumber()-currentState.greenIncubation-1);       //Tutti gli infetti (quelli in incubazione sono compresi)
         currentState.total.get(1).add(currentState.getSymptomaticNumber());                                     //Tutti i malati gravi
         currentState.total.get(2).add(currentState.getDeathsNumber());                                          //Tutti i morti
@@ -332,7 +337,6 @@ public class Simulation {
         currentScenario = new PeopleGetStoppedOnceScenario(this, 100000, 50);
         currentState.startingPopulation = Rng.generatePopulation(currentState);
         currentState.resources = config.getInitialResources();
-        currentScenario.oneTimeAction();
 
         //System.out.println(currentState.getCurrentAgeAverage(0, currentState.getCurrentAgeAverage(0,configs.populationNumber)));
     }
