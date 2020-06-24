@@ -83,6 +83,8 @@ public class State {
         }
 
         switch (el) {
+            case "0":
+                return -1;
             case "WEAREEUROPEAN":
                 configs.forceInitialResources(2147483647);
                 return 1;
