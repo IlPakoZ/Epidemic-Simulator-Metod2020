@@ -4,10 +4,7 @@ import assets.ColorStatus;
 import assets.Person;
 
 import sys.Core.*;
-import sys.applications.scenarios.CustomScenario;
-import sys.applications.scenarios.DefaultScenario;
-import sys.applications.scenarios.PeopleMetGetsTestedScenario;
-import sys.applications.scenarios.StopRandomPeopleScenario;
+import sys.applications.scenarios.*;
 import sys.models.IMenu;
 import sys.models.Scenario;
 
@@ -332,10 +329,11 @@ public class Simulation {
         config.incubationToYellowDeadline = (int)(config.getDiseaseDuration()*Config.INCUBATION_TO_YELLOW_DEADLINE);
         config.yellowToRedDeadline = (int)(config.getDiseaseDuration()*Config.YELLOW_TO_RED_DEADLINE);
 
-        currentScenario = new StopRandomPeopleScenario(this, 50, 20, 20);
-        currentScenario.oneTimeAction();
+        currentScenario = new PeopleGetStoppedOnceScenario(this, 100000, 50);
         currentState.startingPopulation = Rng.generatePopulation(currentState);
         currentState.resources = config.getInitialResources();
+        currentScenario.oneTimeAction();
+
         //System.out.println(currentState.getCurrentAgeAverage(0, currentState.getCurrentAgeAverage(0,configs.populationNumber)));
     }
 

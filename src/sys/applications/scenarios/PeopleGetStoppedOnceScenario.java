@@ -43,6 +43,7 @@ public class PeopleGetStoppedOnceScenario extends Scenario{
      * di tempo preso in input.
      */
     @Override
+    @Ready
     public void oneTimeAction() {
         if (peopleToStop>currentState.configs.getPopulationNumber()) peopleToStop = currentState.configs.getPopulationNumber();
         int[] indexes = Rng.getPersonShuffledIndex(currentState);
@@ -60,21 +61,20 @@ public class PeopleGetStoppedOnceScenario extends Scenario{
 
     //Non fa nulla
     @Override
-    public void dailyAction() {
-
-    }
+    @Ready
+    public void dailyAction() { }
 
     //Non fa nulla
     @Override
-    public void frameAction() {
-
-    }
+    @Ready
+    public void frameAction() { }
 
     /**
      * Restituisce una breve descrizione dello scenario e dei parametri di cui necessita per essere eseguito.
      * @return  breve descrizione dello scenario.
      */
     @Override
+    @Ready
     public ScenarioInfos getInfos() {
         return SCENARIO_INFOS;
     }

@@ -1,5 +1,5 @@
 package sys.applications.scenarios;
-
+import sys.Core.*;
 import sys.Simulation;
 import sys.models.Scenario;
 
@@ -23,6 +23,7 @@ public class PeopleMetGetsTestedScenario extends Scenario {
     }
 
     // Non fa nulla
+    @Ready
     @Override
     public void oneTimeAction() {
     }
@@ -31,12 +32,14 @@ public class PeopleMetGetsTestedScenario extends Scenario {
      * Ogni giorno fa i tamponi alle persone che sono entrate in contatto con chi risulta positivo al tampone.
      */
     @Override
+    @Ready
     public void dailyAction() {
         currentSimulation.getCurrentState().swabQueue(percent);
     }
 
     // Non fa nulla
     @Override
+    @Ready
     public void frameAction() { }
 
     /**
@@ -44,6 +47,7 @@ public class PeopleMetGetsTestedScenario extends Scenario {
      * @return  oggetto ScenariosInfos contenente le informazioni dello scenario.
      */
     @Override
+    @Ready
     public ScenarioInfos getInfos() {
         return SCENARIO_INFOS;
     }
