@@ -1,18 +1,4 @@
-package sys.applications;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtils;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.NumberTickUnit;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.data.xy.DefaultXYDataset;
-import sys.Config;
-import sys.Core.*;
-import sys.Simulation;
-import sys.State;
-import sys.applications.scenarios.*;
-import sys.models.IMenu;
-import sys.models.Scenario;
+﻿package sys.applications;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +7,30 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
+/*
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtils;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.xy.DefaultXYDataset;
+*/
+import sys.Config;
+import sys.Core.NotImplemented;
+import sys.Core.Ready;
+import sys.Core.ToRevise;
+import sys.Simulation;
+import sys.State;
+import sys.applications.scenarios.CustomScenario;
+import sys.applications.scenarios.DefaultScenario;
+import sys.applications.scenarios.PeopleGetStoppedOnceScenario;
+import sys.applications.scenarios.PeopleMetGetsTestedScenario;
+import sys.applications.scenarios.RandomSwabsScenario;
+import sys.applications.scenarios.ScenarioInfos;
+import sys.applications.scenarios.StopRandomPeopleScenario;
+import sys.models.IMenu;
+import sys.models.Scenario;
 
 
 public class CommandLineMenu implements IMenu {
@@ -37,7 +47,6 @@ public class CommandLineMenu implements IMenu {
      * @param currentState  stato corrente della simulazione
      * @param value         indice per la scelta del grafico da stampare
      */
-    @Ready
     public void createDataset(State currentState, int value) {
         ArrayList<ArrayList<Integer>> timeRange;
         File file;
@@ -81,13 +90,11 @@ public class CommandLineMenu implements IMenu {
         }catch (IOException ignored) {}
 
     }
-
-    @Ready
+    
     public void clear() {
         for(int i=0; i<50; i++) System.out.println();
     }
 
-    @Ready
     public void ScreenSH() {
         clear();
         printPersonalizedTitle("Menù Principale");
@@ -99,13 +106,11 @@ public class CommandLineMenu implements IMenu {
 
     }
 
-    @Ready
     public void ScreenFI() {
         clear();
         printPersonalizedTitle("Configurazione Iniziale");
     }
 
-    @Ready
     public void ScreenSET(Config config) {
         clear();
         printPersonalizedTitle("Menù Parametri");
@@ -122,20 +127,21 @@ public class CommandLineMenu implements IMenu {
         System.out.println("\n0) Torna al menù principale...");
     }
 
-    @Ready
     public void ScreenSET_OP(Config config) {
+        clear();
         printPersonalizedTitle("Menù Parametri opzionali");
         System.out.println("Per modificare i parametri opzionali digita: ");
         System.out.println("1) Eta' massima:\t\t\t\t" + format(config.getMaxAge()) + " valore attuale;");
         System.out.println("2) Eta' media:\t\t\t\t\t" + format(config.getAgeAverage()) + " valore attuale;");
         System.out.println("3) Velocità:\t\t\t\t\t" + config.getVelocity() + " valore attuale;");
         System.out.println("4) Frame per ogni giorno:\t\t" + format(config.getFrameADay()) + " valore attuale;");
-        System.out.println("9) Per settare i parametri principali ...");
+        System.out.println("5) Per settare i parametri principali ...");
         System.out.println("\n0) Torna al menù principale...");
     }
 
-    @Ready
+    
     public void ScreenSEN(Simulation currentSimulation) {
+        clear();
         printPersonalizedTitle("Selezione Scenario");
         System.out.println("1) Scenario di default: " + getEnabledStatus(currentSimulation, DefaultScenario.SCENARIO_INFOS.getID()));
         System.out.println("2) Scenario personalizzato...");
@@ -158,9 +164,8 @@ public class CommandLineMenu implements IMenu {
            ScreenFI();
            break;
        }
-    }
+    }  
 
-    @Ready
     private String format(int value){
        return formatter.format(value);
     }
@@ -170,7 +175,7 @@ public class CommandLineMenu implements IMenu {
        System.out.println("######### " + title + " #########\n");
     }
 
-    @Ready
+
     @Override
     public int show() {
         ScreenSH();
@@ -196,7 +201,6 @@ public class CommandLineMenu implements IMenu {
         }
     }
 
-    @Ready
     private <E extends Number> E inputUntilValid(E lowerBound, E upperBound, Class<E> type, String infos){
         String formattedLowerBound;
         String formattedUpperBound;
@@ -217,14 +221,13 @@ public class CommandLineMenu implements IMenu {
         return value;
     }
 
-    @Ready
     @Override
     public void firstInput(Config config) {
         // Popolazione iniziale
         inputUntilValid(config::setPopulationNumber, Integer.class, "Numero non valido. Reinserirlo (<= "+format(Config.POPULATION_NUMBER_UPPER_BOUND)+"): ", "Inserire il numero della popolazione iniziale (<= "+ format(Config.POPULATION_NUMBER_UPPER_BOUND) +"): ", "FI", config);
 
         // Durata della malattia
-        inputUntilValid(config::setDiseaseDuration, Integer.class, "Numero non valido. Reinserirlo (<= " + format(Config.DISEASE_DURATION_UPPER_BOUND) + "): ", "Inserire la durata della malattia in giorni ("+ format(Config.DISEASE_DURATION_LOWER_BOUND) +" < x < "+ format(Config.DISEASE_DURATION_UPPER_BOUND) +"): ", "FI", config);
+        inputUntilValid(config::setDiseaseDuration, Integer.class, "Numero non valido. Reinserirlo ("+ format(Config.DISEASE_DURATION_LOWER_BOUND) +" < x < "+ format(Config.DISEASE_DURATION_UPPER_BOUND) +"): ", "Inserire la durata della malattia in giorni ("+ format(Config.DISEASE_DURATION_LOWER_BOUND) +" < x < "+ format(Config.DISEASE_DURATION_UPPER_BOUND) +"): ", "FI", config);
 
         // Risorse iniziali
         inputUntilValid(config::setInitialResources, Integer.class, "Numero non valido. Reinserirlo ("+ format(Config.RESOURCES_LOWER_BOUND) + " < x < " +format(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "Inserire il numero delle risorse iniziali (< " +format(config.getPopulationNumber()*config.getDiseaseDuration())+ "): ", "FI", config);
@@ -265,7 +268,6 @@ public class CommandLineMenu implements IMenu {
 
     }
 
-    @Ready
     @Override
     public int settings(Config config) {
         int action = -1;
@@ -314,21 +316,21 @@ public class CommandLineMenu implements IMenu {
 
                 case(5):
                 // Infettività
-                inputUntilValid(config::setInfectivity, Integer.class, "Percentuale non valida. Reinserirla (0 <= x < 100): ", "Inserire la percentuale di infettivita' (0 <= x < 100): ", "FI", config);
+                inputUntilValid(config::setInfectivity, Integer.class, "Percentuale non valida. Reinserirla (0 <= x < 100): ", "Inserire la percentuale di infettivita' (0 <= x < 100): ", "SET", config);
                 break;
 
                 case(6):
                 // Sintomaticità
-                inputUntilValid(config::setSintomaticity, Integer.class, "Percentuale non valida. Reinserirla (0 <= x < 100): ", "Inserire la percentuale di sintomaticita' (0 <= x < 100): ", "FI", config);
+                inputUntilValid(config::setSintomaticity, Integer.class, "Percentuale non valida. Reinserirla (0 <= x < 100): ", "Inserire la percentuale di sintomaticita' (0 <= x < 100): ", "SET", config);
                 break;
 
                 case(7):
                 // Letalità
-                inputUntilValid(config::setLetality, Integer.class, "Percentuale non valida. Reinserirla (0 <= x < 100): ", "Inserire la percentuale di letalita' (0 <= x < 100): ", "FI", config);
+                inputUntilValid(config::setLetality, Integer.class, "Percentuale non valida. Reinserirla (0 <= x < 100): ", "Inserire la percentuale di letalita' (0 <= x < 100): ", "SET", config);
                 break;
 
-                /*case(8):
-                configurationScreen("FI", config);
+                case(8):
+                configurationScreen("SET", config);
                 System.out.println("\nInserire l'altezza e la larghezza dello spazio grafico dove avverrà la simulazione.");
                 System.out.println("Più lo spazio è grande, meno spesso avverranno i contatti tra le persone!\n");
                 System.out.print("Larghezza: (" + format(config.SizeLowerBound.apply(0)) + "<=x<=" + format(config.SizeUpperBound.apply(0)) + ", valore consigliato " + format(config.PreferredSizeBound.apply(0)) + "): ");
@@ -340,7 +342,7 @@ public class CommandLineMenu implements IMenu {
                     System.out.print("Parametri non validi, reinserirli: ");
                 }
                 break;
-                */
+                
                 
                 case(9): break;
                 case(0): break;
@@ -349,16 +351,15 @@ public class CommandLineMenu implements IMenu {
                 break;
             }
         }
-        if(action==9) return 3;
+        if(action==9) return 4;
         return action;
     }
 
-    @Ready
     @Override
     public int settings_op(Config config) {
         int action = -1;
  
-        while(action!=0 && action!=9) {
+        while(action!=0 && action!=5) {
             configurationScreen("SET_OP", config);
             action = getInput(Integer.class);
             switch(action){
@@ -374,24 +375,22 @@ public class CommandLineMenu implements IMenu {
 
                 case(3):
                 // Velocità
-                inputUntilValid(config::setVelocity, Integer.class, "Numero non valido. Reinserirlo(> 0)", "Inserire la velocità(> 0): ", "SET_OP", config);
+                inputUntilValid(config::setVelocity, Integer.class, "Numero non valido. Reinserirlo("+ Config.VELOCITY_LOWER_BOUND +"<= x <"+ config.VELOCITY_UPPER_BOUND.getAsInt() +")", "Inserire la velocità("+ Config.VELOCITY_LOWER_BOUND +"< x <"+ config.VELOCITY_UPPER_BOUND.getAsInt() +"): ", "SET_OP", config);
                 break;
 
                 case(4):
                 // Frame per ogni giorno
-                inputUntilValid(config::setFrameADay, Integer.class, "Numero non valido. Reinserirlo(> 0)", "Inserire il numero di frame per ogni giorno(> 0): ", "SET_OP", config);
+                inputUntilValid(config::setFrameADay, Integer.class, "Numero non valido. Reinserirlo("+ Config.FRAME_A_DAY_LOWER_BOUND +"< x <"+ config.FRAME_A_DAY_UPPER_BOUND +")", "Inserire il numero di frame per ogni giorno("+ Config.FRAME_A_DAY_LOWER_BOUND +"< x <"+ config.FRAME_A_DAY_UPPER_BOUND +"): ", "SET_OP", config);
                 break;
 
                 case(5): break;
-                case(6): break;
                 case(0): break;
             }
         }
-        if(action==6) return 3;
+        if(action==5) return 3;
         return action;   
     }
 
-    @Ready
     @Override
     public void feedback(State state){
         printPersonalizedTitle("GIORNO " + state.currentDay);
@@ -405,7 +404,6 @@ public class CommandLineMenu implements IMenu {
         System.out.println("\n\n");
     }
 
-    @Ready
     @Override
     public void finalFeedback(State state) {
         printPersonalizedTitle("SIMULAZIONE TERMINATA");
@@ -417,8 +415,8 @@ public class CommandLineMenu implements IMenu {
         System.out.println("Morti: " + state.getDeathsNumber());
         System.out.println("Risorse rimaste: " + state.resources);
         System.out.println("Motivo termine simulazione: " + state.status);
-        createDataset(state, 0);
-        createDataset(state,1 );
+        //createDataset(state, 0);
+        //createDataset(state,1 );
     }
 
 
@@ -435,24 +433,24 @@ public class CommandLineMenu implements IMenu {
         return result;
     }
 
-    @Ready
+    @NotImplemented
     private void customScenarioMenu(Simulation currentSimulation){
        printPersonalizedTitle("Custom Scenario");
-       System.out.println("1) Scenario 'Tampone alle persone incontrate da chi risulta positivo': \t\t" + getEnabledStatus(currentSimulation, PeopleMetGetTestedScenario.SCENARIO_INFOS.getID()));
+       System.out.println("1) Scenario 'Tampone alle persone incontrate da chi risulta positivo': \t\t" + getEnabledStatus(currentSimulation, PeopleMetGetsTestedScenario.SCENARIO_INFOS.getID()));
        System.out.println("2) Scenario 'Persone fermate a caso all'inizio': \t\t\t\t\t\t\t" + getEnabledStatus(currentSimulation, PeopleGetStoppedOnceScenario.SCENARIO_INFOS.getID()));
        System.out.println("3) Scenario 'Persone fermate a caso periodicamente': \t\t\t\t\t\t" + getEnabledStatus(currentSimulation, StopRandomPeopleScenario.SCENARIO_INFOS.getID()));
        System.out.println("4) Scenario 'Tamponi a persone a caso': \t\t\t\t\t\t\t\t\t" + getEnabledStatus(currentSimulation, RandomSwabsScenario.SCENARIO_INFOS.getID()));
        System.out.println("\n0) Torna indietro...");
     }
 
-    @Ready
+    @ToRevise
     private String getEnabledStatus(Simulation currentSimulation, Integer ID){
         final String positiveFeedback = "abilitato.";
         final String negativeFeedback = "disabilitato.";
         return currentSimulation.isScenarioEnabled(ID) ? positiveFeedback : negativeFeedback;
     }
 
-    @Ready
+    @ToRevise
     private boolean askConfirmation(String customMessage){
         String positiveFeedback = "si";
         System.out.print(customMessage + " (si per accettare): ");
@@ -460,7 +458,7 @@ public class CommandLineMenu implements IMenu {
         return response.equalsIgnoreCase(positiveFeedback);
     }
 
-    @Ready
+    @ToRevise
     private void printScenarioIntro(ScenarioInfos infos){
         System.out.println();
         printPersonalizedTitle("Hai scelto " + infos.getName());
@@ -479,7 +477,7 @@ public class CommandLineMenu implements IMenu {
      * @param scenario      lo scenario attivo
      * @return              lo scenario attivato
      */
-    @Ready
+    @ToRevise
     private Scenario enableDisable(Simulation simulation, Scenario scenario){
         boolean response;
 
@@ -526,13 +524,13 @@ public class CommandLineMenu implements IMenu {
 
         System.out.print("Premi un tasto per continuare.");
         input.next();
+        ScreenSEN(simulation);
         return scenario;
     }
 
-    @Ready
+    @ToRevise
     @Override
     public void selectScenario(Simulation simulation) {
-        clear();
         ScreenSEN(simulation);
         DefaultScenario defaultScenario = new DefaultScenario(simulation);
 
@@ -562,7 +560,7 @@ public class CommandLineMenu implements IMenu {
 
 
 
-    @Ready
+    @ToRevise
     private void makeCustomScenario(Simulation simulation){
         CustomScenario customScenario;
         if (simulation.getCurrentScenario() instanceof CustomScenario) customScenario = (CustomScenario) simulation.getCurrentScenario();
@@ -582,10 +580,10 @@ public class CommandLineMenu implements IMenu {
 
             switch(action) {
                 case 1:
-                    printScenarioIntro(PeopleMetGetTestedScenario.SCENARIO_INFOS);
+                    printScenarioIntro(PeopleMetGetsTestedScenario.SCENARIO_INFOS);
                     percentage = inputUntilValid(0,100, Integer.class, "Inserisci la possibilità che una persona incontrata da un positivo venga testata");
                     if (askConfirmation(confirmMessage)) {
-                        customScenario.addScenario(new PeopleMetGetTestedScenario(simulation, percentage));
+                        customScenario.addScenario(new PeopleMetGetsTestedScenario(simulation, percentage));
                         simulation.loadScenario(customScenario);
                     }
                     break;
@@ -626,12 +624,14 @@ public class CommandLineMenu implements IMenu {
         }
     }
 
-    /*
+    
     public static void main(String[] args) {
-        CommandLineMenu c = new CommandLineMenu();
+        CommandLineMenu menu = new CommandLineMenu();
         Config config = new Config();
-        c.firstInput(config);
-        c.settings(config);
-       
-    }*/
+        Simulation S = new Simulation(menu);
+        try {
+            S.run();
+        }catch(InterruptedException e) {}
+        
+    }
 }
