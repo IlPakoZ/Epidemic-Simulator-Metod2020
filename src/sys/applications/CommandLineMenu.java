@@ -425,7 +425,7 @@ public class CommandLineMenu implements IMenu {
     @NotImplemented
     private void customScenarioMenu(Simulation currentSimulation){
        printPersonalizedTitle("Custom Scenario");
-       System.out.println("1) Scenario 'Tampone alle persone incontrate da chi risulta positivo': \t\t" + getEnabledStatus(currentSimulation, PeopleMetGetsTestedScenario.SCENARIO_INFOS.getID()));
+       System.out.println("1) Scenario 'Tampone alle persone incontrate da chi risulta positivo': \t\t" + getEnabledStatus(currentSimulation, PeopleMetGetTestedScenario.SCENARIO_INFOS.getID()));
        System.out.println("2) Scenario 'Persone fermate a caso all'inizio': \t\t\t\t\t\t\t" + getEnabledStatus(currentSimulation, PeopleGetStoppedOnceScenario.SCENARIO_INFOS.getID()));
        System.out.println("3) Scenario 'Persone fermate a caso periodicamente': \t\t\t\t\t\t" + getEnabledStatus(currentSimulation, StopRandomPeopleScenario.SCENARIO_INFOS.getID()));
        System.out.println("4) Scenario 'Tamponi a persone a caso': \t\t\t\t\t\t\t\t\t" + getEnabledStatus(currentSimulation, RandomSwabsScenario.SCENARIO_INFOS.getID()));
@@ -569,10 +569,10 @@ public class CommandLineMenu implements IMenu {
 
             switch(action) {
                 case 1:
-                    printScenarioIntro(PeopleMetGetsTestedScenario.SCENARIO_INFOS);
+                    printScenarioIntro(PeopleMetGetTestedScenario.SCENARIO_INFOS);
                     percentage = inputUntilValid(0,100, Integer.class, "Inserisci la possibilità che una persona incontrata da un positivo venga testata");
                     if (askConfirmation(confirmMessage)) {
-                        customScenario.addScenario(new PeopleMetGetsTestedScenario(simulation, percentage));
+                        customScenario.addScenario(new PeopleMetGetTestedScenario(simulation, percentage));
                         simulation.loadScenario(customScenario);
                     }
                     break;

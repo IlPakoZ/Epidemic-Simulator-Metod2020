@@ -34,7 +34,7 @@ public class Rng {
     public static boolean generateFortune(double percent, double modifier){
         double newPercent;
         newPercent = percent + (percent*modifier/100);
-        if (newPercent>100) newPercent = percent;
+        if (newPercent>100) newPercent = 100;
         double isItGonna = Math.random();
         return isItGonna * 100 < newPercent;
     }

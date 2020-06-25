@@ -71,7 +71,7 @@ public class State {
      * @param el    codice
      * @return      un intero che segnala al menù cosa eseguire
      */
-    @ToRevise
+    @Ready
     public int checkExCode(String el){
         poorCountry = false;
         bigBrother = false;
@@ -107,10 +107,12 @@ public class State {
         }
     }
 
+    @Ready
     public boolean isPoorCountry(){
         return poorCountry;
     }
 
+    @Ready
     public boolean isBigBrother(){
         return bigBrother;
     }
@@ -192,6 +194,7 @@ public class State {
      *
      * @return  il numero totale di tamponi effettuati
      */
+    @Ready
     public int getTotalSwabsNumber() {return totalSwabsNumber;}
 
 
@@ -208,12 +211,11 @@ public class State {
      * @param p1    persona a cui sottoporre il tampone.
      * @return      true se la persona è positiva al tampone, false altrimenti.
      */
-    @ToRevise
+    @Ready
     public boolean doSwab(Person p1){
         boolean result = false;
         if (p1.color == ColorStatus.RED) {
             result = true;
-            swabPersons.enqueue(p1);
         } else {
             totalSwabsNumber++;
             subtractResources(configs.getSwabsCost());
@@ -223,14 +225,20 @@ public class State {
             if (!result) return false;
             if (!Rng.generateFortune(Config.SWAB_SUCCESS_RATE, 1)) {
                 result = false;
-            }
-
-            if (result) {
-                if (!swabs.contains(p1)) p1.setStationary(configs.getDiseaseDuration() - configs.incubationToYellowDeadline);
-                swabs.add(p1);
-                swabPersons.enqueue(p1);
+            } else {
+                if (!swabs.contains(p1))
+                    p1.setStationary(configs.getDiseaseDuration() - configs.incubationToYellowDeadline);
             }
         }
+        if (result) {
+            swabs.add(p1);
+            if (contacts.containsKey(p1)) {
+                for (Person person : contacts.get(p1)) {
+                    if (!swabs.contains(person)) swabPersons.enqueue(person);
+                }
+            }
+        }
+
         return result;
     }
 
@@ -242,17 +250,13 @@ public class State {
      * @param percent   percentuale di fare il tampone ad una persona.
      *
      */
-    @ToRevise
+    @Ready
     public void swabQueue(double percent){
         int oldSize = swabPersons.getSize();
         for (int i = 0; i < oldSize; i++) {
             Person x = swabPersons.dequeue();
-            if (Rng.generateFortune(percent, 1)) {
-                if (doSwab(x)) {
-                    for (Person person : contacts.get(x)) {
-                        if (!swabs.contains(person)) swabPersons.enqueue(person);
-                    }
-                }
+            if (!swabs.contains(x) && Rng.generateFortune(percent, 1)) {
+                doSwab(x);
             }
         }
     }

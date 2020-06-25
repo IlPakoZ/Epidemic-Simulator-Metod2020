@@ -3,7 +3,7 @@ import sys.Core.*;
 import sys.Simulation;
 import sys.models.Scenario;
 
-public class PeopleMetGetsTestedScenario extends Scenario {
+public class PeopleMetGetTestedScenario extends Scenario {
 
     private Simulation currentSimulation;
     private double percent;
@@ -16,7 +16,7 @@ public class PeopleMetGetsTestedScenario extends Scenario {
         SCENARIO_INFOS.setName("People Met Gets Tested Scenario");
     }
 
-    public PeopleMetGetsTestedScenario(Simulation currentSimulation, double percent) {
+    public PeopleMetGetTestedScenario(Simulation currentSimulation, double percent) {
         super(currentSimulation);
         this.currentSimulation = currentSimulation;
         this.percent = percent;

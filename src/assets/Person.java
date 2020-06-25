@@ -100,7 +100,7 @@ public class Person {
     public void setStationary(int duration) {
         if (duration < -1) duration = -1;
         if (movement == MovementStatus.STATIONARY) {
-            dayToStop = Math.max(duration, dayToStop);
+            dayToStop = duration == -1 ? -1 : Math.max(duration, dayToStop);
         }
         else {
             dayToStop = duration;
@@ -150,6 +150,7 @@ public class Person {
             case RED:
                 this.color = ColorStatus.RED;
                 if (index != currentState.yellowRed) switchPerson(currentState.yellowRed);
+                currentState.swabPersons.enqueue(this);
                 currentState.yellowRed-=1;
                 break;
             case BLUE:
