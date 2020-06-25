@@ -176,7 +176,7 @@ public class Simulation {
     private boolean nextDay(){
         currentState.currentlyStationary = currentState.getDeathsNumber();
 
-        for (int i = currentState.blueBlack; i > -1 ; i--)             //TODO: Controllare che gli indici siano giusti (voglio refreshare tutti tranne i verdi non incubati, blu e neri)
+        for (int i = currentState.blueBlack; i > -1 ; i--)
         {
             currentState.startingPopulation[i].refresh();
         }
