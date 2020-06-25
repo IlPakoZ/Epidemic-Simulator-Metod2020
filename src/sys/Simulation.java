@@ -27,7 +27,7 @@ public class Simulation {
     /**
      * Inizializza la simulazione. Metodo di appoggio.
      */
-    @ToRevise
+    @Ready
     private void initialize(IMenu menu){
         this.menu = menu;
         currentState = new State();
@@ -52,7 +52,7 @@ public class Simulation {
      * Serve all'utente per interfacciarsi alla simulazione
      * e decidere cosa fare.
      */
-    @ToRevise
+    @Ready
     void run() throws InterruptedException {
         menu.firstInput(getConfigs());
         int state = 0;
@@ -92,7 +92,7 @@ public class Simulation {
     /**
      * Avvia la simulazione.
      */
-    @ToRevise
+    @Ready
     private void start() throws InterruptedException {
         currentState.status = SimulationStatus.PLAYING;
         boolean going = true;
@@ -131,7 +131,7 @@ public class Simulation {
      * false.
      *
      */
-    @ToRevise
+    @Ready
     private void loop() {
         currentState.space = new PeopleIndexList[currentState.configs.getSize()[0]+1][currentState.configs.getSize()[1]+1];
 
@@ -172,7 +172,7 @@ public class Simulation {
      * persone tranne quelle verdi (anche quelle in incubazione
      * sono considerate infette).
      */
-    @ToRevise
+    @Ready
     private boolean nextDay(){
         currentState.currentlyStationary = currentState.getDeathsNumber();
 
@@ -222,7 +222,7 @@ public class Simulation {
      *
      * @param config    istanza di Config, contiene le configurazioni da cariare nella simulazione
      */
-    @ToRevise
+    @Ready
     public void loadConfigs(Config config){
         getConfigs().copy(config);
     }
@@ -232,7 +232,7 @@ public class Simulation {
      *
      * @return      configurazioni attuali
      */
-    @ToRevise
+    @Ready
     public Config getConfigs(){
         return currentState.configs;
     }
@@ -290,7 +290,7 @@ public class Simulation {
      * @param p1    persona sana che è venuta in contatto con un infetto
      * @param p2    persona infetta.
      */
-    @ToRevise
+    @Ready
     private void contact(Person p1, Person p2){
         p1.contact = true;
         p2.contact = true;
@@ -311,7 +311,7 @@ public class Simulation {
      * risultati e delle statistiche finali si occupa la classe
      * che implementa IMenu.
      */
-    @ToRevise
+    @Ready
     private void end() {menu.finalFeedback(currentState);}
 
     // ------------------------- DEBUGGING ---------------------------

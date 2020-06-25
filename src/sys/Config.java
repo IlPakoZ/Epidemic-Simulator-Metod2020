@@ -73,6 +73,7 @@ public class Config {
      *
      * @param c     configurazione da cui copiare i parametri.
      */
+    @Ready
     void copy(Config c){
         if (isValid){
             this.ageAverage = c.ageAverage;
@@ -95,6 +96,7 @@ public class Config {
      *
      * @param status    nuovo stato della configurazione.
      */
+    @Ready
     void validate(boolean status){
         isValid = status;
     }
@@ -108,7 +110,7 @@ public class Config {
      * @param number   input populationNumber
      * @return  true se il dato è valido, false altrimenti
      */
-    @ToRevise
+    @Ready
     public boolean setPopulationNumber(int number){
         if (number > POPULATION_NUMBER_UPPER_BOUND || number < POPULATION_NUMBER_LOWER_BOUND){
             return false;
@@ -124,6 +126,7 @@ public class Config {
      *
      * @return  numero della popolazione
      */
+    @Ready
     public int getPopulationNumber(){
         return populationNumber;
     }
@@ -137,7 +140,7 @@ public class Config {
      * @param number   input diseaseDuration
      * @return         true se il valore è nel formato corretto, false altrimenti.
      */
-    @ToRevise
+    @Ready
     public boolean setDiseaseDuration(int number){
         if (number > DISEASE_DURATION_UPPER_BOUND || number <= DISEASE_DURATION_LOWER_BOUND){
             return false;
@@ -154,6 +157,7 @@ public class Config {
      *  della durata della malattia.
      * @return  durata della malattia
      */
+    @Ready
     public int getDiseaseDuration(){
         return diseaseDuration;
     }
@@ -167,6 +171,7 @@ public class Config {
      * @param number    input initialResources
      * @return          true se il valore è nel formato corretto, false altrimenti.
      */
+    @Ready
     public boolean setInitialResources(int number){
         if (number >= (populationNumber * diseaseDuration) || number <= RESOURCES_LOWER_BOUND){
             return false;
@@ -182,6 +187,7 @@ public class Config {
      *
      * @return  risorse iniziali
      */
+    @Ready
     public int getInitialResources(){
         return initialResources;
     }
@@ -195,6 +201,7 @@ public class Config {
      * @param number    input swabsCost
      * @return          true se il valore è nel formato corretto, false altrimenti.
      */
+    @Ready
     public boolean setSwabsCost(int number){
         if (number <= (initialResources/(populationNumber*10))){
             return false;
@@ -210,6 +217,7 @@ public class Config {
      *
      * @return  costo del tampone
      */
+    @Ready
     public int getSwabsCost(){
         return swabsCost;
     }
@@ -223,6 +231,7 @@ public class Config {
      * @param number    input infectivity
      * @return          true se il valore è nel formato corretto, false altrimenti.
      */
+    @Ready
     public boolean setInfectivity(int number){
         if (number <= 0.0 || number > 100.0){
             return false;
@@ -238,6 +247,7 @@ public class Config {
      *
      * @return  infettività
      */
+    @Ready
     public double getInfectivity(){
         return infectivity;
     }
@@ -251,7 +261,7 @@ public class Config {
      * @param number    input sintomaticity
      * @return          true se il valore è nel formato corretto, false altrimenti.
      */
-
+    @Ready
     public boolean setSintomaticity(int number){
         if (number <= 0.0 || number > 100.0){
             return false;
@@ -267,6 +277,7 @@ public class Config {
      *
      * @return  sintomaticità
      */
+    @Ready
     public double getSintomaticity(){
         return sintomaticity;
     }
@@ -280,6 +291,7 @@ public class Config {
      * @param number    input letality
      * @return          true se il valore è nel formato corretto, false altrimenti.
      */
+    @Ready
     public boolean setLetality(int number){
         if (number <= 0.0 || number > 100.0){
             return false;
@@ -295,6 +307,7 @@ public class Config {
      *
      * @return  letalità
      */
+    @Ready
     public double getLetality() { return letality; }
 
     /**
@@ -306,6 +319,7 @@ public class Config {
      * @param number    input maxAge
      * @return          true se il valore è nel formato corretto, false altrimenti.
      */
+    @Ready
     public boolean setMaxAge(int number){
         if (number <= MAX_AGE_LOWER_BOUND || number >= MAX_AGE_UPPER_BOUND){
             return false;
@@ -321,6 +335,7 @@ public class Config {
      *
      * @return  età massima.
      */
+    @Ready
     public int getMaxAge() { return maxAge; }
 
     /**
@@ -332,6 +347,7 @@ public class Config {
      * @param number    input ageAverage
      * @return          true se il valore è nel formato corretto, false altrimenti.
      */
+    @Ready
     public boolean setAgeAverage(int number){
         if (number < AGE_AVERAGE_LOWER_BOUND || number > AGE_AVERAGE_UPPER_BOUND){
             return false;
@@ -347,6 +363,7 @@ public class Config {
      *
      * @return  età media
      */
+    @Ready
     public int getAgeAverage() { return ageAverage; }
 
     /**
@@ -358,6 +375,7 @@ public class Config {
      * @param number    input width
      * @return          true se il valore è nel formato corretto, false altrimenti.
      */
+    @Ready
     public boolean setSizeX(int number) {
         if (number >= SizeLowerBound.apply(0) && number <= SizeUpperBound.apply(0)) {
             size[0] = number;
@@ -376,6 +394,7 @@ public class Config {
      * @param number    input height
      * @return          true se il valore è nel formato corretto, false altrimenti.
      */
+    @Ready
     public boolean setSizeY(int number) {
         if (number >= SizeLowerBound.apply(1) && number <= SizeUpperBound.apply(1)){
             size[1] = number;
@@ -391,6 +410,7 @@ public class Config {
      *
      * @return  larghezza, altezza
      */
+    @Ready
     public int[] getSize() { return size; }
 
     /**
@@ -398,12 +418,14 @@ public class Config {
      * backup
      * @return
      */
+    @Ready
     boolean haveConfigsChanged() { return configsChanged; }
 
     /**
      * Setta il valore della velocità
      * @return
      */
+    @Ready
     public boolean setVelocity(int number){
         if (number < VELOCITY_LOWER_BOUND || number > VELOCITY_UPPER_BOUND.getAsInt()){
             return false;
@@ -417,6 +439,7 @@ public class Config {
      * Restituisce l'attributo della velocità
      * @return
      */
+    @Ready
     public double getVelocity() {return velocity;}
 
     /**
@@ -428,6 +451,7 @@ public class Config {
      * @param number    input frameADay
      * @return          true se il valore è nel formato corretto, false altrimenti.
      */
+    @Ready
     public boolean setFrameADay(int number){
         if (number < FRAME_A_DAY_LOWER_BOUND || number > FRAME_A_DAY_UPPER_BOUND){
             return false;
@@ -442,6 +466,7 @@ public class Config {
      * @param number    durata
      * @return          true se il valore è valido, false altrimenti
      */
+    @Ready
     public boolean setDayDuration(int number){
         if (number < DAY_DURATION_LOWER_BOUND || number > DAY_DURATION_UPPER_BOUND){
             return false;
@@ -455,6 +480,7 @@ public class Config {
      * Restituisce il numero di frame per ogni giorno
      * @return
      */
+    @Ready
     public int getFrameADay() {return frameADay;}
 
     /**
@@ -463,6 +489,7 @@ public class Config {
      *
      * @return  dayDuration.
      */
+    @Ready
     public int getDayDuration() { return dayDuration; }
 
     /**
@@ -544,6 +571,7 @@ public class Config {
      * essere usato per prendere in input dati dall'esterno.
      * @param value  input value
      */
+    @Ready
     public void forceDiseaseDuration(int value) { this.diseaseDuration = value; }
 
     /**
@@ -563,5 +591,6 @@ public class Config {
         }
     }
 
+    @Ready
     void setConfigsChanged(boolean changed) {this.configsChanged = changed;}
 }

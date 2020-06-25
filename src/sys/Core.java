@@ -33,12 +33,13 @@ public class Core {
      *
      * @param menu  implementazione dell'interfaccia IMenu
      */
+    @Ready
     public void newSimulation (IMenu menu){ sim = new Simulation(menu); }
 
     /**
      * Dò il via alla simulazione salvata negli attributi.
      */
-    @ToRevise
+    @Ready
     public void run() {
         try {
             sim.run();

@@ -30,7 +30,7 @@ public class Rng {
      *                  sua percentuale.
      * @return          se l'evento deve essere eseguito o no
      */
-    @ToRevise
+    @Ready
     public static boolean generateFortune(double percent, double modifier){
         double newPercent;
         newPercent = percent + (percent*modifier/100);
@@ -47,7 +47,7 @@ public class Rng {
      * @param age   intero che indica l'età del paziente
      * @return      modificatore di probabilità di tipo double
      */
-    @ToRevise
+    @Ready
     private static double generateSeverityModifiers(int age){
         double valore;
         if (age <= YOUNG_RANGE) {
@@ -71,7 +71,7 @@ public class Rng {
      * @param currentState  lo stato della simulazione
      * @return              restituisce l'array di persone
      */
-    @ToRevise
+    @Ready
     public static Person[] generatePopulation(State currentState){
         Person[] people = new Person[currentState.configs.getPopulationNumber()];
         for (int i=0;i<currentState.configs.getPopulationNumber();i++){

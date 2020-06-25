@@ -36,6 +36,7 @@ public class DefaultScenario extends Scenario {
      * Restituisce una breve descrizione dello scenario e dei parametri di cui necessita per essere eseguito.
      * @return  oggetto ScenariosInfos contenente le informazioni dello scenario.
      */
+    @Ready
     @Override
     public ScenarioInfos getInfos() {
         return SCENARIO_INFOS;

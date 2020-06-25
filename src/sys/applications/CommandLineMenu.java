@@ -37,6 +37,7 @@ public class CommandLineMenu implements IMenu {
      * @param currentState  stato corrente della simulazione
      * @param value         indice per la scelta del grafico da stampare
      */
+    @Ready
     public void createDataset(State currentState, int value) {
         ArrayList<ArrayList<Integer>> timeRange;
         File file;
@@ -81,10 +82,12 @@ public class CommandLineMenu implements IMenu {
 
     }
 
+    @Ready
     public void clear() {
         for(int i=0; i<50; i++) System.out.println();
     }
 
+    @Ready
     public void ScreenSH() {
         clear();
         printPersonalizedTitle("Menù Principale");
@@ -96,11 +99,13 @@ public class CommandLineMenu implements IMenu {
 
     }
 
+    @Ready
     public void ScreenFI() {
         clear();
         printPersonalizedTitle("Configurazione Iniziale");
     }
 
+    @Ready
     public void ScreenSET(Config config) {
         clear();
         printPersonalizedTitle("Menù Parametri");
@@ -117,6 +122,7 @@ public class CommandLineMenu implements IMenu {
         System.out.println("\n0) Torna al menù principale...");
     }
 
+    @Ready
     public void ScreenSET_OP(Config config) {
         printPersonalizedTitle("Menù Parametri opzionali");
         System.out.println("Per modificare i parametri opzionali digita: ");
@@ -128,7 +134,7 @@ public class CommandLineMenu implements IMenu {
         System.out.println("\n0) Torna al menù principale...");
     }
 
-    
+    @Ready
     public void ScreenSEN(Simulation currentSimulation) {
         printPersonalizedTitle("Selezione Scenario");
         System.out.println("1) Scenario di default: " + getEnabledStatus(currentSimulation, DefaultScenario.SCENARIO_INFOS.getID()));
@@ -152,8 +158,9 @@ public class CommandLineMenu implements IMenu {
            ScreenFI();
            break;
        }
-    }  
+    }
 
+    @Ready
     private String format(int value){
        return formatter.format(value);
     }
@@ -163,7 +170,7 @@ public class CommandLineMenu implements IMenu {
        System.out.println("######### " + title + " #########\n");
     }
 
-
+    @Ready
     @Override
     public int show() {
         ScreenSH();
@@ -189,6 +196,7 @@ public class CommandLineMenu implements IMenu {
         }
     }
 
+    @Ready
     private <E extends Number> E inputUntilValid(E lowerBound, E upperBound, Class<E> type, String infos){
         String formattedLowerBound;
         String formattedUpperBound;
@@ -209,6 +217,7 @@ public class CommandLineMenu implements IMenu {
         return value;
     }
 
+    @Ready
     @Override
     public void firstInput(Config config) {
         // Popolazione iniziale
@@ -256,6 +265,7 @@ public class CommandLineMenu implements IMenu {
 
     }
 
+    @Ready
     @Override
     public int settings(Config config) {
         int action = -1;
@@ -343,6 +353,7 @@ public class CommandLineMenu implements IMenu {
         return action;
     }
 
+    @Ready
     @Override
     public int settings_op(Config config) {
         int action = -1;
@@ -380,6 +391,7 @@ public class CommandLineMenu implements IMenu {
         return action;   
     }
 
+    @Ready
     @Override
     public void feedback(State state){
         printPersonalizedTitle("GIORNO " + state.currentDay);
@@ -393,6 +405,7 @@ public class CommandLineMenu implements IMenu {
         System.out.println("\n\n");
     }
 
+    @Ready
     @Override
     public void finalFeedback(State state) {
         printPersonalizedTitle("SIMULAZIONE TERMINATA");
@@ -422,7 +435,7 @@ public class CommandLineMenu implements IMenu {
         return result;
     }
 
-    @NotImplemented
+    @Ready
     private void customScenarioMenu(Simulation currentSimulation){
        printPersonalizedTitle("Custom Scenario");
        System.out.println("1) Scenario 'Tampone alle persone incontrate da chi risulta positivo': \t\t" + getEnabledStatus(currentSimulation, PeopleMetGetTestedScenario.SCENARIO_INFOS.getID()));
@@ -432,14 +445,14 @@ public class CommandLineMenu implements IMenu {
        System.out.println("\n0) Torna indietro...");
     }
 
-    @ToRevise
+    @Ready
     private String getEnabledStatus(Simulation currentSimulation, Integer ID){
         final String positiveFeedback = "abilitato.";
         final String negativeFeedback = "disabilitato.";
         return currentSimulation.isScenarioEnabled(ID) ? positiveFeedback : negativeFeedback;
     }
 
-    @ToRevise
+    @Ready
     private boolean askConfirmation(String customMessage){
         String positiveFeedback = "si";
         System.out.print(customMessage + " (si per accettare): ");
@@ -447,7 +460,7 @@ public class CommandLineMenu implements IMenu {
         return response.equalsIgnoreCase(positiveFeedback);
     }
 
-    @ToRevise
+    @Ready
     private void printScenarioIntro(ScenarioInfos infos){
         System.out.println();
         printPersonalizedTitle("Hai scelto " + infos.getName());
@@ -466,7 +479,7 @@ public class CommandLineMenu implements IMenu {
      * @param scenario      lo scenario attivo
      * @return              lo scenario attivato
      */
-    @ToRevise
+    @Ready
     private Scenario enableDisable(Simulation simulation, Scenario scenario){
         boolean response;
 
@@ -516,7 +529,7 @@ public class CommandLineMenu implements IMenu {
         return scenario;
     }
 
-    @ToRevise
+    @Ready
     @Override
     public void selectScenario(Simulation simulation) {
         clear();
@@ -549,7 +562,7 @@ public class CommandLineMenu implements IMenu {
 
 
 
-    @ToRevise
+    @Ready
     private void makeCustomScenario(Simulation simulation){
         CustomScenario customScenario;
         if (simulation.getCurrentScenario() instanceof CustomScenario) customScenario = (CustomScenario) simulation.getCurrentScenario();

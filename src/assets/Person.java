@@ -50,7 +50,7 @@ public class Person {
      * Se la persona diventa rossa, questa deve
      * essere impostata come ferma.
      */
-    @ToRevise
+    @Ready
     public void refresh() {
         if (movement == MovementStatus.STATIONARY){
             currentState.currentlyStationary+=1;
@@ -139,7 +139,7 @@ public class Person {
      *
      * @param color     colore di destinazione
      */
-    @ToRevise
+    @Ready
     private void makeOfColor(ColorStatus color){
         switch (color){
             case YELLOW:
@@ -185,7 +185,7 @@ public class Person {
      * Si occupa anche di mettere una persona nello status di
      * incubazione.
      */
-    @ToRevise
+    @Ready
     public void setAsInfected() {
         isInfected = true;
         if (index!=currentState.greenIncubation) {      //E' inutile effetturare lo scambio se l'indice è già quello giusto.
@@ -233,7 +233,7 @@ public class Person {
      *
      * @param severityModifier     modificatore di morte generato da Rng
      */
-    @ToRevise
+    @Ready
     public void setSeverityModifier(double severityModifier){
         this.severityModifier = severityModifier;
     }
@@ -309,6 +309,7 @@ public class Person {
      *
      * @return  le velocità di movimento
      */
+    @Ready
     private Pair<Double,Double> getRandomSpeed() {
         double x = (Rng.R.nextDouble()-0.5)*2;
         double y = Math.sqrt(1-Math.abs(x));
