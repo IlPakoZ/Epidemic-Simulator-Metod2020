@@ -39,7 +39,6 @@ public class StopRandomPeopleScenario extends Scenario{
     }
 
     //Non fa nulla
-    @Ready
     @Override
     public void oneTimeAction() { if (peopleToStop>currentState.configs.getPopulationNumber()) peopleToStop = currentState.configs.getPopulationNumber(); }
 
@@ -49,7 +48,6 @@ public class StopRandomPeopleScenario extends Scenario{
      * popolazione, per un numero di giorni preso in input e con un intervallo
      * di tempo preso in input.
      */
-    @Ready
     @Override
     public void dailyAction()  {
         if (firstTime == null) {
@@ -75,7 +73,6 @@ public class StopRandomPeopleScenario extends Scenario{
     }
 
     //Non fa nulla
-    @Ready
     @Override
     public void frameAction() { }
 
@@ -83,7 +80,6 @@ public class StopRandomPeopleScenario extends Scenario{
      * Restituisce una breve descrizione dello scenario e dei parametri di cui necessita per essere eseguito.
      * @return  breve descrizione dello scenario.
      */
-    @Ready
     @Override
     public ScenarioInfos getInfos() {
         return SCENARIO_INFOS;

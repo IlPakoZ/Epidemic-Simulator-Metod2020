@@ -19,17 +19,14 @@ public class DefaultScenario extends Scenario {
 
     // Non fa nulla
     @Ready
-    @Override
     public void oneTimeAction() { }
 
     // Non fa nulla
     @Ready
-    @Override
     public void dailyAction() { }
 
     // Non fa nulla
     @Ready
-    @Override
     public void frameAction() { }
 
     /**
@@ -37,7 +34,6 @@ public class DefaultScenario extends Scenario {
      * @return  oggetto ScenariosInfos contenente le informazioni dello scenario.
      */
     @Ready
-    @Override
     public ScenarioInfos getInfos() {
         return SCENARIO_INFOS;
     }

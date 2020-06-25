@@ -320,23 +320,21 @@ public class Simulation {
     public void debug() {
         Config config = getConfigs();
 
-        config.forcePopulationNumber(100000);
-        config.forceHealthParameters(20, 0);
+        config.forcePopulationNumber(80000);
+        config.forceHealthParameters(10, 0);
         config.forceHealthParameters(20, 1);
-        config.forceHealthParameters(20, 2);
+        config.forceHealthParameters(5, 2);
         config.forceSwabsCost(4);
-        config.forceSize(1200,1200);
-        config.forceInitialResources(3500000);
+        config.forceSize(1000,1000);
+        config.forceInitialResources(3000000);
         config.forceDiseaseDuration(40);
         //config.forceAge(50, 1);
         //config.forceAge(110, 0);
         config.incubationToYellowDeadline = (int)(config.getDiseaseDuration()*Config.INCUBATION_TO_YELLOW_DEADLINE);
         config.yellowToRedDeadline = (int)(config.getDiseaseDuration()*Config.YELLOW_TO_RED_DEADLINE);
 
-        //currentScenario = new StopRandomPeopleScenario(this, 100000, 20, 1);
-        currentScenario = new CustomScenario(this);
         //((CustomScenario)currentScenario).addScenario(new StopRandomPeopleScenario(this, 50000, 50, 50));
-        ((CustomScenario)currentScenario).addScenario(new PeopleMetGetTestedScenario(this, 90));
+        //((CustomScenario)currentScenario).addScenario(new PeopleMetGetTestedScenario(this, 90));
         //((CustomScenario)currentScenario).addScenario(new RandomSwabsScenario(this, 5000));
 
         //currentScenario = new StopRandomPeopleScenario(this, 20000, 40, 40);

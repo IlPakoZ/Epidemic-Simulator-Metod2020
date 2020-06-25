@@ -21,7 +21,6 @@ public class Queue<T> {
         }
     }
 
-
     /**
      * Elimina l'elemento in cima alla coda e lo restituisce, se la coda non è vuota.
      *

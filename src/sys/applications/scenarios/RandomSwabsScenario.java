@@ -29,14 +29,12 @@ public class RandomSwabsScenario extends Scenario{
     }
 
     // Non fa nulla
-    @Ready
     @Override
     public void oneTimeAction() { if (swabsNumber>currentState.configs.getPopulationNumber()) swabsNumber = currentState.configs.getPopulationNumber(); }
 
     /**
      * Fa il tampone ad un numero preso in input di persone, scelte casualmente tra la popolazione.
      */
-    @Ready
     @Override
     public void dailyAction() {
         int[] indexes = Rng.getPersonShuffledIndex(currentState);
@@ -52,7 +50,6 @@ public class RandomSwabsScenario extends Scenario{
 
     // Non fa nulla
     @Override
-    @Ready
     public void frameAction() { }
 
     /**
@@ -60,7 +57,6 @@ public class RandomSwabsScenario extends Scenario{
      * @return  oggetto ScenariosInfos contenente le informazioni dello scenario.
      */
     @Override
-    @Ready
     public ScenarioInfos getInfos() {
         return SCENARIO_INFOS;
     }

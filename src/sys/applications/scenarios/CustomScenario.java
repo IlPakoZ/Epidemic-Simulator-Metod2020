@@ -72,7 +72,6 @@ public class CustomScenario extends Scenario {
     /**
      * Esegue le oneTimeAction di tutti gli scenari abilitati.
      */
-    @Ready
     @Override
     public void oneTimeAction() {
         for (Integer i: scenariosInserted){
@@ -84,7 +83,6 @@ public class CustomScenario extends Scenario {
     /**
      * Esegue le dailyAction di tutti gli scenari abilitati.
      */
-    @Ready
     @Override
     public void dailyAction() {
         for (Integer i: scenariosInserted){
@@ -95,7 +93,6 @@ public class CustomScenario extends Scenario {
     /**
      * Esegue le frameAction di tutti gli scenari abilitati.
      */
-    @Ready
     @Override
     public void frameAction() {
         for (Integer i: scenariosInserted){
@@ -107,11 +104,11 @@ public class CustomScenario extends Scenario {
      * Restituisce una breve descrizione dello scenario e dei parametri di cui necessita per essere eseguito.
      * @return  oggetto ScenariosInfos contenente le informazioni dello scenario.
      */
-    @Ready
     @Override
     public ScenarioInfos getInfos() {
         return SCENARIO_INFOS;
     }
+
 
     static class DuplicatedIDScenarioException extends Exception{
         DuplicatedIDScenarioException(){

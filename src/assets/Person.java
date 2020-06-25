@@ -9,8 +9,8 @@ public class Person {
     private State currentState;
     private int age;
     private int index;
-    private double x, y;                      //x, y
-    private double speedX, speedY;            //horizontalSpeed, verticalSpeed
+    private double x, y;                            //x, y
+    private double speedX, speedY;                  //horizontalSpeed, verticalSpeed
     public boolean contact = false;
     public ColorStatus color = ColorStatus.GREEN;
     private MovementStatus movement = MovementStatus.MOVING;
@@ -318,6 +318,7 @@ public class Person {
         }
         return new Pair<>(x*currentState.configs.getVelocity(), -y*currentState.configs.getVelocity());
     }
+
 
     public static class UnsafeMovementStatusChangeException extends Exception{
         UnsafeMovementStatusChangeException(){

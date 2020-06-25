@@ -10,7 +10,7 @@ public interface IMenu {
      * Restituisce un valore intero che viene utilizzato
      * da un'istanza di Simulation per essere interpretato
      * dal metodo run come comando.
-     * ES: restituire 0 chiude il menù e fa partire la simulazione.
+     * ES: restituire 2 chiude il menù e fa partire la simulazione.
      *
      * @return       restituisce un valore che verrà interpretato dal
      *               metodo run di Simulation per decidere che operazione
@@ -29,9 +29,7 @@ public interface IMenu {
 
     /**
      * Apre il menù delle opzioni. Permette di modificare singolarmente
-     * i parametri di input inseriti. Controllare la correttezza
-     * degli input spetta a questa classe. Serve anche per inserire
-     * i parametri opzionali.
+     * i parametri di input obbligatori inseriti.
      *
      * @param config configurazione corrente della simulazione
      * @return       restituisce un valore che verrà interpretato dal
@@ -70,15 +68,12 @@ public interface IMenu {
 
     /**
      * Questo metodo viene richiamato da Simulation per aprire
-     * il menù della scelta dello scenario. In questo menù, verrà
-     * restituita un oggetto di Scenario che implementa IScenario in base
+     * il menù della scelta dello scenario. In questo menù, verrà creato
+     * un oggetto di Scenario che implementa IScenario in base
      * al valore inserito dall'utente (quindi in base allo scenario che
      * vorrà scegliere l'utente).
      * Questo metodo conterrà anche una breve descrizione dello scenario
      * che si vuole selezionare.
-     *
-     * @return un oggetto di una classe che implementa IScenario in base
-     *         alla scelta dell'utente.
      */
     void selectScenario(Simulation simulation);
 
