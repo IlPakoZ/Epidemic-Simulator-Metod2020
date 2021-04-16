@@ -1,5 +1,4 @@
 package sys.applications;
-import javafx.util.Pair;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;

@@ -322,20 +322,22 @@ public class Simulation {
 
         config.forcePopulationNumber(80000);
         config.forceHealthParameters(10, 0);
-        config.forceHealthParameters(20, 1);
+        config.forceHealthParameters(50, 1);
         config.forceHealthParameters(5, 2);
         config.forceSwabsCost(4);
-        config.forceSize(1000,1000);
+        config.forceSize(800,800);
         config.forceInitialResources(3000000);
         config.forceDiseaseDuration(40);
         //config.forceAge(50, 1);
         //config.forceAge(110, 0);
         config.incubationToYellowDeadline = (int)(config.getDiseaseDuration()*Config.INCUBATION_TO_YELLOW_DEADLINE);
         config.yellowToRedDeadline = (int)(config.getDiseaseDuration()*Config.YELLOW_TO_RED_DEADLINE);
+        currentScenario = new CustomScenario(this);
 
+        //((CustomScenario)currentScenario).addScenario(new PeopleGetStoppedOnceScenario(this, 50000, 50));
         //((CustomScenario)currentScenario).addScenario(new StopRandomPeopleScenario(this, 50000, 50, 50));
-        //((CustomScenario)currentScenario).addScenario(new PeopleMetGetTestedScenario(this, 90));
         //((CustomScenario)currentScenario).addScenario(new RandomSwabsScenario(this, 5000));
+        //((CustomScenario)currentScenario).addScenario(new PeopleMetGetTestedScenario(this, 90));
 
         //currentScenario = new StopRandomPeopleScenario(this, 20000, 40, 40);
         //currentScenario = new RandomSwabsScenario(this, 5000);
